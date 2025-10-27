@@ -6,7 +6,7 @@
 
   /* Header sizing */
   --header-pad-x: 14px;
-  --header-pad-top-min: 8px;   /* компактно сверху */
+  --header-pad-top-min: 12px;   /* компактно сверху */
   --header-pad-bottom: 8px;    /* компактно снизу */
   --safe-top: env(safe-area-inset-top, 0px);
 
@@ -17,7 +17,7 @@
 }
 
 @media (min-width: 480px){
-  :root{ --title-size: 28px; --logo-size: 48px; }
+  :root{ --title-size: 26px; --logo-size: 44px; }
 }
 
 html, body { margin:0; padding:0; }
