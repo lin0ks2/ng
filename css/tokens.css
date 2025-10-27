@@ -1,64 +1,138 @@
-html, body { margin:0; padding:0; }
+/* ===========================================================
+ * MOYAMOVA — базовые токены и окружения
+ * -----------------------------------------------------------
+ * Единый файл стилей с ветками для:
+ *   — Общих правил (все браузеры)
+ *   — Safari / iOS
+ *   — Chrome / Android / Desktop
+ *   — PWA (standalone режим)
+ * =========================================================== */
 
-:root{
-  --safe-top: env(safe-area-inset-top, 0px);
+/* ---------- БАЗОВЫЕ ПЕРЕМЕННЫЕ (общие) ---------- */
+:root {
+  /* Брендовые цвета */
+  --brand: #1fb6ff;
+  --brand-dark: #0ea5e9;
 
-  --brand: #1fb6ff;          /* пример близкий к оттенку лого, можно подогнать */
-  --brand-dark: #0ea5e9;     /* чуть темнее, нажатие/hover */
-  --burger: var(--brand);    /* цвет иконки "три линии" — в токен */
+  /* Отступы и размеры */
   --header-pad: 12px 14px;
-  --title-size: 24px;        /* крупный заголовок */
-  --logo-size: 40px;         /* крупнее логотип */
-  --gap-tight: 8px;          /* плотнее к логотипу */
+  --title-size: 24px;
+  --logo-size: 40px;
+  --gap-tight: 8px;
+
+  /* Безопасная зона (iOS) */
+  --safe-top: env(safe-area-inset-top, 0px);
 }
 
-@media (min-width: 480px){
-  :root{
-  --safe-top: env(safe-area-inset-top, 0px);
-
+/* Адаптивное увеличение шрифта и логотипа */
+@media (min-width: 480px) {
+  :root {
     --title-size: 26px;
     --logo-size: 44px;
   }
 }
 
-/* Базовая типографика: системный шрифт, H1 — Montserrat */
-body{
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+/* ---------- ОБЩИЕ СТИЛИ (все браузеры) ---------- */
+html, body {
   margin: 0;
+  padding: 0;
 }
-.brand-title{
+
+body {
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  background: #fff;
+  color: #111;
+}
+
+/* Шапка */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--header-pad);
+  border-bottom: 1px solid #e5e7eb;
+  background: #fff;
+}
+
+/* Логотип и название */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-tight);
+}
+.brand img {
+  width: var(--logo-size);
+  height: var(--logo-size);
+}
+.brand-title {
   font-family: 'Montserrat', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
   font-weight: 700;
   font-size: var(--title-size);
   line-height: 1.1;
   margin: 0;
 }
-.header{
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  background: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--header-pad);
-  padding-top: max(var(--safe-top), 6px); /* iOS safe-area + минимум для Chrome */
-  border-bottom: 1px solid #e5e7eb;
-}
-.brand{
-  display:flex; align-items:center; gap: var(--gap-tight);
-}
-.brand img{ width: var(--logo-size); height: var(--logo-size); }
-.burger{
-  font-size: 28px;           /* крупнее "три линии" */
-  line-height: 1;
-  color: var(--burger);      /* цвет из токена */
-  background: none; border: 0; cursor: pointer;
-}
-.burger:active{ color: var(--brand-dark); transform: scale(.98); }
 
-/* iOS Safari: нормализуем safe-area и убираем фантомный верхний зазор */
-:root{ --safe-top: env(safe-area-inset-top, 0px); }
+/* Кнопка меню ("три линии") */
+.burger {
+  font-size: 28px;
+  line-height: 1;
+  color: var(--brand);
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+.burger:active {
+  color: var(--brand-dark);
+  transform: scale(.98);
+}
+
+/* ===========================================================
+ * 🧭 SAFARI / iOS
+ * Только для Safari и iOS (включая PWA)
+ * =========================================================== */
 @supports (-webkit-touch-callout: none) {
-  .header{ padding-top: var(--safe-top); } /* фикс на случай самовольных inset-ов */
+  .header {
+    /* В iOS учитываем safe area сверху */
+    padding-top: var(--safe-top);
+  }
+}
+
+/* ===========================================================
+ * 🌐 CHROME / ANDROID / DESKTOP
+ * Все браузеры кроме Safari
+ * =========================================================== */
+@supports not (-webkit-touch-callout: none) {
+  .header {
+    /* Минимальный верхний отступ для баланса */
+    padding-top: 6px;
+  }
+}
+
+/* ===========================================================
+ * 📦 PWA (display-mode: standalone)
+ * Только при запуске как установленное приложение
+ * =========================================================== */
+@media all and (display-mode: standalone) {
+  .header {
+    /* Убираем тень, чтобы выглядело как нативное приложение */
+    box-shadow: none;
+    padding-top: var(--safe-top);
+  }
+
+  body {
+    background: #fff;
+  }
+}
+
+/* ===========================================================
+ * 🌐 ОБЫЧНЫЙ БРАУЗЕР (не PWA)
+ * =========================================================== */
+@media all and (display-mode: browser) {
+  .header {
+    /* Лёгкая тень в обычном браузере */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
 }
