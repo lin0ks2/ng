@@ -109,7 +109,7 @@ body{
 
 /* ---------- PWA (standalone) ---------- */
 @media all and (display-mode: standalone){
-  .app-footer{ bottom: calc(-5 * var(--safe-bottom)); }
+  .app-footer{ bottom: calc(-2 * var(--safe-bottom)); }
 }
 
 /* ---------- Browser (not PWA) ---------- */
