@@ -58,5 +58,5 @@ body{
 /* iOS Safari: нормализуем safe-area и убираем фантомный верхний зазор */
 :root{ --safe-top: env(safe-area-inset-top, 0px); }
 @supports (-webkit-touch-callout: none) {
-  .header{ padding-top: 12px; } /* фикс на случай самовольных inset-ов */
+  .header{ padding-top: var(--safe-top); } /* фикс на случай самовольных inset-ов */
 }
