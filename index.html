@@ -37,30 +37,25 @@
   </header>
 
   <main id="app" class="content">
-    <!-- Контекст появится здесь -->
+    <!-- Контент появится здесь -->
   </main>
 
-  <!-- Footer nav -->
+  <!-- Footer nav — иконки вместо эмодзи/подписей -->
   <footer class="app-footer" role="navigation" aria-label="Основная навигация">
     <button class="nav-btn" data-action="home" aria-label="Главная">
-      <span class="nav-icon">🏠</span>
-      <span class="nav-label">Главная</span>
+      <img class="nav-icon" src="./img/home.svg" alt="Главная">
     </button>
     <button class="nav-btn" data-action="dicts" aria-label="Словари">
-      <span class="nav-icon">📚</span>
-      <span class="nav-label">Словари</span>
+      <img class="nav-icon" src="./img/book.svg" alt="Словари">
     </button>
     <button class="nav-btn" data-action="fav" aria-label="Избранное">
-      <span class="nav-icon">⭐️</span>
-      <span class="nav-label">Избранное</span>
+      <img class="nav-icon" src="./img/star.svg" alt="Избранное">
     </button>
     <button class="nav-btn" data-action="mistakes" aria-label="Мои ошибки">
-      <span class="nav-icon">⚠️</span>
-      <span class="nav-label">Мои ошибки</span>
+      <img class="nav-icon" src="./img/warning.svg" alt="Мои ошибки">
     </button>
     <button class="nav-btn" data-action="stats" aria-label="Статистика">
-      <span class="nav-icon">📊</span>
-      <span class="nav-label">Статистика</span>
+      <img class="nav-icon" src="./img/stats.svg" alt="Статистика">
     </button>
   </footer>
 
@@ -68,10 +63,7 @@
     // Клик по лого → главная
     document.addEventListener('click', function(e){
       const a = e.target.closest('.brand-link');
-      if (a) {
-        e.preventDefault();
-        location.assign('./');
-      }
+      if (a) { e.preventDefault(); location.assign('./'); }
     });
 
     // Навигация (заглушки)
@@ -79,7 +71,6 @@
       btn.addEventListener('click', () => {
         const act = btn.getAttribute('data-action');
         if (act === 'home') location.assign('./');
-        // TODO: остальные маршруты добавим позже
       });
     });
 
