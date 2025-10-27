@@ -1,0 +1,57 @@
+# ===============================
+# MOYAMOVA — базовый .gitignore
+# ===============================
+
+# --- ОС и редакторы ---
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.swp
+*.bak
+
+# macOS Spotlight / Windows Explorer
+._*
+ehthumbs.db
+desktop.ini
+
+# IDE / редакторы
+.vscode/
+.idea/
+*.code-workspace
+
+# --- Сборки и временные файлы ---
+dist/
+build/
+node_modules/
+*.map
+*.cache/
+.cache/
+.temp/
+.tmp/
+coverage/
+*.zip
+
+# --- Служебные данные ---
+# файлы резервных копий или временные дампы
+backup/
+*.bak
+*.old
+*.orig
+
+# --- Пользовательские данные ---
+# (экспортированные словари, сохранённые состояния и т.п.)
+user_data/
+exports/
+import/
+*.json.backup
+
+# --- Системные ---
+# если будешь использовать pwa или service workers — исключим кеши
+service-worker.js
+sw.js.map
+
+# --- Чистая папка для тестов или черновиков ---
+sandbox/
+drafts/
+tests/
