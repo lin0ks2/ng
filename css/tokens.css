@@ -1,4 +1,4 @@
-/* MOYAMOVA — tokens.css (footer lower in browser/PWA, cleaner buttons, bigger burger) */
+/* MOYAMOVA — tokens.css (nav buttons with equal side & inner gaps) */
 :root{
   --brand: #1fb6ff;
   --brand-dark: #0ea5e9;
@@ -20,7 +20,8 @@
   --footer-h: 60px;
   --footer-sep: #e5e7eb;
   --footer-bg: #fff;
-  --footer-fg: #333; /* темнее для читаемости */
+  --footer-fg: #333;
+  --nav-gap: 12px; /* НОВОЕ: одинаковые отступы слева/справа и между кнопками */
 }
 
 @media (min-width: 480px){
@@ -52,7 +53,6 @@ body{
   font-family: 'Montserrat', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
   font-weight:700; font-size:var(--title-size); line-height:1.05; margin:0;
 }
-/* Бургер крупнее */
 .burger{ font-size:32px; line-height:1; color:var(--burger); background:none; border:0; cursor:pointer; }
 .burger:active{ color:var(--brand-dark); transform:scale(.98); }
 
@@ -64,7 +64,11 @@ body{
   position: fixed;
   left:0; right:0; bottom:0;
   height: calc(var(--footer-h) + var(--safe-bottom));
-  display:grid; grid-template-columns: repeat(5, 1fr);
+  display:grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  column-gap: var(--nav-gap);          /* одинаковые промежутки между кнопками */
+  padding-left: var(--nav-gap);        /* и равные поля по краям */
+  padding-right: var(--nav-gap);
   background: var(--footer-bg);
   color: var(--footer-fg);
   border-top: 1px solid var(--footer-sep);
@@ -77,14 +81,15 @@ body{
   display:flex; flex-direction:column; align-items:center; justify-content:center;
   gap: 4px;
   margin:0; padding: 8px 4px 10px;
-  background: transparent; border: 0; /* разделители убраны */
+  background: transparent; border: 0;
   color: inherit;
   font: inherit;
   cursor: pointer;
+  width: 100%; /* растянуть по колонке */
 }
 
 .nav-icon{ font-size: 20px; line-height:1; }
-.nav-label{ font-size: 13px; line-height: 1.1; white-space:nowrap; font-weight:600; } /* крупнее и жирнее */
+.nav-label{ font-size: 13px; line-height: 1.1; white-space:nowrap; font-weight:600; }
 
 /* ---------- Safari / iOS branch ---------- */
 @supports (-webkit-touch-callout: none){
@@ -99,16 +104,10 @@ body{
 
 /* ---------- PWA (standalone) ---------- */
 @media all and (display-mode: standalone){
-  .app-footer{
-    /* Сильнее прижимаем вниз: уводим на величину safe-area, чтобы касался низа экрана */
-    bottom: calc(-1 * var(--safe-bottom));
-  }
+  .app-footer{ bottom: calc(-1 * var(--safe-bottom)); }
 }
 
 /* ---------- Browser (not PWA) ---------- */
 @media all and (display-mode: browser){
-  .app-footer{
-    /* Чуть опускаем визуально (4px) */
-    bottom: -4px;
-  }
+  .app-footer{ bottom: -4px; }
 }
