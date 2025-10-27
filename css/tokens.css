@@ -22,7 +22,7 @@
   --footer-bg: #fff;
   --footer-fg: #333;
   --nav-gap: 12px;
-  --nav-icon-size: 26px; /* размер иконок в футере */
+  --nav-icon-size: 32px; /* размер иконок в футере */
 }
 
 @media (min-width: 480px){
