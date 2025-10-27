@@ -1,0 +1,46 @@
+
+:root{
+  --brand: #1fb6ff;          /* пример близкий к оттенку лого, можно подогнать */
+  --brand-dark: #0ea5e9;     /* чуть темнее, нажатие/hover */
+  --burger: var(--brand);    /* цвет иконки "три линии" — в токен */
+  --header-pad: 12px 14px;
+  --title-size: 24px;        /* крупный заголовок */
+  --logo-size: 40px;         /* крупнее логотип */
+  --gap-tight: 8px;          /* плотнее к логотипу */
+}
+
+@media (min-width: 480px){
+  :root{
+    --title-size: 26px;
+    --logo-size: 44px;
+  }
+}
+
+/* Базовая типографика: системный шрифт, H1 — Montserrat */
+body{
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  margin: 0;
+}
+.brand-title{
+  font-family: 'Montserrat', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  font-weight: 700;
+  font-size: var(--title-size);
+  line-height: 1.1;
+  margin: 0;
+}
+.header{
+  display:flex; align-items:center; justify-content:space-between;
+  padding: var(--header-pad);
+  border-bottom:1px solid #e5e7eb;
+}
+.brand{
+  display:flex; align-items:center; gap: var(--gap-tight);
+}
+.brand img{ width: var(--logo-size); height: var(--logo-size); }
+.burger{
+  font-size: 28px;           /* крупнее "три линии" */
+  line-height: 1;
+  color: var(--burger);      /* цвет из токена */
+  background: none; border: 0; cursor: pointer;
+}
+.burger:active{ color: var(--brand-dark); transform: scale(.98); }
