@@ -26,7 +26,7 @@
 }
 
 @media (min-width: 480px){
-  :root{ --title-size: 28px; --logo-size: 48px; --nav-icon-size: 28px; }
+  :root{ --title-size: 28px; --logo-size: 48px; --nav-icon-size: 32px; }
 }
 
 html, body { margin:0; padding:0; }
@@ -109,7 +109,7 @@ body{
 
 /* ---------- PWA (standalone) ---------- */
 @media all and (display-mode: standalone){
-  .app-footer{ bottom: calc(-1 * var(--safe-bottom)); }
+  .app-footer{ bottom: calc(-5 * var(--safe-bottom)); }
 }
 
 /* ---------- Browser (not PWA) ---------- */
