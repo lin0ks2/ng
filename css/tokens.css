@@ -107,7 +107,7 @@ body {
 @supports not (-webkit-touch-callout: none) {
   .header {
     /* Минимальный верхний отступ для баланса */
-    padding-top: 6px;
+    padding-top: 12px;
   }
 }
 
