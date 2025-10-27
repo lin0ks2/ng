@@ -35,13 +35,15 @@ body{
 }
 .header{
   position: sticky;
-  top: 0; 
+  top: 0;
   z-index: 1000;
   background: #fff;
-
-  display:flex; align-items:center; justify-content:space-between;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding: var(--header-pad);
-  border-bottom:1px solid #e5e7eb;
+  padding-top: max(var(--safe-top), 6px); /* iOS safe-area + минимум для Chrome */
+  border-bottom: 1px solid #e5e7eb;
 }
 .brand{
   display:flex; align-items:center; gap: var(--gap-tight);
