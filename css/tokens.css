@@ -1,4 +1,4 @@
-/* MOYAMOVA — tokens.css (header + footer nav, per env branches) */
+/* MOYAMOVA — tokens.css (footer lower in browser/PWA, cleaner buttons, bigger burger) */
 :root{
   --brand: #1fb6ff;
   --brand-dark: #0ea5e9;
@@ -20,7 +20,7 @@
   --footer-h: 60px;
   --footer-sep: #e5e7eb;
   --footer-bg: #fff;
-  --footer-fg: var(--burger);
+  --footer-fg: #333; /* темнее для читаемости */
 }
 
 @media (min-width: 480px){
@@ -52,6 +52,7 @@ body{
   font-family: 'Montserrat', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
   font-weight:700; font-size:var(--title-size); line-height:1.05; margin:0;
 }
+/* Бургер крупнее */
 .burger{ font-size:32px; line-height:1; color:var(--burger); background:none; border:0; cursor:pointer; }
 .burger:active{ color:var(--brand-dark); transform:scale(.98); }
 
@@ -67,22 +68,23 @@ body{
   background: var(--footer-bg);
   color: var(--footer-fg);
   border-top: 1px solid var(--footer-sep);
+  border-bottom: 1px solid var(--footer-sep);
   z-index: 1000;
   padding-bottom: var(--safe-bottom);
+  box-shadow: 0 -1px 2px rgba(0,0,0,.05);
 }
 .app-footer .nav-btn{
   display:flex; flex-direction:column; align-items:center; justify-content:center;
   gap: 4px;
-  margin:0; padding: 6px 4px 8px;
-  background: transparent; border: 0; border-left: 1px solid var(--footer-sep);
+  margin:0; padding: 8px 4px 10px;
+  background: transparent; border: 0; /* разделители убраны */
   color: inherit;
   font: inherit;
   cursor: pointer;
 }
-.app-footer .nav-btn:first-child{ border-left: 0; }
 
 .nav-icon{ font-size: 20px; line-height:1; }
-.nav-label{ font-size: 11px; line-height: 1.05; white-space:nowrap; }
+.nav-label{ font-size: 13px; line-height: 1.1; white-space:nowrap; font-weight:600; } /* крупнее и жирнее */
 
 /* ---------- Safari / iOS branch ---------- */
 @supports (-webkit-touch-callout: none){
@@ -97,12 +99,16 @@ body{
 
 /* ---------- PWA (standalone) ---------- */
 @media all and (display-mode: standalone){
-  .header{ box-shadow: none; }
-  .app-footer{ box-shadow: 0 -1px 2px rgba(0,0,0,.06); }
+  .app-footer{
+    /* Сильнее прижимаем вниз: уводим на величину safe-area, чтобы касался низа экрана */
+    bottom: calc(-1 * var(--safe-bottom));
+  }
 }
 
 /* ---------- Browser (not PWA) ---------- */
 @media all and (display-mode: browser){
-  .header{ box-shadow: 0 1px 3px rgba(0,0,0,.06); }
-  .app-footer{ box-shadow: 0 -1px 2px rgba(0,0,0,.06); }
+  .app-footer{
+    /* Чуть опускаем визуально (4px) */
+    bottom: -4px;
+  }
 }
