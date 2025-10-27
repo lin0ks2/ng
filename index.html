@@ -16,30 +16,74 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="apple-touch-icon" sizes="180x180" href="./img/apple-touch-icon-180x180.png">
 
-  <!-- ✅ Google Analytics (вставь свой ID вместо G-XXXXXXX) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-DZL66KME4H"></script>
+  <!-- Google Analytics (замени G-XXXXXXX на свой ID) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXX"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){ dataLayer.push(arguments); }
     gtag('js', new Date());
-    gtag('config', 'G-DZL66KME4H', { transport_type: 'beacon' });
+    gtag('config', 'G-XXXXXXX', { transport_type: 'beacon' });
   </script>
 </head>
-
 <body>
-  <header class="header is-centered">
+  <header class="header">
     <div class="brand">
-      <img src="./img/logo_64.png" alt="MOYAMOVA">
-      <h1 class="brand-title">MOYAMOVA</h1>
+      <a class="brand-link" href="./" aria-label="Главная">
+        <img src="./img/logo_64.png" alt="MOYAMOVA">
+        <h1 class="brand-title">MOYAMOVA</h1>
+      </a>
     </div>
     <button id="btnMenu" class="burger" aria-label="Меню">☰</button>
   </header>
 
-  <main id="app" style="padding:16px;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;">
-    <!-- Контент появится здесь -->
+  <main id="app" class="content">
+    <!-- Контекст появится здесь -->
   </main>
 
+  <!-- Footer nav -->
+  <footer class="app-footer" role="navigation" aria-label="Основная навигация">
+    <button class="nav-btn" data-action="home" aria-label="Главная">
+      <span class="nav-icon">🏠</span>
+      <span class="nav-label">Главная</span>
+    </button>
+    <button class="nav-btn" data-action="dicts" aria-label="Словари">
+      <span class="nav-icon">📚</span>
+      <span class="nav-label">Словари</span>
+    </button>
+    <button class="nav-btn" data-action="fav" aria-label="Избранное">
+      <span class="nav-icon">⭐️</span>
+      <span class="nav-label">Избранное</span>
+    </button>
+    <button class="nav-btn" data-action="mistakes" aria-label="Мои ошибки">
+      <span class="nav-icon">⚠️</span>
+      <span class="nav-label">Мои ошибки</span>
+    </button>
+    <button class="nav-btn" data-action="stats" aria-label="Статистика">
+      <span class="nav-icon">📊</span>
+      <span class="nav-label">Статистика</span>
+    </button>
+  </footer>
+
   <script>
+    // Клик по лого → главная
+    document.addEventListener('click', function(e){
+      const a = e.target.closest('.brand-link');
+      if (a) {
+        e.preventDefault();
+        location.assign('./');
+      }
+    });
+
+    // Навигация (заглушки)
+    document.querySelectorAll('.app-footer .nav-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const act = btn.getAttribute('data-action');
+        if (act === 'home') location.assign('./');
+        // TODO: остальные маршруты добавим позже
+      });
+    });
+
+    // Service worker
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
         navigator.serviceWorker.register('./sw.js').catch(console.warn);
