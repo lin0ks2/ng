@@ -6,7 +6,7 @@
 
   /* Header sizing */
   --header-pad-x: 14px;
-  --header-pad-top-min: 12px;   /* компактно сверху */
+  --header-pad-top-min: 8px;   /* компактно сверху */
   --header-pad-bottom: 8px;    /* компактно снизу */
   --safe-top: env(safe-area-inset-top, 0px);
 
@@ -59,7 +59,7 @@ body{
 
 /* Burger */
 .burger{
-  font-size:28px;
+  font-size:32px;
   line-height:1;
   color:var(--burger);
   background:none;
