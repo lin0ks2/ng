@@ -52,7 +52,7 @@ body{
   font-family: 'Montserrat', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
   font-weight:700; font-size:var(--title-size); line-height:1.05; margin:0;
 }
-.burger{ font-size:28px; line-height:1; color:var(--burger); background:none; border:0; cursor:pointer; }
+.burger{ font-size:32px; line-height:1; color:var(--burger); background:none; border:0; cursor:pointer; }
 .burger:active{ color:var(--brand-dark); transform:scale(.98); }
 
 /* Content bottom padding so footer never overlaps */
