@@ -4,16 +4,23 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
   <title>MOYAMOVA</title>
+
+  <!-- Montserrat для крупных надписей -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/tokens.css">
 </head>
+
 <body>
   <!-- Минимальная шапка без внешних стилей -->
-  <header style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid #ddd;">
-    <div style="display:flex;align-items:center;gap:10px;">
-      <img src="./img/logo_64.png" alt="MOYAMOVA" width="32" height="32"/>
-      <strong style="font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;">MOYAMOVA</strong>
+  
+  <header class="header">
+    <div class="brand">
+      <img src="./img/logo_64.png" alt="MOYAMOVA">
+      <h1 class="brand-title">MOYAMOVA</h1>
     </div>
-    <button id="btnMenu" aria-label="Меню" style="font-size:24px;background:none;border:0;cursor:pointer;">☰</button>
+    <button id="btnMenu" class="burger" aria-label="Меню">☰</button>
   </header>
+
 
   <!-- Пустая страница: верстать будем дальше -->
   <main id="app" style="padding:16px;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;">
