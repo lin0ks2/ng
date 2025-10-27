@@ -8,6 +8,13 @@
   <!-- Montserrat для крупных надписей -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./css/tokens.css">
+
+  <link rel="manifest" href="./manifest.webmanifest">
+  <meta name="theme-color" content="#1fb6ff">
+  <!-- iOS PWA hints -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="apple-touch-icon" sizes="180x180" href="./img/apple-touch-icon-180x180.png">
 </head>
 
 <body>
@@ -37,5 +44,14 @@
   <script src="./js/deck.en.js"></script>
   <script src="./js/app.favorites.js"></script>
   <script src="./js/app.mistakes.js"></script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('./sw.js').catch(console.warn);
+    });
+  }
+</script>
+
 </body>
 </html>
