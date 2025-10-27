@@ -1,4 +1,4 @@
-/* MOYAMOVA — tokens.css (strong centering & tighter spacing) */
+/* MOYAMOVA — tokens.css (compact height + normal logo placement) */
 :root{
   --brand: #1fb6ff;
   --brand-dark: #0ea5e9;
@@ -6,8 +6,8 @@
 
   /* Header sizing */
   --header-pad-x: 14px;
-  --header-pad-top-min: 4px;   /* ещё компактнее сверху */
-  --header-pad-bottom: 4px;    /* ещё компактнее снизу */
+  --header-pad-top-min: 4px;   /* компактно сверху */
+  --header-pad-bottom: 4px;    /* компактно снизу */
   --safe-top: env(safe-area-inset-top, 0px);
 
   /* Typography */
@@ -21,9 +21,12 @@
 }
 
 html, body { margin:0; padding:0; }
-body{ font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif; background:#fff; color:#111; }
+body{
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  background:#fff; color:#111;
+}
 
-/* Header base */
+/* Header */
 .header{
   position: sticky;
   top: 0;
@@ -33,29 +36,42 @@ body{ font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-ser
   padding-top: max(var(--safe-top), var(--header-pad-top-min));
   padding-bottom: var(--header-pad-bottom);
   background:#fff;
-  border-bottom:1px solid #dfe3e8; /* немного темнее, чтобы было видно изменение */
+  border-bottom:1px solid #dfe3e8;
 }
-
-/* Strong centering mode */
-.header.is-centered{ position: sticky; }
-.header.is-centered .brand{
-  position:absolute; left:50%; transform:translateX(-50%); /* геометрический центр */
-}
-.header.is-centered .burger{ margin-left:auto; } /* закрепляем кнопку справа */
 
 /* Brand */
-.brand{ display:flex; align-items:center; gap: var(--gap-tight); }
-.brand img{ width: var(--logo-size); height: var(--logo-size); }
+.brand{
+  display:flex;
+  align-items:center;
+  gap: var(--gap-tight);
+}
+.brand img{
+  width: var(--logo-size);
+  height: var(--logo-size);
+}
 .brand-title{
   font-family: 'Montserrat', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
-  font-weight:700; font-size:var(--title-size); line-height:1.05; margin:0;
+  font-weight:700;
+  font-size:var(--title-size);
+  line-height:1.05;
+  margin:0;
 }
 
 /* Burger */
-.burger{ font-size:28px; line-height:1; color:var(--burger); background:none; border:0; cursor:pointer; }
-.burger:active{ color:var(--brand-dark); transform:scale(.98); }
+.burger{
+  font-size:28px;
+  line-height:1;
+  color:var(--burger);
+  background:none;
+  border:0;
+  cursor:pointer;
+}
+.burger:active{
+  color:var(--brand-dark);
+  transform:scale(.98);
+}
 
-/* Safari/iOS */
+/* Safari / iOS */
 @supports (-webkit-touch-callout: none){
   .header{ padding-top: max(var(--safe-top), var(--header-pad-top-min)); }
 }
