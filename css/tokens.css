@@ -6,18 +6,18 @@
 
   /* Header sizing */
   --header-pad-x: 14px;
-  --header-pad-top-min: 4px;   /* компактно сверху */
-  --header-pad-bottom: 4px;    /* компактно снизу */
+  --header-pad-top-min: 8px;   /* компактно сверху */
+  --header-pad-bottom: 8px;    /* компактно снизу */
   --safe-top: env(safe-area-inset-top, 0px);
 
   /* Typography */
-  --title-size: 24px;
-  --logo-size: 40px;
+  --title-size: 26px;
+  --logo-size: 44px;
   --gap-tight: 8px;
 }
 
 @media (min-width: 480px){
-  :root{ --title-size: 26px; --logo-size: 44px; }
+  :root{ --title-size: 28px; --logo-size: 48px; }
 }
 
 html, body { margin:0; padding:0; }
