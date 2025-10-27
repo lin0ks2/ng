@@ -1,4 +1,4 @@
-/* MOYAMOVA — tokens.css (compact height + normal logo placement) */
+/* MOYAMOVA — tokens.css (header + footer nav, per env branches) */
 :root{
   --brand: #1fb6ff;
   --brand-dark: #0ea5e9;
@@ -6,18 +6,25 @@
 
   /* Header sizing */
   --header-pad-x: 14px;
-  --header-pad-top-min: 8px;   /* компактно сверху */
-  --header-pad-bottom: 8px;    /* компактно снизу */
+  --header-pad-top-min: 8px;
+  --header-pad-bottom: 8px;
   --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
 
   /* Typography */
   --title-size: 26px;
   --logo-size: 44px;
   --gap-tight: 8px;
+
+  /* Footer */
+  --footer-h: 60px;
+  --footer-sep: #e5e7eb;
+  --footer-bg: #fff;
+  --footer-fg: var(--burger);
 }
 
 @media (min-width: 480px){
-  :root{ --title-size: 26px; --logo-size: 44px; }
+  :root{ --title-size: 28px; --logo-size: 48px; }
 }
 
 html, body { margin:0; padding:0; }
@@ -33,53 +40,69 @@ body{
   z-index: 1000;
   display:flex; align-items:center; justify-content:space-between;
   padding: 0 var(--header-pad-x);
-  padding-top: max(var(--safe-top), var(--header-pad-top-min));
+  padding-top: max(var(--safe-top), 8px);
   padding-bottom: var(--header-pad-bottom);
   background:#fff;
   border-bottom:1px solid #dfe3e8;
 }
-
-/* Brand */
-.brand{
-  display:flex;
-  align-items:center;
-  gap: var(--gap-tight);
-}
-.brand img{
-  width: var(--logo-size);
-  height: var(--logo-size);
-}
+.brand{ display:flex; align-items:center; }
+.brand-link{ display:flex; align-items:center; gap: var(--gap-tight); color:inherit; text-decoration:none; }
+.brand img{ width: var(--logo-size); height: var(--logo-size); }
 .brand-title{
   font-family: 'Montserrat', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
-  font-weight:700;
-  font-size:var(--title-size);
-  line-height:1.05;
-  margin:0;
+  font-weight:700; font-size:var(--title-size); line-height:1.05; margin:0;
 }
+.burger{ font-size:28px; line-height:1; color:var(--burger); background:none; border:0; cursor:pointer; }
+.burger:active{ color:var(--brand-dark); transform:scale(.98); }
 
-/* Burger */
-.burger{
-  font-size:32px;
-  line-height:1;
-  color:var(--burger);
-  background:none;
-  border:0;
-  cursor:pointer;
-}
-.burger:active{
-  color:var(--brand-dark);
-  transform:scale(.98);
-}
+/* Content bottom padding so footer never overlaps */
+.content{ padding:16px; padding-bottom: calc(var(--footer-h) + var(--safe-bottom) + 12px); }
 
-/* Safari / iOS */
+/* Footer nav */
+.app-footer{
+  position: fixed;
+  left:0; right:0; bottom:0;
+  height: calc(var(--footer-h) + var(--safe-bottom));
+  display:grid; grid-template-columns: repeat(5, 1fr);
+  background: var(--footer-bg);
+  color: var(--footer-fg);
+  border-top: 1px solid var(--footer-sep);
+  z-index: 1000;
+  padding-bottom: var(--safe-bottom);
+}
+.app-footer .nav-btn{
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap: 4px;
+  margin:0; padding: 6px 4px 8px;
+  background: transparent; border: 0; border-left: 1px solid var(--footer-sep);
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.app-footer .nav-btn:first-child{ border-left: 0; }
+
+.nav-icon{ font-size: 20px; line-height:1; }
+.nav-label{ font-size: 11px; line-height: 1.05; white-space:nowrap; }
+
+/* ---------- Safari / iOS branch ---------- */
 @supports (-webkit-touch-callout: none){
-  .header{ padding-top: max(var(--safe-top), var(--header-pad-top-min)); }
+  .header{ padding-top: max(var(--safe-top), 8px); }
+  .app-footer{ height: calc(var(--footer-h) + var(--safe-bottom)); padding-bottom: var(--safe-bottom); }
 }
 
-/* PWA */
-@media all and (display-mode: standalone){
-  .header{ box-shadow:none; }
+/* ---------- Chrome / others ---------- */
+@supports not (-webkit-touch-callout: none){
+  .header{ padding-top: 8px; }
 }
+
+/* ---------- PWA (standalone) ---------- */
+@media all and (display-mode: standalone){
+  .header{ box-shadow: none; }
+  .app-footer{ box-shadow: 0 -1px 2px rgba(0,0,0,.06); }
+}
+
+/* ---------- Browser (not PWA) ---------- */
 @media all and (display-mode: browser){
-  .header{ box-shadow:0 1px 3px rgba(0,0,0,.06); }
+  .header{ box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+  .app-footer{ box-shadow: 0 -1px 2px rgba(0,0,0,.06); }
 }
