@@ -1,10 +1,4 @@
-/* MOYAMOVA — tokens.css (seamless footer join when offcanvas is open) */
-/* This patch removes the visible gap/edge when the menu opens by:
-   - pinning footer to bottom:0 while menu is open,
-   - hiding footer's top border then drawing a single hairline on the overlay,
-   - removing footer shadow while open to avoid grey fringe,
-   - keeping exact same heights via --footer-h-actual variables.
-*/
+/* MOYAMOVA — tokens.css (fix seams in browsers only; header/footer fixed; panel rides rails) */
 :root{
   --brand: #1fb6ff;
   --brand-dark: #0ea5e9;
@@ -17,23 +11,27 @@
   --title-size: 26px;
   --logo-size: 44px;
   --gap-tight: 8px;
+
   --footer-h: 60px;
   --footer-sep: #e5e7eb;
   --footer-bg: #fff;
   --footer-fg: #333;
   --nav-gap: 12px;
   --nav-icon-size: 28px;
+
   --header-h-actual: 64px;
   --footer-h-actual: calc(var(--footer-h) + var(--safe-bottom));
 }
+
 @media (min-width: 480px){
   :root{ --title-size: 28px; --logo-size: 48px; --nav-icon-size: 30px; }
 }
+
 html, body { margin:0; padding:0; }
 *{ -webkit-tap-highlight-color: transparent; }
 body{ font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif; background:#fff; color:#111; }
-body.menu-open{ overflow:hidden; }
 
+/* Header (фиксирован) */
 .header{
   position: sticky; top: 0; z-index: 1000;
   display:flex; align-items:center; justify-content:space-between;
@@ -46,12 +44,16 @@ body.menu-open{ overflow:hidden; }
 .brand-link{ display:flex; align-items:center; gap: var(--gap-tight); color:inherit; text-decoration:none; }
 .brand img{ width: var(--logo-size); height: var(--logo-size); }
 .brand-title{ font-family: 'Montserrat', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif; font-weight:700; font-size:var(--title-size); line-height:1.05; margin:0; }
+
+/* Burger */
 .burger{ font-size:32px; line-height:1; color:var(--burger); background:none; border:0; cursor:pointer; -webkit-appearance:none; appearance:none; outline:none; transition: transform .1s ease, color .12s ease; }
 body.menu-open .burger{ color: var(--footer-fg); transform: scale(1.06); }
 .burger:active{ transform: scale(1.08); }
 
+/* Контент */
 .content{ padding:16px; padding-bottom: calc(var(--footer-h) + var(--safe-bottom) + 12px); }
 
+/* Footer (фиксирован, не подпрыгивает вообще) */
 .app-footer{
   position: fixed; left:0; right:0; bottom:0;
   height: calc(var(--footer-h) + var(--safe-bottom));
@@ -62,20 +64,14 @@ body.menu-open .burger{ color: var(--footer-fg); transform: scale(1.06); }
   z-index: 1000; padding-bottom: var(--safe-bottom);
   box-shadow: 0 -1px 2px rgba(0,0,0,.05);
 }
-.app-footer .nav-btn{
-  display:flex; align-items:center; justify-content:center;
-  margin:0; padding: 8px 4px 10px; background:transparent; border:0;
-  color:inherit; font:inherit; cursor:pointer; width:100%;
-  -webkit-appearance:none; appearance:none; outline:none;
-}
+.app-footer .nav-btn{ display:flex; align-items:center; justify-content:center; margin:0; padding: 8px 4px 10px; background:transparent; border:0; color:inherit; font:inherit; cursor:pointer; width:100%; -webkit-appearance:none; appearance:none; outline:none; }
 .nav-icon{
   width: var(--nav-icon-size); height: var(--nav-icon-size);
   display:block; background-repeat:no-repeat; background-position:center; background-size:contain;
-  pointer-events:none; user-select:none; -webkit-user-select:none;
-  transition: transform .12s ease, opacity .15s ease;
+  pointer-events:none; user-select:none; -webkit-user-select:none; transition: transform .12s ease, opacity .15s ease;
 }
 
-/* icon mapping (paths are from css/ → ../img) */
+/* Icons mapping (css/ → ../img) */
 .nav-btn [data-icon="home"]    { background-image:url("../img/home_dark.svg"); }
 .nav-btn [data-icon="book"]    { background-image:url("../img/book_dark.svg"); }
 .nav-btn [data-icon="star"]    { background-image:url("../img/star_dark.svg"); }
@@ -97,10 +93,9 @@ body.menu-open .burger{ color: var(--footer-fg); transform: scale(1.06); }
 .nav-btn.active [data-icon="stats"]   { background-image:url("../img/stats.svg"); }
 .nav-btn:active .nav-icon{ transform: scale(1.08); }
 
-/* ----- Offcanvas (гамбургер) ----- */
+/* Offcanvas: «ездит по рельсам» между линией хедера и футера */
 .oc-root{ position: fixed; inset:0; z-index:1100; pointer-events:none; }
 body.menu-open .oc-root{ pointer-events:auto; }
-
 .oc-overlay{
   position: fixed; left:0; right:0;
   top: var(--header-h-actual); bottom: var(--footer-h-actual);
@@ -108,17 +103,15 @@ body.menu-open .oc-root{ pointer-events:auto; }
   opacity: 0; transition: opacity .18s ease;
 }
 body.menu-open .oc-overlay{ opacity: 1; }
-/* draw a SINGLE hairline exactly above the footer while menu is open */
-body.menu-open .oc-overlay::after{
-  content:""; position:absolute; left:0; right:0; bottom:0; height:1px;
-  background: var(--footer-sep);
-}
 
 .oc-panel{
   position: fixed; right:0;
   top: var(--header-h-actual); bottom: var(--footer-h-actual);
   width: 50vw; max-width: 520px; min-width: 280px;
-  background:#fff; box-shadow: -8px 0 24px rgba(0,0,0,.12);
+  background:#fff;
+  border-top: 1px solid #dfe3e8;     /* «рельсы» сверху */
+  border-bottom: 1px solid #dfe3e8;  /* «рельсы» снизу */
+  box-shadow: -8px 0 24px rgba(0,0,0,.12);
   transform: translateX(100%); transition: transform .22s ease;
   display:flex; flex-direction:column;
 }
@@ -130,19 +123,14 @@ body.menu-open .oc-panel{ transform: translateX(0); }
 .oc-back{ margin-right:8px; } .oc-close{ margin-left:8px; }
 .oc-body{ overflow:auto; padding:12px; -webkit-overflow-scrolling:touch; }
 
-/* --- environment tweaks --- */
-/* In normal mode keep slight visual drop; when menu open -> pixel-perfect join */
-@media all and (display-mode: standalone){
-  .app-footer{ bottom: calc(-1 * var(--safe-bottom)); }
-  body.menu-open .app-footer{ bottom: 0; box-shadow:none; border-top-color: transparent; }
-}
+/* --- Только для браузеров: сохраняем лёгкий визуальный сдвиг футера как раньше --- */
 @media all and (display-mode: browser){
-  .app-footer{ bottom: -4px; }
-  body.menu-open .app-footer{ bottom: 0; box-shadow:none; border-top-color: transparent; }
+  .app-footer{ bottom: -4px; } /* как было — футер НЕ подпрыгивает при меню */
 }
 
-/* Safari iOS safe-areas */
+/* Safari/iOS adjustments */
 @supports (-webkit-touch-callout: none){
   .header{ padding-top: max(var(--safe-top), 8px); }
   .app-footer{ height: calc(var(--footer-h) + var(--safe-bottom)); padding-bottom: var(--safe-bottom); }
 }
+/* PWA — не трогаем в этом патче */
