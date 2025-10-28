@@ -234,7 +234,7 @@
     // ---- Быстрые действия (нижний ряд)
     const actionsMap = {
       guide(){ /* TODO */ },
-      donate(){ /* TODO */ },
+        donate(){ window.Donate && window.Donate.open(); },
       share(){
         const data = { title: 'MOYAMOVA', url: location.href };
         if (navigator.share) navigator.share(data).catch(()=>{});
@@ -262,5 +262,6 @@
     }
   </script>
   <script type="module" src="./js/legal.js"></script>
+  <script src="./js/donate.js"></script>
 </body>
 </html>
