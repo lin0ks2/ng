@@ -60,7 +60,7 @@ body.menu-open .burger{ color: var(--footer-fg); transform: scale(1.06); }
   display:grid; grid-template-columns: repeat(5, minmax(0, 1fr));
   column-gap: var(--nav-gap); padding-left: var(--nav-gap); padding-right: var(--nav-gap);
   background: var(--footer-bg); color: var(--footer-fg);
-  border-top: 1px solid var(--footer-sep); border-bottom: 1px solid var(--footer-sep);
+  border-top: 1px solid var(--footer-sep); border-bottom: 0px solid var(--footer-sep);
   z-index: 1000; padding-bottom: var(--safe-bottom);
   box-shadow: 0 -1px 2px rgba(0,0,0,.05);
 }
@@ -117,7 +117,7 @@ body.menu-open .oc-overlay{ opacity: 1; }
 }
 body.menu-open .oc-panel{ transform: translateX(0); }
 
-.oc-header{ display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-bottom:1px solid #e5e7eb; }
+.oc-header{ display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-bottom:0px solid #e5e7eb; }
 .oc-title{ font-weight:700; text-align:center; flex:1; }
 .oc-back,.oc-close{ background:transparent; border:0; font-size:20px; cursor:pointer; color:#333; -webkit-appearance:none; appearance:none; outline:none; }
 .oc-back{ margin-right:8px; } .oc-close{ margin-left:8px; }
