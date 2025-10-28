@@ -16,7 +16,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="apple-touch-icon" sizes="180x180" href="./img/apple-touch-icon-180x180.png">
 
-  <!-- Google Analytics (замени G-XXXXXXX на свой ID) -->
+  <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXX"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -49,6 +49,7 @@
       </div>
 
       <div class="oc-body">
+
         <!-- Пункт 1: Тема -->
         <div class="menu-item theme-toggle">
           <div class="menu-label">Тема</div>
@@ -87,8 +88,10 @@
             <span class="level-label right" role="img" aria-label="Сложный уровень">🦅</span>
           </div>
         </div>
-      </div>
-       
+
+        <!-- Пустой отступ -->
+        <div class="menu-spacer" aria-hidden="true"></div>
+
         <!-- Пункт 4: Резервное копирование -->
         <div class="menu-item backup-tools">
           <div class="menu-label">Резервное копирование</div>
@@ -98,14 +101,23 @@
           </div>
         </div>
 
-        <!-- ПРИЖАТЫЕ КНИЗУ 5 КНОПОК -->
-        <div class="actions-row-bottom" role="group" aria-label="Быстрые действия">
-          <button class="action-btn" data-action="guide"   aria-label="Инструкция">📘</button>
-          <button class="action-btn" data-action="donate"  aria-label="Поддержите проект">💰</button>
-          <button class="action-btn" data-action="contact" aria-label="Связаться">✉️</button>
-          <button class="action-btn" data-action="share"   aria-label="Поделиться">🔗</button>
-          <button class="action-btn" data-action="legal"   aria-label="Юридическая информация">⚖️</button>
+        <!-- Пункт 5: Обновления -->
+        <div class="menu-item updates-check">
+          <div class="menu-label">Обновления</div>
+          <div class="updates-row">
+            <button class="primary-btn" id="btnCheckUpdates">Проверить обновления</button>
+          </div>
         </div>
+      </div>
+
+      <!-- Нижний ряд быстрых действий -->
+      <div class="actions-row-bottom" role="group" aria-label="Быстрые действия">
+        <button class="action-btn" data-action="guide"   aria-label="Инструкция">📘</button>
+        <button class="action-btn" data-action="donate"  aria-label="Поддержите проект">💰</button>
+        <button class="action-btn" data-action="contact" aria-label="Связаться">✉️</button>
+        <button class="action-btn" data-action="share"   aria-label="Поделиться">🔗</button>
+        <button class="action-btn" data-action="legal"   aria-label="Юридическая информация">⚖️</button>
+      </div>
     </aside>
   </div>
 
@@ -129,7 +141,6 @@
   </footer>
 
   <script>
-    // Measure header/footer and set CSS vars (rails for offcanvas)
     function updateHFVars(){
       const h = document.querySelector('.header');
       const f = document.querySelector('.app-footer');
@@ -169,7 +180,6 @@
     });
     if (overlay) overlay.addEventListener('click', closeMenu);
 
-    // Swipe to close
     (function(){
       let startX = null;
       ocPanel.addEventListener('touchstart', (e)=>{ startX = e.touches[0].clientX; }, {passive:true});
@@ -181,7 +191,6 @@
       });
     })();
 
-    // Edge-swipe open
     (function(){
       let startX = null, startedAtEdge = false;
       const EDGE = 16;
@@ -199,7 +208,6 @@
       });
     })();
 
-    // Footer nav
     document.querySelectorAll('.app-footer .nav-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.app-footer .nav-btn').forEach(b => b.classList.remove('active'));
@@ -209,7 +217,7 @@
       });
     });
 
-    // ---- Тогл темы ----
+    // Тема
     const themeToggle = document.getElementById('themeToggle');
     if(themeToggle){
       themeToggle.addEventListener('change', e=>{
@@ -218,20 +226,16 @@
       });
     }
 
-    // ---- Тогл языка ---- (по умолчанию русский)
+    // Язык
     const langToggle = document.getElementById('langToggle');
     if(langToggle){
-      // начальное состояние: русский
-      document.documentElement.dataset.lang = 'ru';
-      langToggle.checked = false;
-
       langToggle.addEventListener('change', e=>{
-        const uk = e.target.checked;
-        document.documentElement.dataset.lang = uk ? 'uk' : 'ru';
+        const ru = e.target.checked;
+        document.documentElement.dataset.lang = ru ? 'uk' : 'ru';
       });
     }
 
-    // ---- Тогл сложности ----
+    // Сложность
     const levelToggle = document.getElementById('levelToggle');
     if(levelToggle){
       levelToggle.addEventListener('change', e=>{
@@ -240,10 +244,30 @@
       });
     }
 
-    // ---- Быстрые действия (нижний ряд)
+    // Экспорт / Импорт
+    const backupButtons = document.querySelectorAll('.backup-btn');
+    if (backupButtons.length){
+      backupButtons.forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          const act = btn.dataset.action;
+          if (act === 'export') alert('📤 Экспорт данных (заглушка)');
+          else if (act === 'import') alert('📥 Импорт данных (заглушка)');
+        });
+      });
+    }
+
+    // Проверка обновлений
+    const btnCheckUpdates = document.getElementById('btnCheckUpdates');
+    if (btnCheckUpdates){
+      btnCheckUpdates.addEventListener('click', ()=>{
+        alert('Проверка обновлений (заглушка)');
+      });
+    }
+
+    // Нижние действия
     const actionsMap = {
-      guide(){ /* TODO */ },
-        donate(){ window.Donate && window.Donate.open(); },
+      guide(){ /* TODO: инструкция */ },
+      donate(){ /* TODO: экран доната */ },
       share(){
         const data = { title: 'MOYAMOVA', url: location.href };
         if (navigator.share) navigator.share(data).catch(()=>{});
@@ -252,8 +276,8 @@
           catch { prompt('Скопируйте ссылку:', location.href); }
         }
       },
-      legal(){ import('./js/legal.js').then(m => m.Legal.open('impressum')); },
-      contact(){ location.href = 'mailto:info@moyamova.com'; }
+      legal(){ /* TODO: юр страницы */ },
+      contact(){ location.href = 'mailto:support@moyamova.app'; }
     };
     document.querySelectorAll('.actions-row-bottom .action-btn').forEach(btn=>{
       btn.addEventListener('click', ()=>{
@@ -262,73 +286,12 @@
         if (act !== 'guide') { try { closeMenu(); } catch(_){} }
       });
     });
-// ---- Блокировка альбомной ориентации (заглушка + попытка lock)
-(function(){
-  const mq = window.matchMedia('(orientation: landscape)');
 
-  function applyGuard(){
-    const isLandscape = mq.matches || (window.innerWidth > window.innerHeight);
-    document.body.classList.toggle('landscape-block', isLandscape);
-    // aria для скринридеров
-    const guard = document.querySelector('.orientation-guard');
-    if (guard) guard.setAttribute('aria-hidden', String(!isLandscape));
-  }
-// ---- Экспорт/Импорт (резервное копирование)
-const backupButtons = document.querySelectorAll('.backup-btn');
-if (backupButtons.length){
-  backupButtons.forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      const act = btn.dataset.action;
-      if (act === 'export') {
-        alert('📤 Экспорт данных (заглушка)');
-      } else if (act === 'import') {
-        alert('📥 Импорт данных (заглушка)');
-      }
-    });
-  });
-}
-  // Попытка залочить портрет (работает только в некоторых PWA/Android, после жеста)
-  async function tryLockPortrait(){
-    try{
-      if (screen.orientation && screen.orientation.lock) {
-        await screen.orientation.lock('portrait');
-      }
-    }catch(_){ /* iOS Safari/большинство браузеров игнорируют — ок */ }
-  }
-
-  // Первичная установка
-  applyGuard();
-
-  // Следим за изменениями
-  ['resize','orientationchange','pageshow','visibilitychange'].forEach(ev=>{
-    window.addEventListener(ev, applyGuard, {passive:true});
-  });
-
-  // Пытаемся залочить после первого пользовательского жеста (чтобы не ругались браузеры)
-  const firstUserGesture = () => {
-    tryLockPortrait();
-    window.removeEventListener('click', firstUserGesture, true);
-    window.removeEventListener('touchstart', firstUserGesture, true);
-  };
-  window.addEventListener('click', firstUserGesture, true);
-  window.addEventListener('touchstart', firstUserGesture, true);
-})();
-    // Service worker
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
         navigator.serviceWorker.register('./sw.js').catch(console.warn);
       });
     }
   </script>
-  <script type="module" src="./js/legal.js"></script>
-  <script src="./js/donate.js"></script>
-<!-- Заглушка для альбомной ориентации -->
-<div class="orientation-guard" aria-hidden="true" role="dialog" aria-label="Поверните устройство">
-  <div class="og-inner">
-    <div class="og-emoji">🔄</div>
-    <p class="og-title">Поверните устройство</p>
-    <p class="og-text">Шаблон под альбомный режим в разработке. Используйте портретную ориентацию.</p>
-  </div>
-</div>
 </body>
 </html>
