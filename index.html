@@ -270,7 +270,7 @@
     // Нижние действия
     const actionsMap = {
       guide(){ /* TODO: инструкция */ },
-      donate(){ location.href = './donate.html'; },
+      donate(){ import('./js/donate.js').then(m => m.Donate.open()).catch(console.warn); },
       share(){
         const data = { title: 'MOYAMOVA', url: location.href };
         if (navigator.share) navigator.share(data).catch(()=>{});
