@@ -1,151 +1,244 @@
-/* tokens.css — объединённые правки, ничего не теряем
-   - Оверлей и панель кликабельны; корень меню — нет (header/footer кликаются)
-   - Блокируем скролл под меню
-   - Убраны тени и бордеры панели; «двойная линия» исправлена
-   - PWA: футер прижат к нижнему краю, учитывает safe-area
-*/
+/* ========================================================================== */
+/*  TOKENS.CSS — ЧИСТАЯ СБОРКА С КОММЕНТАРИЯМИ                                */
+/*  Браузерные правила оставлены как есть (идеальны).                          */
+/*  PWA отделён в свою ветку и не дублирует safe-area снизу.                   */
+/* ========================================================================== */
 
+
+/* =========================
+   БАЗОВЫЕ ПЕРЕМЕННЫЕ (CSS)
+   ========================= */
 :root{
-  --brand:#1fb6ff; --brand-dark:#0ea5e9; --burger:var(--brand);
-  --header-pad-x:14px; --header-pad-bottom:8px;
-  --safe-top:env(safe-area-inset-top,0px); --safe-bottom:env(safe-area-inset-bottom,0px);
-  --title-size:26px; --logo-size:44px; --gap-tight:8px;
-  --footer-h:60px; --footer-sep:#e5e7eb; --footer-bg:#fff; --footer-fg:#333;
-  --nav-gap:12px; --nav-icon-size:28px;
-  --header-h-actual:64px; --footer-h-actual:calc(var(--footer-h) + var(--safe-bottom));
+  --brand:#1fb6ff;                 /* основной брендовый цвет (иконки/акценты) */
+  --brand-dark:#0ea5e9;            /* более тёмный оттенок бренда */
+  --burger:var(--brand);           /* цвет кнопки «три линии» по умолчанию */
+
+  --header-pad-x:14px;             /* горизонтальные отступы шапки */
+  --header-pad-bottom:8px;         /* нижний отступ внутри шапки */
+
+  --safe-top:env(safe-area-inset-top,0px);     /* безопасная зона сверху (iOS вырез) */
+  --safe-bottom:env(safe-area-inset-bottom,0px);/* безопасная зона снизу (iOS home-бар) */
+
+  --title-size:26px;               /* размер названия в шапке */
+  --logo-size:44px;                /* размер логотипа в шапке */
+  --gap-tight:8px;                 /* компактный межэлементный зазор */
+
+  --footer-h:60px;                 /* базовая высота футера без safe-area */
+  --footer-sep:#e5e7eb;            /* цвет разделительных линий */
+  --footer-bg:#fff;                /* фон футера */
+  --footer-fg:#333;                /* цвет иконок/текста футера */
+  --nav-gap:12px;                  /* зазоры между кнопками в футере */
+  --nav-icon-size:28px;            /* базовый размер иконок футера */
+
+  --header-h-actual:64px;          /* фактическая высота шапки (перезаписывается JS) */
+  --footer-h-actual:calc(var(--footer-h) + var(--safe-bottom)); /* фактическая высота футера (перезапишет JS) */
 }
-@media (min-width:480px){ :root{ --title-size:28px; --logo-size:48px; --nav-icon-size:30px; } }
 
-html,body{margin:0;padding:0}
-*{-webkit-tap-highlight-color:transparent}
-body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;background:#fff;color:#111}
-body.menu-open{overflow:hidden; touch-action:none;}
+/* чуть больше размеры на более широких экранах */
+@media (min-width:480px){
+  :root{ --title-size:28px; --logo-size:48px; --nav-icon-size:30px; }
+}
 
-/* header */
+
+/* =========================
+   СБРОСЫ/ОСНОВЫ
+   ========================= */
+html,body{ margin:0; padding:0; }                      /* убираем внешние отступы документа */
+*{ -webkit-tap-highlight-color:transparent; }           /* убираем серую вспышку при тапе на iOS */
+body{
+  font-family:system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif; /* системный шрифт */
+  background:#fff;                                      /* белый фон по умолчанию */
+  color:#111;                                           /* базовый текстовый цвет */
+}
+body.menu-open{ overflow:hidden; touch-action:none; }   /* при открытом меню — не скроллим под ним */
+
+
+/* =========================
+   ШАПКА (HEADER)
+   ========================= */
 .header{
-  position:sticky; top:0; z-index:1000;
-  display:flex; align-items:center; justify-content:space-between;
-  padding:0 var(--header-pad-x);
-  padding-top:max(var(--safe-top),8px);
-  padding-bottom:var(--header-pad-bottom);
-  background:#fff; border-bottom:1px solid #dfe3e8;
+  position:sticky; top:0; z-index:1000;                /* шапка прилипает к верху и перекрывает контент */
+  display:flex; align-items:center; justify-content:space-between; /* выравнивание логотип/название/бургер */
+  padding:0 var(--header-pad-x);                        /* горизонтальные поля шапки */
+  padding-top:max(var(--safe-top),8px);                 /* учитываем safe-area сверху на iOS */
+  padding-bottom:var(--header-pad-bottom);              /* нижний внутренний отступ */
+  background:#fff;                                      /* фон шапки */
+  border-bottom:1px solid #dfe3e8;                      /* нижняя разделительная линия шапки */
 }
-.brand{display:flex;align-items:center}
-.brand-link{display:flex;align-items:center;gap:var(--gap-tight);color:inherit;text-decoration:none}
-.brand img{width:var(--logo-size);height:var(--logo-size)}
-.brand-title{font-family:'Montserrat',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-weight:700;font-size:var(--title-size);line-height:1.05;margin:0}
+.brand{ display:flex; align-items:center; }             /* блок логотип+название */
+.brand-link{ display:flex; align-items:center; gap:var(--gap-tight); color:inherit; text-decoration:none; } /* ссылка-домой */
+.brand img{ width:var(--logo-size); height:var(--logo-size); } /* размеры логотипа */
+.brand-title{
+  font-family:'Montserrat',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif; /* шрифт названия */
+  font-weight:700; font-size:var(--title-size); line-height:1.05; margin:0;            /* жирность/размер/лид/сброс внешних */
+}
+
+/* кнопка «три линии» */
 .burger{
-  font-size:32px; line-height:1; color:var(--burger);
-  background:none; border:0; cursor:pointer;
-  -webkit-appearance:none; appearance:none; outline:none;
-  transition:transform .1s ease,color .12s ease;
+  font-size:32px; line-height:1; color:var(--burger);  /* размер и базовый цвет бургера */
+  background:none; border:0; cursor:pointer;           /* убираем фон/бордеры, курсор — рука */
+  -webkit-appearance:none; appearance:none; outline:none; /* нативные артефакты и фокус-рамки убраны (потом добавим кастомные) */
+  transition:transform .1s ease, color .12s ease;      /* лёгкая анимация на нажатие/цвет */
 }
-body.menu-open .burger{ color:var(--footer-fg); transform:scale(1.06) }
-.burger:active{ transform:scale(1.08) }
+body.menu-open .burger{ color:var(--footer-fg); transform:scale(1.06); } /* при открытом меню — чуть темнее и крупнее */
+.burger:active{ transform:scale(1.08); }               /* микро-скейл при активном тапе */
 
-/* content */
-.content{ padding:16px; padding-bottom:calc(var(--footer-h) + var(--safe-bottom) + 12px) }
 
-/* footer */
+/* =========================
+   КОНТЕНТ
+   ========================= */
+.content{
+  padding:16px;                                         /* внутренние поля контента */
+  padding-bottom:calc(var(--footer-h) + var(--safe-bottom) + 12px); /* запас снизу, чтобы контент не уходил под футер */
+}
+
+
+/* =========================
+   ФУТЕР (НАВИГАЦИЯ)
+   ========================= */
 .app-footer{
-  position:fixed; left:0; right:0; bottom:0;
-  height:calc(var(--footer-h) + var(--safe-bottom));
-  display:grid; grid-template-columns:repeat(5,minmax(0,1fr));
-  column-gap:var(--nav-gap); padding-left:var(--nav-gap); padding-right:var(--nav-gap);
-  background:var(--footer-bg); color:var(--footer-fg);
-  border-top:1px solid var(--footer-sep); border-bottom:1px solid var(--footer-sep);
-  z-index:1000; padding-bottom:var(--safe-bottom);
-  box-shadow:none;
+  position:fixed; left:0; right:0; bottom:0;           /* футер всегда прибит к низу окна */
+  height:calc(var(--footer-h) + var(--safe-bottom));   /* базовая высота + safe-area (перезапишет JS фактом) */
+  display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); /* пять равных колонок (5 кнопок) */
+  column-gap:var(--nav-gap);                            /* горизонтальный зазор между кнопками */
+  padding-left:var(--nav-gap); padding-right:var(--nav-gap); /* поля слева/справа внутри футера */
+  background:var(--footer-bg); color:var(--footer-fg); /* фон и цвет иконок/текста */
+  border-top:1px solid var(--footer-sep);              /* линия сверху футера */
+  border-bottom:1px solid var(--footer-sep);           /* линия снизу футера (в PWA мы её отключим) */
+  z-index:1000;                                        /* над контентом */
+  padding-bottom:var(--safe-bottom);                   /* отступ под home-бар (в PWA уберём) */
+  box-shadow:none;                                     /* тени убраны для чистых стыков */
 }
+/* кнопка навигации в футере */
 .app-footer .nav-btn{
-  display:flex; align-items:center; justify-content:center;
-  margin:0; padding:8px 4px 10px;
-  background:transparent; border:0; color:inherit; font:inherit;
-  cursor:pointer; width:100%;
-  -webkit-appearance:none; appearance:none; outline:none;
+  display:flex; align-items:center; justify-content:center; /* центрирование иконок в каждой кнопке */
+  margin:0; padding:8px 4px 10px;                           /* внутренние отступы кнопки */
+  background:transparent; border:0; color:inherit; font:inherit; /* кнопка «плоская», наследует шрифт/цвет */
+  cursor:pointer; width:100%;                               /* кликабельна вся колонка */
+  -webkit-appearance:none; appearance:none; outline:none;   /* нативный вид и фокус-рамка отключены (сделаем позже) */
 }
+/* иконка навигации */
 .nav-icon{
-  width:var(--nav-icon-size); height:var(--nav-icon-size);
-  display:block; background-repeat:no-repeat; background-position:center; background-size:contain;
-  pointer-events:none; user-select:none; -webkit-user-select:none;
-  transition:transform .12s ease, opacity .15s ease;
+  width:var(--nav-icon-size); height:var(--nav-icon-size); /* размеры иконок */
+  display:block; background-repeat:no-repeat; background-position:center; background-size:contain; /* рисуем svg как фон */
+  pointer-events:none; user-select:none; -webkit-user-select:none; /* иконки не интерактивны, выделение отключено */
+  transition:transform .12s ease, opacity .15s ease;       /* лёгкая анимация при hover/active */
 }
 
-/* icons mapping (css/ → ../img) */
-.nav-btn [data-icon="home"]   { background-image:url("../img/home_dark.svg") }
-.nav-btn [data-icon="book"]   { background-image:url("../img/book_dark.svg") }
-.nav-btn [data-icon="star"]   { background-image:url("../img/star_dark.svg") }
-.nav-btn [data-icon="warning"]{ background-image:url("../img/warning_dark.svg") }
-.nav-btn [data-icon="stats"]  { background-image:url("../img/stats_dark.svg") }
+
+/* =========================
+   ИКОНКИ (картинки из /img)
+   ========================= */
+/* обычные (неактивные) */
+.nav-btn [data-icon="home"]   { background-image:url("../img/home_dark.svg"); }     /* иконка Главная */
+.nav-btn [data-icon="book"]   { background-image:url("../img/book_dark.svg"); }     /* иконка Словари */
+.nav-btn [data-icon="star"]   { background-image:url("../img/star_dark.svg"); }     /* иконка Избранное */
+.nav-btn [data-icon="warning"]{ background-image:url("../img/warning_dark.svg"); }  /* иконка Мои ошибки */
+.nav-btn [data-icon="stats"]  { background-image:url("../img/stats_dark.svg"); }    /* иконка Статистика */
+
+/* hover-состояние (десктопы/мышь) */
 @media (hover:hover){
-  .nav-btn:hover [data-icon="home"]   { background-image:url("../img/home_hover.svg") }
-  .nav-btn:hover [data-icon="book"]   { background-image:url("../img/book_hover.svg") }
-  .nav-btn:hover [data-icon="star"]   { background-image:url("../img/star_hover.svg") }
-  .nav-btn:hover [data-icon="warning"]{ background-image:url("../img/warning_hover.svg") }
-  .nav-btn:hover [data-icon="stats"]  { background-image:url("../img/stats_hover.svg") }
-  .nav-btn:hover .nav-icon{ transform:translateY(-1px) }
+  .nav-btn:hover [data-icon="home"]   { background-image:url("../img/home_hover.svg"); }    /* hover Главная */
+  .nav-btn:hover [data-icon="book"]   { background-image:url("../img/book_hover.svg"); }    /* hover Словари */
+  .nav-btn:hover [data-icon="star"]   { background-image:url("../img/star_hover.svg"); }    /* hover Избранное */
+  .nav-btn:hover [data-icon="warning"]{ background-image:url("../img/warning_hover.svg"); } /* hover Мои ошибки */
+  .nav-btn:hover [data-icon="stats"]  { background-image:url("../img/stats_hover.svg"); }   /* hover Статистика */
+  .nav-btn:hover .nav-icon{ transform:translateY(-1px); }                                   /* лёгкий сдвиг вверх при hover */
 }
-.nav-btn.active .nav-icon{ transform:scale(1.06) }
-.nav-btn.active [data-icon="home"]   { background-image:url("../img/home.svg") }
-.nav-btn.active [data-icon="book"]   { background-image:url("../img/book.svg") }
-.nav-btn.active [data-icon="star"]   { background-image:url("../img/star.svg") }
-.nav-btn.active [data-icon="warning"]{ background-image:url("../img/warning.svg") }
-.nav-btn.active [data-icon="stats"]  { background-image:url("../img/stats.svg") }
-.nav-btn:active .nav-icon{ transform:scale(1.08) }
 
-/* offcanvas — клики только на overlay/panel, header/footer кликаются; панель в «рельсах» */
-.oc-root{ position:fixed; inset:0; z-index:1100; pointer-events:none; } /* ← не перехватывает клики глобально */
-.oc-overlay,.oc-panel{ pointer-events:auto; }
+/* активная кнопка (выбранная вкладка) */
+.nav-btn.active .nav-icon{ transform:scale(1.06); }                                        /* небольшое увеличение активной */
+.nav-btn.active [data-icon="home"]   { background-image:url("../img/home.svg"); }          /* активная Главная */
+.nav-btn.active [data-icon="book"]   { background-image:url("../img/book.svg"); }          /* активные Словари */
+.nav-btn.active [data-icon="star"]   { background-image:url("../img/star.svg"); }          /* активное Избранное */
+.nav-btn.active [data-icon="warning"]{ background-image:url("../img/warning.svg"); }       /* активные Ошибки */
+.nav-btn.active [data-icon="stats"]  { background-image:url("../img/stats.svg"); }         /* активная Статистика */
+.nav-btn:active .nav-icon{ transform:scale(1.08); }                                        /* отклик при таче */
 
+
+/* =========================
+   OFF-CANVAS (гамбургер)
+   ========================= */
+/* корневой слой меню: не перехватывает клики (чтобы шапка/футер работали) */
+.oc-root{ position:fixed; inset:0; z-index:1100; pointer-events:none; } /* клики сквозь корень */
+/* кликаются только оверлей и панель */
+.oc-overlay,.oc-panel{ pointer-events:auto; }            /* активны overlay и panel, остальное кликается сквозь */
+
+/* полупрозрачный оверлей между шапкой и футером */
 .oc-overlay{
-  position:fixed; left:0; right:0;
-  top:var(--header-h-actual);
-  bottom:calc(var(--footer-h-actual) + 0px); /* fix double line: подняли нижний край оверлея на 1px выше футера */
-  background:rgba(0,0,0,.18);
-  opacity:0; transition:opacity .18s ease;
+  position:fixed; left:0; right:0;                        /* растягиваем по ширине */
+  top:var(--header-h-actual);                             /* от нижней границы шапки (измеряется JS) */
+  bottom:calc(var(--footer-h-actual) + 0px);              /* до верхней границы футера (измеряется JS), +0px для ровного стыка */
+  background:rgba(0,0,0,.18);                             /* затемнение фона */
+  opacity:0; transition:opacity .18s ease;                /* плавное появление/исчезновение */
 }
-body.menu-open .oc-overlay{ opacity:1 }
+body.menu-open .oc-overlay{ opacity:1; }                  /* показываем при открытом меню */
 
+/* сама панель — «выезжает» справа и ездит по «рельсам» между шапкой и футером */
 .oc-panel{
-  position:fixed; right:0;
-  top:var(--header-h-actual);
-  bottom:calc(var(--footer-h-actual) + 0px); /* fix double line: подняли нижний край панели на 1px выше футера */
-  width:50vw; max-width:520px; min-width:280px;
-  background:#fff; border:0; box-shadow:none;
-  transform:translateX(100%); transition:transform .22s ease;
-  display:flex; flex-direction:column;
+  position:fixed; right:0;                                /* панель прижата к правому краю */
+  top:var(--header-h-actual);                             /* верх = низ шапки */
+  bottom:calc(var(--footer-h-actual) + 0px);              /* низ = верх футера (ровный стык) */
+  width:50vw; max-width:520px; min-width:280px;           /* ширина панели (адаптивные пределы) */
+  background:#fff; border:0; box-shadow:none;             /* без бордеров и теней (чтобы не было «двойных линий») */
+  transform:translateX(100%); transition:transform .22s ease; /* скрыта за правым краем, с анимацией выезда */
+  display:flex; flex-direction:column;                    /* вертикальная компоновка внутри */
 }
-body.menu-open .oc-panel{ transform:translateX(0) }
+body.menu-open .oc-panel{ transform:translateX(0); }      /* выезжает при открытом меню */
 
+/* шапка внутри панели (стрелка ←, заголовок «Меню», крестик ✕) */
 .oc-header{
-  display:flex; align-items:center; justify-content:space-between;
-  padding:10px 12px; border-bottom:1px solid #e5e7eb;
+  display:flex; align-items:center; justify-content:space-between; /* стрелка слева, крестик справа, заголовок по центру */
+  padding:10px 12px; border-bottom:1px solid #e5e7eb;              /* внутренние отступы и нижняя линия */
 }
-.oc-title{ font-weight:700; text-align:center; flex:1; }
+.oc-title{ font-weight:700; text-align:center; flex:1; }           /* заголовок занимает центр */
 .oc-back,.oc-close{
-  background:transparent; border:0; font-size:20px; cursor:pointer; color:#333;
-  -webkit-appearance:none; appearance:none; outline:none;
+  background:transparent; border:0; font-size:20px; cursor:pointer; color:#333; /* кнопки без рамок, приятный размер */
+  -webkit-appearance:none; appearance:none; outline:none;                         /* чистый вид */
 }
-.oc-back{ margin-right:8px } .oc-close{ margin-left:8px }
+.oc-back{ margin-right:8px; } .oc-close{ margin-left:8px; }       /* небольшие отступы по сторонам */
+.oc-body{ overflow:auto; padding:12px; -webkit-overflow-scrolling:touch; } /* прокрутка содержимого меню, инерция iOS */
 
-.oc-body{ overflow:auto; padding:12px; -webkit-overflow-scrolling:touch; }
 
-/* browsers: если был лёгкий сдвиг — оставляем как в базе */
+/* ========================================================================== */
+/*  ВЕТКИ ОКРУЖЕНИЙ                                                           */
+/*  1) Мобильные БРАУЗЕРЫ (Chrome/Safari): ничего не трогаем — как есть.      */
+/*  2) PWA (установленное приложение): убираем дубли safe-area снизу.         */
+/* ========================================================================== */
+
+
+/* 1) МОБИЛЬНЫЕ БРАУЗЕРЫ (Chrome / Safari) — ОСТАВЛЕНО БЕЗ ИЗМЕНЕНИЙ */
 @media all and (display-mode:browser){
-  .app-footer{ bottom:0px; }
+  .app-footer{ bottom:0px; }    /* футер на нуле — твоё идеальное текущее поведение в браузерах */
 }
 
+
+/* 2) PWA (display-mode: standalone) — прижимаем кнопки НА САМЫЙ НИЗ, без дублей safe-area */
 @media all and (display-mode:standalone){
   .app-footer{
-    bottom: 0;
-    height: var(--footer-h);     /* убрали safe-bottom из высоты */
-    padding-bottom: 0;           /* и из паддинга тоже */
-    border-bottom: 0;
+    bottom:0;                    /* футер ровно у нижней кромки окна */
+    height:var(--footer-h);      /* высота БЕЗ safe-area (раньше здесь была сумма, получался двойной учёт) */
+    padding-bottom:0;            /* убрали нижний внутренний отступ (safe-area) — не нужен для полной «прилипки» */
+    border-bottom:0;             /* нижняя линия футера в PWA не нужна (часто визуально мешает у самого края) */
   }
 }
 
-/* Safari */
+
+/* ========================================================================== */
+/*  ДОП. НАСТРОЙКИ ДЛЯ iOS (SAFE-AREAS)                                       */
+/*  ВАЖНО: разбиваем на две ветки, чтобы НЕ дублировать safe-area в PWA.      */
+/* ========================================================================== */
+
+/* iOS + БРАУЗЕРЫ (Safari в браузерном режиме) — можно учитывать safe-area, если нужно */
 @supports (-webkit-touch-callout:none){
-  .header{ padding-top:max(var(--safe-top),8px) }
-  .app-footer{ height:calc(var(--footer-h) + var(--safe-bottom)); padding-bottom:var(--safe-bottom) }
+  @media all and (display-mode:browser){
+    .header{ padding-top:max(var(--safe-top),8px); }             /* шапка уважает вырез сверху в браузере */
+    .app-footer{
+      height:calc(var(--footer-h) + var(--safe-bottom));         /* высота футера с учётом home-бара в браузере */
+      padding-bottom:var(--safe-bottom);                         /* добавляем отступ для кнопок над home-баром в браузере */
+    }
+  }
 }
+
+/* iOS + PWA — тут НИЧЕГО НЕ ДОБАВЛЯЕМ, чтобы не возвращать «двойное» safe-bottom
+   Кнопки должны быть у самого низа → оставляем поведение из ветки PWA выше. */
