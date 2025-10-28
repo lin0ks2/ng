@@ -40,22 +40,22 @@
     <!-- Контент появится здесь -->
   </main>
 
-  <!-- Footer nav — иконки вместо эмодзи/подписей -->
+  <!-- Footer nav (иконки: passive=*_dark.svg, active=*.svg, hover=*_hover.svg) -->
   <footer class="app-footer" role="navigation" aria-label="Основная навигация">
-    <button class="nav-btn" data-action="home" aria-label="Главная">
-      <img class="nav-icon" src="./img/home.svg" alt="Главная">
+    <button class="nav-btn active" data-action="home" aria-label="Главная">
+      <span class="nav-icon" data-icon="home"></span>
     </button>
     <button class="nav-btn" data-action="dicts" aria-label="Словари">
-      <img class="nav-icon" src="./img/book.svg" alt="Словари">
+      <span class="nav-icon" data-icon="book"></span>
     </button>
     <button class="nav-btn" data-action="fav" aria-label="Избранное">
-      <img class="nav-icon" src="./img/star.svg" alt="Избранное">
+      <span class="nav-icon" data-icon="star"></span>
     </button>
     <button class="nav-btn" data-action="mistakes" aria-label="Мои ошибки">
-      <img class="nav-icon" src="./img/warning.svg" alt="Мои ошибки">
+      <span class="nav-icon" data-icon="warning"></span>
     </button>
     <button class="nav-btn" data-action="stats" aria-label="Статистика">
-      <img class="nav-icon" src="./img/stats.svg" alt="Статистика">
+      <span class="nav-icon" data-icon="stats"></span>
     </button>
   </footer>
 
@@ -66,11 +66,14 @@
       if (a) { e.preventDefault(); location.assign('./'); }
     });
 
-    // Навигация (заглушки)
+    // Навигация (переключение active-состояния и заглушки переходов)
     document.querySelectorAll('.app-footer .nav-btn').forEach(btn => {
       btn.addEventListener('click', () => {
+        document.querySelectorAll('.app-footer .nav-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
         const act = btn.getAttribute('data-action');
         if (act === 'home') location.assign('./');
+        // Остальные — подключим реальные экраны позже
       });
     });
 
