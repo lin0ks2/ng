@@ -45,7 +45,7 @@
       /* юр-сноска (теперь сверху) */
       .donate-note{
         flex:0 0 auto;
-        font-size:13px;
+        font-size:15px;
         border-bottom:1px solid #e5e7eb;
         padding:12px; color:#374151; line-height:1.5;
         display:flex; gap:10px; align-items:flex-start; background:#fff;
