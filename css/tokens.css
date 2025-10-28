@@ -441,6 +441,38 @@ input:checked + .slider:before{
 .backup-btn:active {
   transform: scale(0.96);
 }
+
+/* отступ-«прокладка» между секциями меню */
+.menu-spacer{ height:12px; }
+
+/* уже у тебя есть .menu-item.backup-tools {...} и .backup-btn {...} */
+
+/* общий стиль «основной кнопки» в меню (как у бэкапа, но центрируется) */
+.primary-btn{
+  background: var(--brand);
+  color:#fff;
+  border:none;
+  border-radius:10px;
+  font-size:14px;     /* чтобы влезала в бургер с полями */
+  font-weight:600;
+  padding:10px 16px;
+  cursor:pointer;
+  -webkit-appearance:none; appearance:none;
+}
+.primary-btn:hover{ background:var(--brand-dark); }
+
+/* «Обновления» */
+.menu-item.updates-check{
+  padding:14px 12px;
+  display:flex; flex-direction:column; gap:10px;
+}
+.updates-row{
+  display:flex; justify-content:center;
+}
+.updates-row .primary-btn{
+  width:100%;
+  max-width:320px;     /* центрированная и не «расползается» шире */
+}
 /* =========================
    БУРГЕР → НИЖНИЕ 5 КНОПОК (БЕЗ ПОДЛОЖЕК/НАДПИСИ)
    ========================= */
