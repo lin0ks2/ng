@@ -161,8 +161,11 @@ body.menu-open .burger{ color:var(--footer-fg); transform:scale(1.06); } /* пр
    ========================= */
 /* корневой слой меню: не перехватывает клики (чтобы шапка/футер работали) */
 .oc-root{ position:fixed; inset:0; z-index:1100; pointer-events:none; } /* клики сквозь корень */
-/* кликаются только оверлей и панель */
-.oc-overlay,.oc-panel{ pointer-events:auto; }            /* активны overlay и panel, остальное кликается сквозь */
+
+/* ВАЖНО: overlay/panel кликабельны ТОЛЬКО когда меню открыто */
+.oc-overlay, .oc-panel{ pointer-events:none; }
+body.menu-open .oc-overlay,
+body.menu-open .oc-panel{ pointer-events:auto; }
 
 /* полупрозрачный оверлей между шапкой и футером */
 .oc-overlay{
