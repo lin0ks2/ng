@@ -4,19 +4,13 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
   <title>MOYAMOVA</title>
-
-  <!-- Fonts & CSS -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./css/tokens.css">
-
-  <!-- PWA -->
   <link rel="manifest" href="./manifest.webmanifest">
   <meta name="theme-color" content="#ffffff">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="apple-touch-icon" sizes="180x180" href="./img/apple-touch-icon-180x180.png">
-
-  <!-- Google Analytics (замени G-XXXXXXX на свой ID) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXX"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -36,11 +30,8 @@
     <button id="btnMenu" class="burger" aria-label="Меню">☰</button>
   </header>
 
-  <main id="app" class="content">
-    <!-- Контент появится здесь -->
-  </main>
+  <main id="app" class="content"></main>
 
-  <!-- Offcanvas (гамбургер) -->
   <div class="oc-root" aria-hidden="true">
     <div class="oc-overlay" data-close="overlay"></div>
     <aside class="oc-panel" role="menu" aria-label="Меню">
@@ -49,33 +40,19 @@
         <div class="oc-title">Меню</div>
         <button class="oc-close" aria-label="Закрыть" data-close="close">✕</button>
       </div>
-      <div class="oc-body">
-        <!-- пункты меню добавим позже -->
-      </div>
+      <div class="oc-body"></div>
     </aside>
   </div>
 
-  <!-- Footer nav -->
   <footer class="app-footer" role="navigation" aria-label="Основная навигация">
-    <button class="nav-btn active" data-action="home" aria-label="Главная">
-      <span class="nav-icon" data-icon="home"></span>
-    </button>
-    <button class="nav-btn" data-action="dicts" aria-label="Словари">
-      <span class="nav-icon" data-icon="book"></span>
-    </button>
-    <button class="nav-btn" data-action="fav" aria-label="Избранное">
-      <span class="nav-icon" data-icon="star"></span>
-    </button>
-    <button class="nav-btn" data-action="mistakes" aria-label="Мои ошибки">
-      <span class="nav-icon" data-icon="warning"></span>
-    </button>
-    <button class="nav-btn" data-action="stats" aria-label="Статистика">
-      <span class="nav-icon" data-icon="stats"></span>
-    </button>
+    <button class="nav-btn active" data-action="home" aria-label="Главная"><span class="nav-icon" data-icon="home"></span></button>
+    <button class="nav-btn" data-action="dicts" aria-label="Словари"><span class="nav-icon" data-icon="book"></span></button>
+    <button class="nav-btn" data-action="fav" aria-label="Избранное"><span class="nav-icon" data-icon="star"></span></button>
+    <button class="nav-btn" data-action="mistakes" aria-label="Мои ошибки"><span class="nav-icon" data-icon="warning"></span></button>
+    <button class="nav-btn" data-action="stats" aria-label="Статистика"><span class="nav-icon" data-icon="stats"></span></button>
   </footer>
 
   <script>
-    // Measure header/footer and set CSS vars
     function updateHFVars(){
       const h = document.querySelector('.header');
       const f = document.querySelector('.app-footer');
@@ -89,33 +66,26 @@
     const burger = document.getElementById('btnMenu');
     const ocRoot = document.querySelector('.oc-root');
     const ocPanel = document.querySelector('.oc-panel');
+    const overlay = document.querySelector('.oc-overlay');
 
-    function openMenu(){
-      document.body.classList.add('menu-open');
-      ocRoot.setAttribute('aria-hidden','false');
-      updateHFVars();
+    function openMenu(){ document.body.classList.add('menu-open'); ocRoot.setAttribute('aria-hidden','false'); updateHFVars(); }
+    function closeMenu(){ document.body.classList.remove('menu-open'); ocRoot.setAttribute('aria-hidden','true'); }
+
+    if (burger){
+      burger.addEventListener('click', (e)=>{
+        e.preventDefault(); e.stopPropagation();
+        document.body.classList.contains('menu-open') ? closeMenu() : openMenu();
+      }, {passive:false});
     }
-    function closeMenu(){
-      document.body.classList.remove('menu-open');
-      ocRoot.setAttribute('aria-hidden','true');
-    }
 
-    // ✅ Toggle on burger click (открыть/закрыть одной кнопкой)
-    burger.addEventListener('click', () => {
-      if (document.body.classList.contains('menu-open')) closeMenu();
-      else openMenu();
-    });
-
-    // Закрытие: кнопки и оверлей
     document.addEventListener('click', (e) => {
-      const closeAttr = e.target.getAttribute('data-close');
-      if (!closeAttr) return;
-      e.preventDefault();
-      closeMenu();
+      const t = e.target;
+      const closeAttr = t.getAttribute && t.getAttribute('data-close');
+      if (closeAttr){ e.preventDefault(); closeMenu(); }
     });
-    document.querySelector('.oc-overlay').addEventListener('click', closeMenu);
+    if (overlay) overlay.addEventListener('click', closeMenu);
 
-    // Свайп по панели — закрыть (вправо)
+    // swipe to close (panel)
     (function(){
       let startX = null;
       ocPanel.addEventListener('touchstart', (e)=>{ startX = e.touches[0].clientX; }, {passive:true});
@@ -127,29 +97,25 @@
       });
     })();
 
-    // ✅ Edge-swipe from right — открыть (только когда меню закрыто)
+    // edge swipe from right to open
     (function(){
-      let edgeStartX = null;
-      let startedAtEdge = false;
-      const EDGE = 16; // px от правого края
+      let startX = null, startedAtEdge = false;
+      const EDGE = 16;
       document.addEventListener('touchstart', (e)=>{
-        const x = e.touches[0].clientX;
+        if (document.body.classList.contains('menu-open')) return;
+        startX = e.touches[0].clientX;
         const vw = window.innerWidth;
-        startedAtEdge = (vw - x) <= EDGE && !document.body.classList.contains('menu-open');
-        edgeStartX = x;
+        startedAtEdge = (vw - startX) <= EDGE;
       }, {passive:true});
       document.addEventListener('touchend', (e)=>{
         if (!startedAtEdge) return;
         const endX = (e.changedTouches[0]||{}).clientX || 0;
-        if (edgeStartX - endX > 30) { // свайп влево от правого края
-          openMenu();
-        }
-        startedAtEdge = false;
-        edgeStartX = null;
+        if (startX - endX > 30) openMenu();
+        startedAtEdge = false; startX = null;
       });
     })();
 
-    // Footer nav (заглушки)
+    // footer stubs
     document.querySelectorAll('.app-footer .nav-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.app-footer .nav-btn').forEach(b => b.classList.remove('active'));
@@ -159,7 +125,6 @@
       });
     });
 
-    // Service worker
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
         navigator.serviceWorker.register('./sw.js').catch(console.warn);
