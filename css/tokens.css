@@ -135,9 +135,13 @@ body.menu-open .oc-panel{ transform:translateX(0) }
   .app-footer{ bottom:0px; }
 }
 
-/* PWA: прижать футер к самому низу, учесть safe-area, убрать нижний бордер */
 @media all and (display-mode:standalone){
-  .app-footer{ bottom:0; padding-bottom:var(--safe-bottom); border-bottom:0; }
+  .app-footer{
+    bottom: 0;
+    height: var(--footer-h);     /* убрали safe-bottom из высоты */
+    padding-bottom: 0;           /* и из паддинга тоже */
+    border-bottom: 0;
+  }
 }
 
 /* Safari */
