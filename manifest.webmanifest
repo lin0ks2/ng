@@ -79,6 +79,12 @@
       "type": "image/png",
       "purpose": "any"
     },
+{
+  "name": "MOYAMOVA",
+  "short_name": "MOYAMOVA",
+  "version": "0.1.0",
+  ...
+}
     {
       "src": "./img/favicon-32x32.png",
       "sizes": "32x32",
