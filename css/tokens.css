@@ -100,7 +100,7 @@ body.menu-open .burger{ color:var(--footer-fg); transform:scale(1.06) }
 .oc-overlay{
   position:fixed; left:0; right:0;
   top:var(--header-h-actual);
-  bottom:calc(var(--footer-h-actual) + 1px); /* fix double line: подняли нижний край оверлея на 1px выше футера */
+  bottom:calc(var(--footer-h-actual) + 0px); /* fix double line: подняли нижний край оверлея на 1px выше футера */
   background:rgba(0,0,0,.18);
   opacity:0; transition:opacity .18s ease;
 }
