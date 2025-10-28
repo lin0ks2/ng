@@ -1,9 +1,9 @@
 /* ========================================================================== */
-/*  TOKENS.CSS — ЧИСТАЯ СБОРКА (Идеально) + iOS-анимации и мелкие украшательства */
-/*  Важно: браузерная ветка (Chrome/Safari) оставлена как была — эталон.       */
-/*  PWA отделён и не дублирует safe-area снизу.                                */
-/*  Добавлены универсальные токены анимаций и мягкие press‑эффекты.            */
+/*  TOKENS.CSS — ЧИСТАЯ СБОРКА С КОММЕНТАРИЯМИ                                */
+/*  Браузерные правила оставлены как есть (идеальны).                          */
+/*  PWA отделён в свою ветку и не дублирует safe-area снизу.                   */
 /* ========================================================================== */
+
 
 /* =========================
    БАЗОВЫЕ ПЕРЕМЕННЫЕ (CSS)
@@ -16,7 +16,7 @@
   --header-pad-x:14px;             /* горизонтальные отступы шапки */
   --header-pad-bottom:8px;         /* нижний отступ внутри шапки */
 
-  --safe-top:env(safe-area-inset-top,0px);      /* безопасная зона сверху (iOS вырез) */
+  --safe-top:env(safe-area-inset-top,0px);     /* безопасная зона сверху (iOS вырез) */
   --safe-bottom:env(safe-area-inset-bottom,0px);/* безопасная зона снизу (iOS home-бар) */
 
   --title-size:26px;               /* размер названия в шапке */
@@ -30,13 +30,8 @@
   --nav-gap:12px;                  /* зазоры между кнопками в футере */
   --nav-icon-size:28px;            /* базовый размер иконок футера */
 
-  --header-h-actual:64px;          /* фактическая высота шапки (перезаписывает JS) */
+  --header-h-actual:64px;          /* фактическая высота шапки (перезаписывается JS) */
   --footer-h-actual:calc(var(--footer-h) + var(--safe-bottom)); /* фактическая высота футера (перезапишет JS) */
-
-  /* Токены анимации iOS-стиля */
-  --anim-fast:160ms;
-  --anim-normal:220ms;
-  --ease-ios:cubic-bezier(.22,.61,.36,1);
 }
 
 /* чуть больше размеры на более широких экранах */
@@ -44,268 +39,418 @@
   :root{ --title-size:28px; --logo-size:48px; --nav-icon-size:30px; }
 }
 
+
 /* =========================
    СБРОСЫ/ОСНОВЫ
    ========================= */
-html,body{ margin:0; padding:0; }
-*{ -webkit-tap-highlight-color:transparent; }
+html,body{ margin:0; padding:0; }                      /* убираем внешние отступы документа */
+*{ -webkit-tap-highlight-color:transparent; }           /* убираем серую вспышку при тапе на iOS */
 body{
-  font-family:system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;
-  background:#fff; color:#111;
+  font-family:system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif; /* системный шрифт */
+  background:#fff;                                      /* белый фон по умолчанию */
+  color:#111;                                           /* базовый текстовый цвет */
 }
-body.menu-open{ overflow:hidden; touch-action:none; }
+body.menu-open{ overflow:hidden; touch-action:none; }   /* при открытом меню — не скроллим под ним */
+
 
 /* =========================
    ШАПКА (HEADER)
    ========================= */
 .header{
-  position:sticky; top:0; z-index:1000;
-  display:flex; align-items:center; justify-content:space-between;
-  padding:0 var(--header-pad-x);
-  padding-top:max(var(--safe-top),8px);
-  padding-bottom:var(--header-pad-bottom);
-  background:#fff; border-bottom:1px solid #dfe3e8;
+  position:sticky; top:0; z-index:1000;                /* шапка прилипает к верху и перекрывает контент */
+  display:flex; align-items:center; justify-content:space-between; /* выравнивание логотип/название/бургер */
+  padding:0 var(--header-pad-x);                        /* горизонтальные поля шапки */
+  padding-top:max(var(--safe-top),8px);                 /* учитываем safe-area сверху на iOS */
+  padding-bottom:var(--header-pad-bottom);              /* нижний внутренний отступ */
+  background:#fff;                                      /* фон шапки */
+  border-bottom:1px solid #dfe3e8;                      /* нижняя разделительная линия шапки */
 }
-.brand{ display:flex; align-items:center; }
-.brand-link{ display:flex; align-items:center; gap:var(--gap-tight); color:inherit; text-decoration:none; }
-.brand img{ width:var(--logo-size); height:var(--logo-size); }
+.brand{ display:flex; align-items:center; }             /* блок логотип+название */
+.brand-link{ display:flex; align-items:center; gap:var(--gap-tight); color:inherit; text-decoration:none; } /* ссылка-домой */
+.brand img{ width:var(--logo-size); height:var(--logo-size); } /* размеры логотипа */
 .brand-title{
-  font-family:'Montserrat',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;
-  font-weight:700; font-size:var(--title-size); line-height:1.05; margin:0;
+  font-family:'Montserrat',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif; /* шрифт названия */
+  font-weight:700; font-size:var(--title-size); line-height:1.05; margin:0;            /* жирность/размер/лид/сброс внешних */
 }
 
-/* Кнопка «три линии» */
+/* кнопка «три линии» */
 .burger{
-  font-size:32px; line-height:1; color:var(--burger);
-  background:none; border:0; cursor:pointer;
-  -webkit-appearance:none; appearance:none; outline:none;
-  transition:transform 120ms var(--ease-ios), color var(--anim-fast) ease;
+  font-size:32px; line-height:1; color:var(--burger);  /* размер и базовый цвет бургера */
+  background:none; border:0; cursor:pointer;           /* убираем фон/бордеры, курсор — рука */
+  -webkit-appearance:none; appearance:none; outline:none; /* нативные артефакты и фокус-рамки убраны (потом добавим кастомные) */
+  transition:transform .1s ease, color .12s ease;      /* лёгкая анимация на нажатие/цвет */
 }
-body.menu-open .burger{ color:var(--footer-fg); transform:scale(1.06); }
-.burger:active{ transform:scale(1.08); }
+body.menu-open .burger{ color:var(--footer-fg); transform:scale(1.06); } /* при открытом меню — чуть темнее и крупнее */
+.burger:active{ transform:scale(1.08); }               /* микро-скейл при активном тапе */
+
 
 /* =========================
    КОНТЕНТ
    ========================= */
 .content{
-  padding:16px;
-  padding-bottom:calc(var(--footer-h) + var(--safe-bottom) + 12px);
+  padding:16px;                                         /* внутренние поля контента */
+  padding-bottom:calc(var(--footer-h) + var(--safe-bottom) + 12px); /* запас снизу, чтобы контент не уходил под футер */
 }
+
 
 /* =========================
    ФУТЕР (НАВИГАЦИЯ)
    ========================= */
 .app-footer{
-  position:fixed; left:0; right:0; bottom:0;
-  height:calc(var(--footer-h) + var(--safe-bottom));
-  display:grid; grid-template-columns:repeat(5,minmax(0,1fr));
-  column-gap:var(--nav-gap); padding-left:var(--nav-gap); padding-right:var(--nav-gap);
-  background:var(--footer-bg); color:var(--footer-fg);
-  border-top:1px solid var(--footer-sep);
-  border-bottom:1px solid var(--footer-sep);
-  z-index:1000; padding-bottom:var(--safe-bottom);
-  box-shadow:none;
+  position:fixed; left:0; right:0; bottom:0;           /* футер всегда прибит к низу окна */
+  height:calc(var(--footer-h) + var(--safe-bottom));   /* базовая высота + safe-area (перезапишет JS фактом) */
+  display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); /* пять равных колонок (5 кнопок) */
+  column-gap:var(--nav-gap);                            /* горизонтальный зазор между кнопками */
+  padding-left:var(--nav-gap); padding-right:var(--nav-gap); /* поля слева/справа внутри футера */
+  background:var(--footer-bg); color:var(--footer-fg); /* фон и цвет иконок/текста */
+  border-top:1px solid #e5e7eb;                        /* линия сверху футера */
+  border-bottom:1px solid #e5e7eb;                     /* линия снизу футера (в PWA мы её отключим) */
+  z-index:1000;                                        /* над контентом */
+  padding-bottom:var(--safe-bottom);                   /* отступ под home-бар (в PWA уберём) */
+  box-shadow:none;                                     /* тени убраны для чистых стыков */
 }
+/* кнопка навигации в футере */
 .app-footer .nav-btn{
-  display:flex; align-items:center; justify-content:center;
-  margin:0; padding:8px 4px 10px;
-  background:transparent; border:0; color:inherit; font:inherit;
-  cursor:pointer; width:100%;
-  -webkit-appearance:none; appearance:none; outline:none;
+  display:flex; align-items:center; justify-content:center; /* центрирование иконок в каждой кнопке */
+  margin:0; padding:8px 4px 10px;                           /* внутренние отступы кнопки */
+  background:transparent; border:0; color:inherit; font:inherit; /* кнопка «плоская», наследует шрифт/цвет */
+  cursor:pointer; width:100%;                               /* кликабельна вся колонка */
+  -webkit-appearance:none; appearance:none; outline:none;   /* нативный вид и фокус-рамка отключены (сделаем позже) */
 }
+/* иконка навигации */
 .nav-icon{
-  width:var(--nav-icon-size); height:var(--nav-icon-size);
-  display:block; background-repeat:no-repeat; background-position:center; background-size:contain;
-  pointer-events:none; user-select:none; -webkit-user-select:none;
-  transition:transform 120ms var(--ease-ios), opacity .15s ease;
+  width:var(--nav-icon-size); height:var(--nav-icon-size); /* размеры иконок */
+  display:block; background-repeat:no-repeat; background-position:center; background-size:contain; /* рисуем svg как фон */
+  pointer-events:none; user-select:none; -webkit-user-select:none; /* иконки не интерактивны, выделение отключено */
+  transition:transform .12s ease, opacity .15s ease;       /* лёгкая анимация при hover/active */
 }
+
 
 /* =========================
    ИКОНКИ (картинки из /img)
    ========================= */
 /* обычные (неактивные) */
-.nav-btn [data-icon="home"]   { background-image:url("../img/home_dark.svg"); }
-.nav-btn [data-icon="book"]   { background-image:url("../img/book_dark.svg"); }
-.nav-btn [data-icon="star"]   { background-image:url("../img/star_dark.svg"); }
-.nav-btn [data-icon="warning"]{ background-image:url("../img/warning_dark.svg"); }
-.nav-btn [data-icon="stats"]  { background-image:url("../img/stats_dark.svg"); }
-/* hover-состояние */
+.nav-btn [data-icon="home"]   { background-image:url("../img/home_dark.svg"); }     /* иконка Главная */
+.nav-btn [data-icon="book"]   { background-image:url("../img/book_dark.svg"); }     /* иконка Словари */
+.nav-btn [data-icon="star"]   { background-image:url("../img/star_dark.svg"); }     /* иконка Избранное */
+.nav-btn [data-icon="warning"]{ background-image:url("../img/warning_dark.svg"); }  /* иконка Мои ошибки */
+.nav-btn [data-icon="stats"]  { background-image:url("../img/stats_dark.svg"); }    /* иконка Статистика */
+
+/* hover-состояние (десктопы/мышь) */
 @media (hover:hover){
-  .nav-btn:hover [data-icon="home"]   { background-image:url("../img/home_hover.svg"); }
-  .nav-btn:hover [data-icon="book"]   { background-image:url("../img/book_hover.svg"); }
-  .nav-btn:hover [data-icon="star"]   { background-image:url("../img/star_hover.svg"); }
-  .nav-btn:hover [data-icon="warning"]{ background-image:url("../img/warning_hover.svg"); }
-  .nav-btn:hover [data-icon="stats"]  { background-image:url("../img/stats_hover.svg"); }
-  .nav-btn:hover .nav-icon{ transform:translateY(-1px); }
+  .nav-btn:hover [data-icon="home"]   { background-image:url("../img/home_hover.svg"); }    /* hover Главная */
+  .nav-btn:hover [data-icon="book"]   { background-image:url("../img/book_hover.svg"); }    /* hover Словари */
+  .nav-btn:hover [data-icon="star"]   { background-image:url("../img/star_hover.svg"); }    /* hover Избранное */
+  .nav-btn:hover [data-icon="warning"]{ background-image:url("../img/warning_hover.svg"); } /* hover Мои ошибки */
+  .nav-btn:hover [data-icon="stats"]  { background-image:url("../img/stats_hover.svg"); }   /* hover Статистика */
+  .nav-btn:hover .nav-icon{ transform:translateY(-1px); }                                   /* лёгкий сдвиг вверх при hover */
 }
-/* активная вкладка */
-.nav-btn.active .nav-icon{ transform:scale(1.06); }
-.nav-btn.active [data-icon="home"]   { background-image:url("../img/home.svg"); }
-.nav-btn.active [data-icon="book"]   { background-image:url("../img/book.svg"); }
-.nav-btn.active [data-icon="star"]   { background-image:url("../img/star.svg"); }
-.nav-btn.active [data-icon="warning"]{ background-image:url("../img/warning.svg"); }
-.nav-btn.active [data-icon="stats"]  { background-image:url("../img/stats.svg"); }
-.nav-btn:active .nav-icon{ transform:scale(1.08); }
+
+/* активная кнопка (выбранная вкладка) */
+.nav-btn.active .nav-icon{ transform:scale(1.06); }                                        /* небольшое увеличение активной */
+.nav-btn.active [data-icon="home"]   { background-image:url("../img/home.svg"); }          /* активная Главная */
+.nav-btn.active [data-icon="book"]   { background-image:url("../img/book.svg"); }          /* активные Словари */
+.nav-btn.active [data-icon="star"]   { background-image:url("../img/star.svg"); }          /* активное Избранное */
+.nav-btn.active [data-icon="warning"]{ background-image:url("../img/warning.svg"); }       /* активные Ошибки */
+.nav-btn.active [data-icon="stats"]  { background-image:url("../img/stats.svg"); }         /* активная Статистика */
+.nav-btn:active .nav-icon{ transform:scale(1.08); }                                        /* отклик при таче */
+
 
 /* =========================
    OFF-CANVAS (гамбургер)
    ========================= */
-.oc-root{ position:fixed; inset:0; z-index:1100; pointer-events:none; }
-.oc-overlay,.oc-panel{ pointer-events:auto; }
+/* корневой слой меню: не перехватывает клики (чтобы шапка/футер работали) */
+.oc-root{ position:fixed; inset:0; z-index:1100; pointer-events:none; } /* клики сквозь корень */
 
+/* ВАЖНО: overlay/panel кликабельны ТОЛЬКО когда меню открыто */
+.oc-overlay, .oc-panel{ pointer-events:none; }
+body.menu-open .oc-overlay,
+body.menu-open .oc-panel{ pointer-events:auto; }
+
+/* полупрозрачный оверлей между шапкой и футером */
 .oc-overlay{
-  position:fixed; left:0; right:0;
-  top:var(--header-h-actual);
-  bottom:calc(var(--footer-h-actual) + 0px);
-  background:rgba(0,0,0,.18);
-  opacity:0; transition:opacity var(--anim-normal) var(--ease-ios);
+  position:fixed; left:0; right:0;                        /* растягиваем по ширине */
+  top:var(--header-h-actual);                             /* от нижней границы шапки (измеряется JS) */
+  bottom:calc(var(--footer-h-actual) + 0px);              /* до верхней границы футера (измеряется JS), +0px для ровного стыка */
+  background:rgba(0,0,0,.18);                             /* затемнение фона */
+  opacity:0; transition:opacity .18s ease;                /* плавное появление/исчезновение */
 }
-body.menu-open .oc-overlay{ opacity:1; }
+body.menu-open .oc-overlay{ opacity:1; }                  /* показываем при открытом меню */
 
+/* сама панель — «выезжает» справа и ездит по «рельсам» между шапкой и футером */
 .oc-panel{
-  position:fixed; right:0;
-  top:var(--header-h-actual);
-  bottom:calc(var(--footer-h-actual) + 0px);
-  width:50vw; max-width:520px; min-width:280px;
-  background:#fff; border:0; box-shadow:none;
-  transform:translateX(100%); transition:transform var(--anim-normal) var(--ease-ios);
-  display:flex; flex-direction:column;
+  position:fixed; right:0;                                /* панель прижата к правому краю */
+  top:var(--header-h-actual);                             /* верх = низ шапки */
+  bottom:calc(var(--footer-h-actual) + 0px);              /* низ = верх футера (ровный стык) */
+  width:50vw; max-width:520px; min-width:280px;           /* ширина панели (адаптивные пределы) */
+  background:#fff; border:0; box-shadow:none;             /* без бордеров и теней (чтобы не было «двойных линий») */
+  transform:translateX(100%); transition:transform .22s ease; /* скрыта за правым краем, с анимацией выезда */
+  display:flex; flex-direction:column;                    /* вертикальная компоновка внутри */
 }
-body.menu-open .oc-panel{ transform:translateX(0); }
+body.menu-open .oc-panel{ transform:translateX(0); }      /* выезжает при открытом меню */
 
+/* шапка внутри панели (стрелка ←, заголовок «Меню», крестик ✕) */
 .oc-header{
-  display:flex; align-items:center; justify-content:space-between;
-  padding:10px 12px; border-bottom:1px solid #e5e7eb;
+  display:flex; align-items:center; justify-content:space-between; /* стрелка слева, крестик справа, заголовок по центру */
+  padding:10px 12px; border-bottom:1px solid #e5e7eb;              /* внутренние отступы и нижняя линия */
 }
-.oc-title{ font-weight:700; text-align:center; flex:1; }
+.oc-title{ font-weight:700; text-align:center; flex:1; }           /* заголовок занимает центр */
 .oc-back,.oc-close{
-  background:transparent; border:0; font-size:20px; cursor:pointer; color:#333;
-  -webkit-appearance:none; appearance:none; outline:none;
+  background:transparent; border:0; font-size:20px; cursor:pointer; color:#333; /* кнопки без рамок, приятный размер */
+  -webkit-appearance:none; appearance:none; outline:none;                         /* чистый вид */
 }
-.oc-back{ margin-right:8px; } .oc-close{ margin-left:8px; }
-.oc-body{ overflow:auto; padding:12px; -webkit-overflow-scrolling:touch; }
+.oc-back{ margin-right:8px; } .oc-close{ margin-left:8px; }       /* небольшие отступы по сторонам */
+.oc-body{ overflow:auto; padding:12px; -webkit-overflow-scrolling:touch; } /* прокрутка содержимого меню, инерция iOS */
 
-/* =========================
-   ВЕТКИ ОКРУЖЕНИЙ
-   ========================= */
-/* 1) МОБИЛЬНЫЕ БРАУЗЕРЫ (Chrome/Safari) — идеальная ветка */
+
+/* ========================================================================== */
+/*  ВЕТКИ ОКРУЖЕНИЙ                                                           */
+/*  1) Мобильные БРАУЗЕРЫ (Chrome/Safari): ничего не трогаем — как есть.      */
+/*  2) PWA (установленное приложение): убираем дубли safe-area снизу.         */
+/* ========================================================================== */
+
+
+/* 1) МОБИЛЬНЫЕ БРАУЗЕРЫ (Chrome / Safari) — ОСТАВЛЕНО БЕЗ ИЗМЕНЕНИЙ */
 @media all and (display-mode:browser){
-  .app-footer{ bottom:0px; }
+  .app-footer{ bottom:0px; }    /* футер на нуле — твоё идеальное текущее поведение в браузерах */
 }
-/* 2) PWA (standalone) — прижимаем кнопки к самому низу, без дублей safe-area */
+
+
+/* 2) PWA (display-mode: standalone) — прижимаем кнопки НА САМЫЙ НИЗ, без дублей safe-area */
 @media all and (display-mode:standalone){
   .app-footer{
-    bottom:0;
-    height:var(--footer-h);
-    padding-bottom:0;
-    border-bottom:0;
+    bottom:0;                    /* футер ровно у нижней кромки окна */
+    height:var(--footer-h);      /* высота БЕЗ safe-area (раньше здесь была сумма, получался двойной учёт) */
+    padding-bottom:0;            /* убрали нижний внутренний отступ (safe-area) — не нужен для полной «прилипки» */
+    border-bottom:0;             /* нижняя линия футера в PWA не нужна (часто визуально мешает у самого края) */
   }
 }
 
-/* =========================
-   ДОП. НАСТРОЙКИ ДЛЯ iOS (SAFE-AREAS)
-   ========================= */
+
+/* ========================================================================== */
+/*  ДОП. НАСТРОЙКИ ДЛЯ iOS (SAFE-AREAS)                                       */
+/*  ВАЖНО: разбиваем на две ветки, чтобы НЕ дублировать safe-area в PWA.      */
+/* ========================================================================== */
+
+/* iOS + БРАУЗЕРЫ (Safari в браузерном режиме) — можно учитывать safe-area, если нужно */
 @supports (-webkit-touch-callout:none){
   @media all and (display-mode:browser){
-    .header{ padding-top:max(var(--safe-top),8px); }
+    .header{ padding-top:max(var(--safe-top),8px); }             /* шапка уважает вырез сверху в браузере */
     .app-footer{
-      height:calc(var(--footer-h) + var(--safe-bottom));
-      padding-bottom:var(--safe-bottom);
+      height:calc(var(--footer-h) + var(--safe-bottom));         /* высота футера с учётом home-бара в браузере */
+      padding-bottom:var(--safe-bottom);                         /* добавляем отступ для кнопок над home-баром в браузере */
     }
   }
 }
 
+/* iOS + PWA — тут НИЧЕГО НЕ ДОБАВЛЯЕМ, чтобы не возвращать «двойное» safe-bottom
+   Кнопки должны быть у самого низа → оставляем поведение из ветки PWA выше. */
+
+
 /* =========================
-   БУРГЕР → ТОГЛЫ (Тема, Язык, Сложность)
+   БУРГЕР → ПУНКТ "ТЕМА" (ТОГЛ)
    ========================= */
-.menu-item.theme-toggle,
-.menu-item.lang-toggle,
-.menu-item.level-toggle{
-  padding:14px 12px; display:flex; flex-direction:column; gap:8px;
+.menu-item.theme-toggle{
+  padding:14px 12px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
 }
-.menu-label{ font-weight:600; font-size:15px; color:#333; }
-.theme-switch,.lang-switch,.level-switch{
-  display:flex; align-items:center; justify-content:center; gap:10px;
+.menu-label{
+  font-weight:600;
+  font-size:15px;
+  color:#333;
 }
-.theme-label,.lang-label,.level-label{ font-size:20px; line-height:1; }
-.theme-label.light,.lang-label.left,.level-label.left{ margin-right:4px; font-size:14px; }
-.theme-label.dark,.lang-label.right,.level-label.right{ margin-left:4px; font-size:14px; }
-.switch{ position:relative; display:inline-block; width:48px; height:28px; }
-.switch input{ opacity:0; width:0; height:0; }
+
+.theme-switch{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+}
+.theme-label{
+  font-size:14px;
+  color:#666;
+}
+.switch{
+  position:relative;
+  display:inline-block;
+  width:48px;
+  height:28px;
+}
+.switch input{
+  opacity:0;
+  width:0;
+  height:0;
+}
 .slider{
-  position:absolute; inset:0; cursor:pointer;
-  background-color:#ccc; border-radius:34px; transition:background-color .25s;
+  position:absolute;
+  cursor:pointer;
+  top:0; left:0; right:0; bottom:0;
+  background-color:#ccc;
+  border-radius:34px;
+  transition:background-color .25s;
 }
 .slider:before{
-  content:""; position:absolute; height:22px; width:22px; left:3px; bottom:3px;
-  background:#fff; border-radius:50%; transition:transform .25s;
+  position:absolute;
+  content:"";
+  height:22px; width:22px;
+  left:3px; bottom:3px;
+  background-color:white;
+  border-radius:50%;
+  transition:transform .25s;
 }
-input:checked + .slider{ background-color:var(--burger); }
-input:checked + .slider:before{ transform:translateX(20px); }
+input:checked + .slider{
+  background-color:var(--burger); /* брендовый цвет при включении */
+}
+input:checked + .slider:before{
+  transform:translateX(20px);
+}
+
 
 /* =========================
-   БУРГЕР → ДЕЙСТВИЯ (нижний 5‑кнопочный ряд)
+   БУРГЕР → ПУНКТ "ЯЗЫК ИНТЕРФЕЙСА"
+   ========================= */
+.menu-item.lang-toggle{
+  padding:14px 12px;                  /* те же отступы, что у темы */
+  display:flex; flex-direction:column;
+  gap:8px;
+}
+.lang-switch{
+  display:flex; align-items:center; justify-content:center; /* флаги по бокам, тогл строго по центру */
+  gap:10px;
+}
+.lang-label{
+  font-size:20px;                     /* размер флага */
+  line-height:1;                      /* ровно по центру тогла */
+}
+.lang-label.left{ margin-right:4px; }
+.lang-label.right{ margin-left:4px; }
+
+/* используем те же стили тогла, чтобы всё было идеально по одной вертикали */
+.lang-switch .switch{
+  position:relative; display:inline-block;
+  width:48px; height:28px;            /* идентично тоглу темы */
+}
+.lang-switch .switch input{
+  opacity:0; width:0; height:0;
+}
+.lang-switch .slider{
+  position:absolute; inset:0;
+  cursor:pointer;
+  background-color:#ccc;
+  border-radius:34px;
+  transition:background-color .25s;
+}
+.lang-switch .slider:before{
+  content:""; position:absolute;
+  height:22px; width:22px;
+  left:3px; bottom:3px;
+  background-color:white;
+  border-radius:50%;
+  transition:transform .25s;
+}
+.lang-switch input:checked + .slider{
+  background-color:var(--burger);     /* при переключении — брендовый цвет */
+}
+.lang-switch input:checked + .slider:before{
+  transform:translateX(20px);
+}
+
+
+/* =========================
+   БУРГЕР → ПУНКТ "РЕЖИМ СЛОЖНОСТИ"
+   ========================= */
+.menu-item.level-toggle{
+  padding:14px 12px;
+  display:flex; flex-direction:column;
+  gap:8px;
+}
+.level-switch{
+  display:flex; align-items:center; justify-content:center;
+  gap:10px;
+}
+.level-label{
+  font-size:20px; line-height:1;
+  display:flex; align-items:center; justify-content:center;
+}
+.level-label.left{ margin-right:4px; }
+.level-label.right{ margin-left:4px; }
+
+.level-switch .switch{
+  position:relative; display:inline-block;
+  width:48px; height:28px;
+}
+.level-switch .switch input{ opacity:0; width:0; height:0; }
+.level-switch .slider{
+  position:absolute; inset:0; cursor:pointer;
+  background-color:#ccc;
+  border-radius:34px;
+  transition:background-color .25s;
+}
+.level-switch .slider:before{
+  content:""; position:absolute;
+  height:22px; width:22px;
+  left:3px; bottom:3px;
+  background-color:white;
+  border-radius:50%;
+  transition:transform .25s;
+}
+.level-switch input:checked + .slider{
+  background-color:var(--burger);
+}
+.level-switch input:checked + .slider:before{
+  transform:translateX(20px);
+}
+
+
+/* =========================
+   БУРГЕР → НИЖНИЕ 5 КНОПОК (БЕЗ ПОДЛОЖЕК/НАДПИСИ)
    ========================= */
 .actions-row-bottom{
-  display:grid; grid-template-columns:repeat(5,1fr);
-  align-items:stretch; justify-items:stretch;
-  border-top:1px solid #e5e7eb; background:#fff;
+  position:absolute; bottom:0; left:0; right:0;      /* прижаты к самому низу панели */
+  display:grid; grid-template-columns:repeat(5,1fr); /* 5 равных колонок */
+  background:#fff; border-top:1px solid #e5e7eb;     /* тонкая верхняя линия ряда */
+  z-index:5;
 }
-.actions-row-bottom .action-btn{
-  position:relative; display:grid; place-items:center;
-  min-height:56px; background:transparent; border:0; width:100%;
-  cursor:pointer; -webkit-appearance:none; appearance:none; outline:none;
-  font-size:22px;
+.action-btn{
+  display:flex; align-items:center; justify-content:center;
+  height:60px; font-size:24px;                        /* крупная тач-зона, только эмодзи */
+  background:transparent; border:0; cursor:pointer;
+  -webkit-appearance:none; appearance:none; outline:none;
+  transition:transform .1s ease, color .12s ease;
 }
-.actions-row-bottom .action-btn:not(:last-child){ border-right:1px solid #eef1f4; }
+.action-btn:not(:last-child){ border-right:1px solid #eef1f4; } /* вертикальные разделители */
+@media (hover:hover){
+  .action-btn:hover{ color:var(--burger); }
+}
+.action-btn:active{ transform:scale(1.08); color:var(--burger); }
 
+/* чтобы содержимое меню не заезжало под нижний ряд */
+.oc-body{ padding-bottom:80px; }
 /* =========================
    ОРИЕНТАЦИЯ: ЗАГЛУШКА ДЛЯ LANDSCAPE
    ========================= */
 .orientation-guard{
-  position:fixed; inset:0; z-index:1500;
+  position:fixed; inset:0; z-index:1500;        /* поверх всего (выше legal/donate) */
   display:none; align-items:center; justify-content:center;
   padding:calc(16px + var(--safe-top)) 16px calc(16px + var(--safe-bottom));
-  background:#fff; text-align:center; color:#111;
+  background:#fff;
+  text-align:center; color:#111; 
   font-family:system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;
 }
 .orientation-guard .og-inner{
-  max-width:520px; border:1px solid #eef1f4; border-radius:14px; background:#fff;
-  padding:16px 14px; box-shadow:none;
+  max-width:520px;
+  border:1px solid #eef1f4; border-radius:14px; background:#fff;
+  padding:16px 14px;
+  box-shadow:none;
 }
 .orientation-guard .og-emoji{ font-size:28px; line-height:1; margin-bottom:8px; }
 .orientation-guard .og-title{ font-weight:700; font-size:18px; margin:0 0 6px; }
 .orientation-guard .og-text{ margin:0; font-size:14px; color:#374151; line-height:1.5; }
 
+/* показываем заглушку и блокируем фон в альбомной ориентации */
 @media (orientation:landscape){
   .orientation-guard{ display:flex; }
   body.landscape-block{ overflow:hidden; touch-action:none; }
-}
-
-/* =========================
-   iOS‑микродвижение (универсально)
-   ========================= */
-/* Мягкий «пресс» */
-.mm-press{
-  transform:translateZ(0); will-change:transform;
-  transition:transform 120ms var(--ease-ios), filter 200ms ease;
-}
-.mm-press:active{ transform:scale(.98); }
-@media (hover:hover){
-  .mm-press:hover{ filter:brightness(1.03); }
-}
-
-/* Появление листов (legal/donate/др.) */
-.mm-sheet{
-  opacity:0; transform:translateY(8px);
-  will-change:opacity, transform;
-  transition:
-    opacity var(--anim-normal) var(--ease-ios),
-    transform var(--anim-normal) var(--ease-ios);
-}
-.mm-sheet.is-open{ opacity:1; transform:none; }
-
-@media (prefers-reduced-motion: reduce){
-  .mm-press, .mm-sheet{ transition:none !important; }
-  .mm-press:active{ transform:none !important; }
 }
