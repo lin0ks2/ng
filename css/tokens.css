@@ -1,9 +1,4 @@
-/* MOYAMOVA — tokens.css
- * Patch: remove gray tap flash, scale icons on active/press, adjust burger active color/scale
- * - No tap highlight on iOS/Android
- * - Footer icons: passive=*_dark, hover=*_hover (desktop), active=*.svg
- * - Active tab and press → icon scales up slightly (no gray flash)
- */
+/* MOYAMOVA — tokens.css (offcanvas menu + header/footer) */
 :root{
   --brand: #1fb6ff;
   --brand-dark: #0ea5e9;
@@ -25,9 +20,13 @@
   --footer-h: 60px;
   --footer-sep: #e5e7eb;
   --footer-bg: #fff;
-  --footer-fg: #333;            /* пассивный цвет, также для бургер-актив */
+  --footer-fg: #333;
   --nav-gap: 12px;
   --nav-icon-size: 28px;
+
+  /* Runtime sizes */
+  --header-h-actual: 64px;
+  --footer-h-actual: calc(var(--footer-h) + var(--safe-bottom));
 }
 
 @media (min-width: 480px){
@@ -35,11 +34,12 @@
 }
 
 html, body { margin:0; padding:0; }
-*{ -webkit-tap-highlight-color: transparent; } /* убираем серый мерцательный хайлайт на iOS/Android */
+*{ -webkit-tap-highlight-color: transparent; }
 body{
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
   background:#fff; color:#111;
 }
+body.menu-open{ overflow:hidden; }
 
 /* Header */
 .header{
@@ -68,8 +68,8 @@ body{
   -webkit-appearance:none; appearance:none; outline: none;
   transition: transform .1s ease, color .12s ease;
 }
-/* На нажатие — увеличиваем и красим как пассивные иконки из футера */
-.burger:active{ color: var(--footer-fg); transform: scale(1.06); }
+body.menu-open .burger{ color: var(--footer-fg); transform: scale(1.06); }
+.burger:active{ transform: scale(1.08); }
 
 /* Content bottom padding so footer never overlaps */
 .content{ padding:16px; padding-bottom: calc(var(--footer-h) + var(--safe-bottom) + 12px); }
@@ -100,8 +100,6 @@ body{
   cursor: pointer; width: 100%;
   -webkit-appearance:none; appearance:none; outline: none;
 }
-
-/* Icon spans with background images */
 .nav-icon{
   width: var(--nav-icon-size);
   height: var(--nav-icon-size);
@@ -115,14 +113,13 @@ body{
   transition: transform .12s ease, opacity .15s ease;
 }
 
-/* ----- mapping: default PASSIVE (dark) ----- */
+/* Icon mapping */
 .nav-btn [data-icon="home"]    { background-image:url("../img/home_dark.svg"); }
 .nav-btn [data-icon="book"]    { background-image:url("../img/book_dark.svg"); }
 .nav-btn [data-icon="star"]    { background-image:url("../img/star_dark.svg"); }
 .nav-btn [data-icon="warning"] { background-image:url("../img/warning_dark.svg"); }
 .nav-btn [data-icon="stats"]   { background-image:url("../img/stats_dark.svg"); }
 
-/* ----- HOVER (desktop) → hover versions ----- */
 @media (hover:hover){
   .nav-btn:hover [data-icon="home"]    { background-image:url("../img/home_hover.svg"); }
   .nav-btn:hover [data-icon="book"]    { background-image:url("../img/book_hover.svg"); }
@@ -132,34 +129,61 @@ body{
   .nav-btn:hover .nav-icon{ transform: translateY(-1px); }
 }
 
-/* ----- ACTIVE TAB → bright versions + немного крупнее постоянно ----- */
-.nav-btn.active .nav-icon{ transform: scale(1.06); } /* активная вкладка чуть больше всегда */
+.nav-btn.active .nav-icon{ transform: scale(1.06); }
 .nav-btn.active [data-icon="home"]    { background-image:url("../img/home.svg"); }
 .nav-btn.active [data-icon="book"]    { background-image:url("../img/book.svg"); }
 .nav-btn.active [data-icon="star"]    { background-image:url("../img/star.svg"); }
 .nav-btn.active [data-icon="warning"] { background-image:url("../img/warning.svg"); }
 .nav-btn.active [data-icon="stats"]   { background-image:url("../img/stats.svg"); }
 
-/* ----- PRESS FEEDBACK (без серой заливки) → просто лёгкое увеличение ----- */
-.nav-btn:active .nav-icon{ transform: scale(1.08); } /* на тап ещё +2px ощущение */
+.nav-btn:active .nav-icon{ transform: scale(1.08); }
 
-/* ---------- Safari / iOS branch ---------- */
+/* ---------- Offcanvas (гамбургер) ---------- */
+.oc-root{
+  position: fixed; inset: 0; z-index: 1100; pointer-events: none;
+}
+body.menu-open .oc-root{ pointer-events:auto; }
+
+.oc-overlay{
+  position: fixed; left:0; right:0;
+  top: var(--header-h-actual); bottom: var(--footer-h-actual);
+  background: rgba(0,0,0,.18);
+  opacity: 0; transition: opacity .18s ease;
+}
+body.menu-open .oc-overlay{ opacity: 1; }
+
+.oc-panel{
+  position: fixed; right:0;
+  top: var(--header-h-actual); bottom: var(--footer-h-actual);
+  width: 50vw; max-width: 520px; min-width: 280px;
+  background:#fff; box-shadow: -8px 0 24px rgba(0,0,0,.12);
+  transform: translateX(100%); transition: transform .22s ease;
+  display:flex; flex-direction:column;
+}
+body.menu-open .oc-panel{ transform: translateX(0); }
+
+.oc-header{ display:flex; align-items:center; justify-content:space-between;
+  padding: 10px 12px; border-bottom:1px solid #e5e7eb; }
+.oc-title{ font-weight:700; text-align:center; flex:1; }
+.oc-back,.oc-close{
+  background:transparent; border:0; font-size:20px; cursor:pointer; color:#333;
+  -webkit-appearance:none; appearance:none; outline:none;
+}
+.oc-back{ margin-right:8px; } .oc-close{ margin-left:8px; }
+.oc-body{ overflow:auto; padding:12px; -webkit-overflow-scrolling:touch; }
+
+/* Safari / iOS */
 @supports (-webkit-touch-callout: none){
   .header{ padding-top: max(var(--safe-top), 8px); }
   .app-footer{ height: calc(var(--footer-h) + var(--safe-bottom)); padding-bottom: var(--safe-bottom); }
 }
 
-/* ---------- Chrome / others ---------- */
-@supports not (-webkit-touch-callout: none){
-  .header{ padding-top: 8px; }
-}
-
-/* ---------- PWA (standalone) ---------- */
+/* PWA */
 @media all and (display-mode: standalone){
   .app-footer{ bottom: calc(-1 * var(--safe-bottom)); }
 }
 
-/* ---------- Browser (not PWA) ---------- */
+/* Browser */
 @media all and (display-mode: browser){
   .app-footer{ bottom: -4px; }
 }
