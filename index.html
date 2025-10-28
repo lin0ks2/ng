@@ -312,6 +312,25 @@ if (backupButtons.length){
     });
   });
 }
+            <!-- Пустой отступ между "Режим сложности" и бэкапом -->
+        <div class="menu-spacer" aria-hidden="true"></div>
+
+        <!-- Пункт 5: Резервное копирование -->
+        <div class="menu-item backup-tools">
+          <div class="menu-label">Резервное копирование</div>
+          <div class="backup-row">
+            <button class="backup-btn" data-action="export">Экспорт</button>
+            <button class="backup-btn" data-action="import">Импорт</button>
+          </div>
+        </div>
+
+        <!-- Пункт 6: Обновления -->
+        <div class="menu-item updates-check">
+          <div class="menu-label">Обновления</div>
+          <div class="updates-row">
+            <button class="primary-btn" id="btnCheckUpdates">Проверить обновления</button>
+          </div>
+        </div>
     // Service worker
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
