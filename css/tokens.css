@@ -301,3 +301,51 @@ input:checked + .slider{
 input:checked + .slider:before{
   transform:translateX(20px);
 }
+/* =========================
+   БУРГЕР → ПУНКТ "ЯЗЫК ИНТЕРФЕЙСА"
+   ========================= */
+.menu-item.lang-toggle{
+  padding:14px 12px;                  /* те же отступы, что у темы */
+  display:flex; flex-direction:column;
+  gap:8px;
+}
+.lang-switch{
+  display:flex; align-items:center; justify-content:center; /* флаги по бокам, тогл строго по центру */
+  gap:10px;
+}
+.lang-label{
+  font-size:20px;                     /* размер флага */
+  line-height:1;                      /* ровно по центру тогла */
+}
+.lang-label.left{ margin-right:4px; }
+.lang-label.right{ margin-left:4px; }
+
+/* используем те же стили тогла, чтобы всё было идеально по одной вертикали */
+.lang-switch .switch{
+  position:relative; display:inline-block;
+  width:48px; height:28px;            /* идентично тоглу темы */
+}
+.lang-switch .switch input{
+  opacity:0; width:0; height:0;
+}
+.lang-switch .slider{
+  position:absolute; inset:0;
+  cursor:pointer;
+  background-color:#ccc;
+  border-radius:34px;
+  transition:background-color .25s;
+}
+.lang-switch .slider:before{
+  content:""; position:absolute;
+  height:22px; width:22px;
+  left:3px; bottom:3px;
+  background-color:white;
+  border-radius:50%;
+  transition:transform .25s;
+}
+.lang-switch input:checked + .slider{
+  background-color:var(--burger);     /* при переключении — брендовый цвет */
+}
+.lang-switch input:checked + .slider:before{
+  transform:translateX(20px);
+}
