@@ -270,7 +270,16 @@
     // Нижние действия
     const actionsMap = {
       guide(){ /* TODO: инструкция */ },
-      donate(){ import('./js/donate.js').then(m => m.Donate.open()).catch(console.warn); },
+      donate(){
+  if (!window.Donate) {
+    const s = document.createElement('script');
+    s.src = './js/donate.js';
+    s.onload = () => window.Donate?.open();
+    document.head.appendChild(s);
+  } else {
+    window.Donate.open();
+  }
+},
       share(){
         const data = { title: 'MOYAMOVA', url: location.href };
         if (navigator.share) navigator.share(data).catch(()=>{});
