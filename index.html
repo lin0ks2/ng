@@ -42,12 +42,10 @@
 
   <!-- Offcanvas (гамбургер) -->
   <div class="oc-root" aria-hidden="true">
-    <div class="oc-overlay" data-close="overlay"></div>
+    <div class="oc-overlay"></div>
     <aside class="oc-panel" role="menu" aria-label="Меню">
       <div class="oc-header">
-        <button class="oc-back" aria-label="Назад" data-close="back">←</button>
         <div class="oc-title">Меню</div>
-        <button class="oc-close" aria-label="Закрыть" data-close="close">✕</button>
       </div>
       <div class="oc-body">
         <!-- пункты меню добавим позже -->
@@ -89,6 +87,7 @@
     const burger = document.getElementById('btnMenu');
     const ocRoot = document.querySelector('.oc-root');
     const ocPanel = document.querySelector('.oc-panel');
+    const overlay = document.querySelector('.oc-overlay');
 
     function openMenu(){
       document.body.classList.add('menu-open');
@@ -100,22 +99,20 @@
       ocRoot.setAttribute('aria-hidden','true');
     }
 
-    // ✅ Toggle on burger click (открыть/закрыть одной кнопкой)
-    burger.addEventListener('click', () => {
-      if (document.body.classList.contains('menu-open')) closeMenu();
-      else openMenu();
-    });
+    // Toggle on burger
+    if (burger){
+      burger.addEventListener('click', (e) => {
+        e.preventDefault(); e.stopPropagation();
+        document.body.classList.contains('menu-open') ? closeMenu() : openMenu();
+      });
+    }
 
-    // Закрытие: кнопки и оверлей
-    document.addEventListener('click', (e) => {
-      const closeAttr = e.target.getAttribute('data-close');
-      if (!closeAttr) return;
-      e.preventDefault();
-      closeMenu();
-    });
-    document.querySelector('.oc-overlay').addEventListener('click', closeMenu);
+    // Close by overlay tap
+    if (overlay){
+      overlay.addEventListener('click', closeMenu);
+    }
 
-    // Свайп по панели — закрыть (вправо)
+    // Swipe to close (on panel, right swipe)
     (function(){
       let startX = null;
       ocPanel.addEventListener('touchstart', (e)=>{ startX = e.touches[0].clientX; }, {passive:true});
@@ -127,25 +124,21 @@
       });
     })();
 
-    // ✅ Edge-swipe from right — открыть (только когда меню закрыто)
+    // Edge-swipe from right to open (when closed)
     (function(){
-      let edgeStartX = null;
-      let startedAtEdge = false;
-      const EDGE = 16; // px от правого края
+      let startX = null, startedAtEdge = false;
+      const EDGE = 16;
       document.addEventListener('touchstart', (e)=>{
-        const x = e.touches[0].clientX;
+        if (document.body.classList.contains('menu-open')) return;
+        startX = e.touches[0].clientX;
         const vw = window.innerWidth;
-        startedAtEdge = (vw - x) <= EDGE && !document.body.classList.contains('menu-open');
-        edgeStartX = x;
+        startedAtEdge = (vw - startX) <= EDGE;
       }, {passive:true});
       document.addEventListener('touchend', (e)=>{
         if (!startedAtEdge) return;
         const endX = (e.changedTouches[0]||{}).clientX || 0;
-        if (edgeStartX - endX > 30) { // свайп влево от правого края
-          openMenu();
-        }
-        startedAtEdge = false;
-        edgeStartX = null;
+        if (startX - endX > 30) openMenu();
+        startedAtEdge = false; startX = null;
       });
     })();
 
