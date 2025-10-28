@@ -50,8 +50,7 @@
         <button class="oc-close" aria-label="Закрыть" data-close="close">✕</button>
       </div>
       <div class="oc-body">
-
-       <!-- Пункт 1: Тема -->
+<!-- Пункт 1: Тема -->
 <div class="menu-item theme-toggle">
   <div class="menu-label">Тема</div>
   <div class="theme-switch">
@@ -63,8 +62,7 @@
     <span class="theme-label dark" role="img" aria-label="Тёмная тема">🌙</span>
   </div>
 </div>
-
-        <!-- Пункт 2: Язык интерфейса -->
+<!-- Пункт 2: Язык интерфейса -->
         <div class="menu-item lang-toggle">
           <div class="menu-label">Язык интерфейса</div>
           <div class="lang-switch">
@@ -80,7 +78,18 @@
       </div>
     </aside>
   </div>
-
+<!-- Пункт 3: Режим сложности -->
+<div class="menu-item level-toggle">
+  <div class="menu-label">Режим сложности</div>
+  <div class="level-switch">
+    <span class="level-label left" role="img" aria-label="Обычный уровень">🐣</span>
+    <label class="switch">
+      <input type="checkbox" id="levelToggle" aria-label="Переключить уровень сложности">
+      <span class="slider"></span>
+    </label>
+    <span class="level-label right" role="img" aria-label="Сложный уровень">🦅</span>
+  </div>
+</div>
   <!-- Footer nav -->
   <footer class="app-footer" role="navigation" aria-label="Основная навигация">
     <button class="nav-btn active" data-action="home" aria-label="Главная">
