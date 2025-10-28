@@ -253,7 +253,44 @@
         if (act !== 'guide') { try { closeMenu(); } catch(_){} }
       });
     });
+// ---- Блокировка альбомной ориентации (заглушка + попытка lock)
+(function(){
+  const mq = window.matchMedia('(orientation: landscape)');
 
+  function applyGuard(){
+    const isLandscape = mq.matches || (window.innerWidth > window.innerHeight);
+    document.body.classList.toggle('landscape-block', isLandscape);
+    // aria для скринридеров
+    const guard = document.querySelector('.orientation-guard');
+    if (guard) guard.setAttribute('aria-hidden', String(!isLandscape));
+  }
+
+  // Попытка залочить портрет (работает только в некоторых PWA/Android, после жеста)
+  async function tryLockPortrait(){
+    try{
+      if (screen.orientation && screen.orientation.lock) {
+        await screen.orientation.lock('portrait');
+      }
+    }catch(_){ /* iOS Safari/большинство браузеров игнорируют — ок */ }
+  }
+
+  // Первичная установка
+  applyGuard();
+
+  // Следим за изменениями
+  ['resize','orientationchange','pageshow','visibilitychange'].forEach(ev=>{
+    window.addEventListener(ev, applyGuard, {passive:true});
+  });
+
+  // Пытаемся залочить после первого пользовательского жеста (чтобы не ругались браузеры)
+  const firstUserGesture = () => {
+    tryLockPortrait();
+    window.removeEventListener('click', firstUserGesture, true);
+    window.removeEventListener('touchstart', firstUserGesture, true);
+  };
+  window.addEventListener('click', firstUserGesture, true);
+  window.addEventListener('touchstart', firstUserGesture, true);
+})();
     // Service worker
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
@@ -263,5 +300,13 @@
   </script>
   <script type="module" src="./js/legal.js"></script>
   <script src="./js/donate.js"></script>
+<!-- Заглушка для альбомной ориентации -->
+<div class="orientation-guard" aria-hidden="true" role="dialog" aria-label="Поверните устройство">
+  <div class="og-inner">
+    <div class="og-emoji">🔄</div>
+    <p class="og-title">Поверните устройство</p>
+    <p class="og-text">Шаблон под альбомный режим в разработке. Используйте портретную ориентацию.</p>
+  </div>
+</div>
 </body>
 </html>
