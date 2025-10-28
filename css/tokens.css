@@ -18,7 +18,7 @@
   --nav-gap: 12px;
   --nav-icon-size: 28px;
   --header-h-actual: 64px;
-  --footer-h-actual: calc(var(--footer-h) + var(--safe-bottom));
+  --footer-h-actual: calc(var(--footer-h));
 }
 @media (min-width: 480px){
   :root{ --title-size: 28px; --logo-size: 48px; --nav-icon-size: 30px; }
@@ -110,7 +110,7 @@ body.menu-open .oc-overlay{ opacity: 1; }
 }
 body.menu-open .oc-panel{ transform: translateX(0); }
 
-.oc-header{ display:flex; align-items:center; justify-content:center; padding:10px 12px; border-bottom:1px solid #e5e7eb; }
+.oc-header{ display:flex; align-items:center; justify-content:center; padding:10px 12px; border-bottom:0px solid #e5e7eb; }
 .oc-title{ font-weight:700; text-align:center; }
 
 .oc-body{ overflow:auto; padding:12px; -webkit-overflow-scrolling:touch; }
