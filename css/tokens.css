@@ -109,7 +109,7 @@ body.menu-open .oc-overlay{ opacity:1 }
 .oc-panel{
   position:fixed; right:0;
   top:var(--header-h-actual);
-  bottom:calc(var(--footer-h-actual) + 1px); /* fix double line: подняли нижний край панели на 1px выше футера */
+  bottom:calc(var(--footer-h-actual) + 0px); /* fix double line: подняли нижний край панели на 1px выше футера */
   width:50vw; max-width:520px; min-width:280px;
   background:#fff; border:0; box-shadow:none;
   transform:translateX(100%); transition:transform .22s ease;
