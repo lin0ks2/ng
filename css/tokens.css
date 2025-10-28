@@ -51,7 +51,7 @@ body.menu-open .burger{ color: var(--footer-fg); transform: scale(1.06); }
 .burger:active{ transform: scale(1.08); }
 
 /* Контент */
-.content{ padding:16px; padding-bottom: calc(var(--footer-h) + var(--safe-bottom) + 12px); }
+.content{ padding:16px; padding-bottom: calc(var(--footer-h) + 12px); }
 
 /* Footer (фиксирован, не подпрыгивает вообще) */
 .app-footer{
@@ -131,6 +131,6 @@ body.menu-open .oc-panel{ transform: translateX(0); }
 /* Safari/iOS adjustments */
 @supports (-webkit-touch-callout: none){
   .header{ padding-top: max(var(--safe-top), 8px); }
-  .app-footer{ height: calc(var(--footer-h) + var(--safe-bottom)); padding-bottom: var(--safe-bottom); }
+  .app-footer{ height: calc(var(--footer-h)); padding-bottom: var(--safe-bottom); }
 }
 /* PWA — не трогаем в этом патче */
