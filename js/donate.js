@@ -8,7 +8,7 @@
   const URL_MONO   = `https://send.monobank.ua/jar/${MONO_JAR_ID}`;
   const URL_PAYPAL = `https://www.paypal.com/donate/?hosted_button_id=${PAYPAL_BUTTON_ID}`;
 
-  let sheet, scroller, note, styleTag;
+  let sheet, scroller, styleTag;
 
   function gaEvent(action, label){
     try { window.gtag && window.gtag('event', action, { event_category:'donate', event_label: label }); } catch(_){}
@@ -34,46 +34,50 @@
         background:transparent; border:0; font-size:20px; cursor:pointer; color:#333;
         -webkit-appearance:none; appearance:none; outline:none;
       }
-      /* прокручиваем только середину; сноска снизу фиксируется во флекс-колонке */
+
+      /* центральная часть листа */
       .donate-content{
         position:relative; flex:1 1 auto; overflow:auto; -webkit-overflow-scrolling:touch;
         padding:14px 12px 20px; color:#111;
+        display:flex; flex-direction:column;
       }
-      /* мотивационный блок сверху */
-      .donate-intro{
-        display:flex; gap:10px; align-items:flex-start;
-        background:#f8fafc; border:1px solid #eef1f4; border-radius:12px;
-        padding:12px 14px; margin:0 0 14px;
-      }
-      .donate-intro .emoji{ font-size:20px; line-height:1; }
-      .donate-intro p{ margin:0; color:#334155; line-height:1.45; }
 
+      /* юр-сноска (теперь сверху) */
+      .donate-note{
+        flex:0 0 auto;
+        border-bottom:1px solid #e5e7eb;
+        padding:12px; color:#374151; line-height:1.5;
+        display:flex; gap:10px; align-items:flex-start; background:#fff;
+        margin-bottom:14px;
+      }
+      .donate-note .emoji{ font-size:20px; line-height:1; }
+
+      /* карточки донатов */
       .donate-card{
         border:1px solid #eef1f4; border-radius:14px; padding:16px; background:#fff;
         margin:0 0 14px;
       }
       .donate-card h3{ margin:0 0 12px; font-size:16px; line-height:1.35; text-align:center; }
-
-      /* Центрируем кнопку аккуратно */
       .donate-cta-wrap{ text-align:center; }
       .donate-cta{
         display:inline-flex; align-items:center; justify-content:center;
         padding:12px 16px; border-radius:12px; font-weight:600; cursor:pointer;
         background:#fff; color:#111; text-decoration:none; border:2px solid;
-        min-width:240px; /* приятная ширина на мобилке */
+        min-width:240px;
       }
-      .donate-cta--mono   { border-color:#f7c948; }  /* жёлтая Monobank */
-      .donate-cta--paypal { border-color:#0b57d0; }  /* синяя PayPal */
+      .donate-cta--mono   { border-color:#f7c948; }
+      .donate-cta--paypal { border-color:#0b57d0; }
       .donate-cta:active{ transform:scale(.98); }
 
-      /* Юр.сноска — всегда внизу листа */
-      .donate-note{
+      /* мотивационный блок — теперь внизу */
+      .donate-intro{
         flex:0 0 auto;
-        border-top:1px solid #e5e7eb;
-        padding:12px; color:#374151; line-height:1.5;
-        display:flex; gap:10px; align-items:flex-start; background:#fff;
+        display:flex; gap:10px; align-items:flex-start;
+        background:#f8fafc; border-top:1px solid #e5e7eb;
+        padding:14px 14px 16px; margin-top:auto;
       }
-      .donate-note .emoji{ font-size:20px; line-height:1; }
+      .donate-intro .emoji{ font-size:20px; line-height:1; }
+      .donate-intro p{ margin:0; color:#334155; line-height:1.45; }
     `;
     styleTag = document.createElement('style');
     styleTag.id = 'donate-sheet-styles';
@@ -97,10 +101,9 @@
     scroller = document.createElement('div');
     scroller.className = 'donate-content';
     scroller.innerHTML = `
-      <div class="donate-intro">
-        <div class="emoji">✨</div>
-        <p>Ваш донат помогает нам развиваться быстрее: добавлять новые словари и режимы,
-        улучшать тренажёр, поддерживать стабильную работу и оставаться без рекламы. Спасибо за поддержку!</p>
+      <div class="donate-note">
+        <div class="emoji">⚖️</div>
+        <div>Донат является добровольным пожертвованием и не является оплатой товаров или услуг.</div>
       </div>
 
       <div class="donate-card">
@@ -120,18 +123,16 @@
           </a>
         </div>
       </div>
-    `;
 
-    note = document.createElement('div');
-    note.className = 'donate-note';
-    note.innerHTML = `
-      <div class="emoji">⚖️</div>
-      <div>Донат является добровольным пожертвованием и не является оплатой товаров или услуг.</div>
+      <div class="donate-intro">
+        <div class="emoji">✨</div>
+        <p>Каждый донат помогает нам развивать MOYAMOVA — добавлять новые функции и словари, 
+        улучшать обучение и сохранять приложение свободным от рекламы. Спасибо за вашу поддержку!</p>
+      </div>
     `;
 
     sheet.appendChild(top);
     sheet.appendChild(scroller);
-    sheet.appendChild(note);
     document.body.appendChild(sheet);
 
     // GA4 трекинг кликов
@@ -151,7 +152,6 @@
 
   function open(){
     ensureSheet();
-    // если бургер открыт — закрываем, чтобы не перекрывал клики
     if (document.body.classList.contains('menu-open')) {
       document.body.classList.remove('menu-open');
       document.querySelector('.oc-root')?.setAttribute('aria-hidden','true');
