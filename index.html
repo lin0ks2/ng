@@ -243,7 +243,7 @@
           catch { prompt('Скопируйте ссылку:', location.href); }
         }
       },
-      legal(){ /* TODO */ },
+      legal(){ import('./js/legal.js').then(m => m.Legal.open('impressum')); },
       contact(){ location.href = 'mailto:support@moyamova.app'; }
     };
     document.querySelectorAll('.actions-row-bottom .action-btn').forEach(btn=>{
