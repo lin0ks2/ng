@@ -109,7 +109,8 @@
           </div>
         </div>
       </div>
-
+<!-- Строка версии приложения -->
+<div class="menu-version"> <b>Версия:</b> <span id="appVersion">—</span> </div>
       <!-- Нижний ряд быстрых действий -->
       <div class="actions-row-bottom" role="group" aria-label="Быстрые действия">
         <button class="action-btn" data-action="guide"   aria-label="Инструкция">📘</button>
@@ -286,7 +287,25 @@
         if (act !== 'guide') { try { closeMenu(); } catch(_){} }
       });
     });
+<script>
+// ---- Версия приложения ----
+// Ручной fallback: если в манифесте нет поля "version".
+const APP_VERSION_FALLBACK = '0.1.0';
 
+async function setAppVersion(){
+  let v = APP_VERSION_FALLBACK;
+  try{
+    const res = await fetch('./manifest.webmanifest', {cache:'no-store'});
+    const manifest = await res.json();
+    // Если добавишь "version" в манифест — возьмём оттуда
+    if (manifest && manifest.version) v = manifest.version;
+  }catch(_){}
+  const el = document.getElementById('appVersion');
+  if (el) el.textContent = v;
+}
+
+window.addEventListener('load', setAppVersion);
+</script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
         navigator.serviceWorker.register('./sw.js').catch(console.warn);
