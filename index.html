@@ -49,7 +49,6 @@
       </div>
 
       <div class="oc-body">
-
         <!-- Пункт 1: Тема -->
         <div class="menu-item theme-toggle">
           <div class="menu-label">Тема</div>
@@ -88,19 +87,17 @@
             <span class="level-label right" role="img" aria-label="Сложный уровень">🦅</span>
           </div>
         </div>
-<!-- Пункт 4: Действия -->
-<div class="menu-item actions-5">
-  <div class="menu-label">Действия</div>
-
-  <div class="actions-row" role="group" aria-label="Действия">
-    <button class="action-btn" data-action="guide"   aria-label="Инструкция"><span class="action-emoji" aria-hidden="true">📘</span></button>
-    <button class="action-btn" data-action="donate"  aria-label="Поддержите проект"><span class="action-emoji" aria-hidden="true">💰</span></button>
-    <button class="action-btn" data-action="share"   aria-label="Поделиться"><span class="action-emoji" aria-hidden="true">🔗</span></button>
-    <button class="action-btn" data-action="legal"   aria-label="Юридическая информация"><span class="action-emoji" aria-hidden="true">⚖️</span></button>
-    <button class="action-btn" data-action="contact" aria-label="Связаться"><span class="action-emoji" aria-hidden="true">✉️</span></button>
-  </div>
-</div>
       </div>
+
+      <!-- ПРИЖАТЫЕ КНИЗУ 5 КНОПОК (без заголовка, без кружков) -->
+      <div class="actions-row-bottom" role="group" aria-label="Быстрые действия">
+        <button class="action-btn" data-action="guide"   aria-label="Инструкция">📘</button>
+        <button class="action-btn" data-action="donate"  aria-label="Поддержите проект">💰</button>
+        <button class="action-btn" data-action="share"   aria-label="Поделиться">🔗</button>
+        <button class="action-btn" data-action="legal"   aria-label="Юридическая информация">⚖️</button>
+        <button class="action-btn" data-action="contact" aria-label="Связаться">✉️</button>
+      </div>
+      <!-- /низ панели -->
     </aside>
   </div>
 
@@ -212,7 +209,6 @@
       themeToggle.addEventListener('change', e=>{
         const dark = e.target.checked;
         document.documentElement.dataset.theme = dark ? 'dark' : 'light';
-        // позже добавим сохранение и применение темы
       });
     }
 
@@ -222,7 +218,6 @@
       langToggle.addEventListener('change', e=>{
         const ru = e.target.checked;
         document.documentElement.dataset.lang = ru ? 'ru' : 'uk';
-        // позже добавим сохранение и обновление интерфейса
       });
     }
 
@@ -232,32 +227,32 @@
       levelToggle.addEventListener('change', e=>{
         const hard = e.target.checked;
         document.documentElement.dataset.level = hard ? 'hard' : 'normal';
-        // позже добавим сохранение и влияние на тренировку
       });
     }
-// ---- Действия в пункте "Действия"
-const actionsMap = {
-  guide(){ /* TODO: открыть страницу/модал «Инструкция» */ },
-  donate(){ /* TODO: открыть экран поддержки (ссылка/модал) */ },
-  share(){
-    const data = { title: 'MOYAMOVA', url: location.href };
-    if (navigator.share) navigator.share(data).catch(()=>{});
-    else {
-      try { navigator.clipboard.writeText(location.href); alert('Ссылка скопирована'); }
-      catch { prompt('Скопируйте ссылку:', location.href); }
-    }
-  },
-  legal(){ /* TODO: открыть «Юридическая информация» */ },
-  contact(){ location.href = 'mailto:support@moyamova.app'; } // временно почта
-};
-document.querySelectorAll('.actions-row .action-btn').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    const act = btn.dataset.action;
-    (actionsMap[act]||function(){})();
-    // по UX меню закрываем после действия (кроме гида, если он внутри)
-    if (act !== 'guide') { try { closeMenu(); } catch(_){} }
-  });
-});
+
+    // ---- Быстрые действия (нижний ряд)
+    const actionsMap = {
+      guide(){ /* TODO: открыть «Инструкцию» */ },
+      donate(){ /* TODO: открыть экран поддержки */ },
+      share(){
+        const data = { title: 'MOYAMOVA', url: location.href };
+        if (navigator.share) navigator.share(data).catch(()=>{});
+        else {
+          try { navigator.clipboard.writeText(location.href); alert('Ссылка скопирована'); }
+          catch { prompt('Скопируйте ссылку:', location.href); }
+        }
+      },
+      legal(){ /* TODO: открыть «Юридическую информацию» */ },
+      contact(){ location.href = 'mailto:support@moyamova.app'; }
+    };
+    document.querySelectorAll('.actions-row-bottom .action-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const act = btn.dataset.action;
+        (actionsMap[act]||function(){})();
+        if (act !== 'guide') { try { closeMenu(); } catch(_){} }
+      });
+    });
+
     // Service worker
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
