@@ -40,7 +40,22 @@
     <!-- Контент появится здесь -->
   </main>
 
-  <!-- Footer nav (иконки: passive=*_dark.svg, active=*.svg, hover=*_hover.svg) -->
+  <!-- Offcanvas (гамбургер) -->
+  <div class="oc-root" aria-hidden="true">
+    <div class="oc-overlay" data-close="overlay"></div>
+    <aside class="oc-panel" role="menu" aria-label="Меню">
+      <div class="oc-header">
+        <button class="oc-back" aria-label="Назад" data-close="back">←</button>
+        <div class="oc-title">Меню</div>
+        <button class="oc-close" aria-label="Закрыть" data-close="close">✕</button>
+      </div>
+      <div class="oc-body">
+        <!-- пункты меню добавим позже -->
+      </div>
+    </aside>
+  </div>
+
+  <!-- Footer nav -->
   <footer class="app-footer" role="navigation" aria-label="Основная навигация">
     <button class="nav-btn active" data-action="home" aria-label="Главная">
       <span class="nav-icon" data-icon="home"></span>
@@ -60,20 +75,63 @@
   </footer>
 
   <script>
-    // Клик по лого → главная
-    document.addEventListener('click', function(e){
-      const a = e.target.closest('.brand-link');
-      if (a) { e.preventDefault(); location.assign('./'); }
+    // Measure header/footer and set CSS vars
+    function updateHFVars(){
+      const h = document.querySelector('.header');
+      const f = document.querySelector('.app-footer');
+      const rs = document.documentElement.style;
+      if (h) rs.setProperty('--header-h-actual', h.getBoundingClientRect().height + 'px');
+      if (f) rs.setProperty('--footer-h-actual', f.getBoundingClientRect().height + 'px');
+    }
+    window.addEventListener('load', updateHFVars);
+    window.addEventListener('resize', updateHFVars);
+
+    const burger = document.getElementById('btnMenu');
+    const ocRoot = document.querySelector('.oc-root');
+    const ocPanel = document.querySelector('.oc-panel');
+
+    function openMenu(){
+      document.body.classList.add('menu-open');
+      ocRoot.setAttribute('aria-hidden','false');
+      updateHFVars();
+    }
+    function closeMenu(){
+      document.body.classList.remove('menu-open');
+      ocRoot.setAttribute('aria-hidden','true');
+    }
+
+    burger.addEventListener('click', () => {
+      if (document.body.classList.contains('menu-open')) closeMenu();
+      else openMenu();
     });
 
-    // Навигация (переключение active-состояния и заглушки переходов)
+    document.addEventListener('click', (e) => {
+      const closeAttr = e.target.getAttribute('data-close');
+      if (!closeAttr) return;
+      e.preventDefault();
+      closeMenu();
+    });
+    document.querySelector('.oc-overlay').addEventListener('click', closeMenu);
+
+    // Swipe to close
+    (function(){
+      let startX = null;
+      ocPanel.addEventListener('touchstart', (e)=>{ startX = e.touches[0].clientX; }, {passive:true});
+      ocPanel.addEventListener('touchend', (e)=>{
+        if (startX == null) return;
+        const endX = (e.changedTouches[0]||{}).clientX || 0;
+        if (endX - startX > 30) closeMenu();
+        startX = null;
+      });
+    })();
+
+    // Footer nav (заглушки)
     document.querySelectorAll('.app-footer .nav-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.app-footer .nav-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         const act = btn.getAttribute('data-action');
         if (act === 'home') location.assign('./');
-        // Остальные — подключим реальные экраны позже
       });
     });
 
