@@ -66,12 +66,12 @@
         <div class="menu-item lang-toggle">
           <div class="menu-label">Язык интерфейса</div>
           <div class="lang-switch">
-            <span class="lang-label left" role="img" aria-label="Українська">🇺🇦</span>
+            <span class="lang-label left" role="img" aria-label="Русский">🇷🇺</span>
             <label class="switch">
               <input type="checkbox" id="langToggle" aria-label="Переключить язык интерфейса">
               <span class="slider"></span>
             </label>
-            <span class="lang-label right" role="img" aria-label="Русский">🇷🇺</span>
+            <span class="lang-label right" role="img" aria-label="Українська">🇺🇦</span>
           </div>
         </div>
 
@@ -89,7 +89,7 @@
         </div>
       </div>
 
-      <!-- ПРИЖАТЫЕ КНИЗУ 5 КНОПОК (без заголовка, без кружков) -->
+      <!-- ПРИЖАТЫЕ КНИЗУ 5 КНОПОК -->
       <div class="actions-row-bottom" role="group" aria-label="Быстрые действия">
         <button class="action-btn" data-action="guide"   aria-label="Инструкция">📘</button>
         <button class="action-btn" data-action="donate"  aria-label="Поддержите проект">💰</button>
@@ -97,7 +97,6 @@
         <button class="action-btn" data-action="share"   aria-label="Поделиться">🔗</button>
         <button class="action-btn" data-action="legal"   aria-label="Юридическая информация">⚖️</button>
       </div>
-      <!-- /низ панели -->
     </aside>
   </div>
 
@@ -147,7 +146,6 @@
       ocRoot.setAttribute('aria-hidden','true');
     }
 
-    // Toggle on burger (open/close)
     if (burger){
       burger.addEventListener('click', (e) => {
         e.preventDefault(); e.stopPropagation();
@@ -155,7 +153,6 @@
       }, { passive:false });
     }
 
-    // Close by overlay / back / close buttons
     document.addEventListener('click', (e) => {
       const t = e.target;
       const closeAttr = t.getAttribute && t.getAttribute('data-close');
@@ -163,7 +160,7 @@
     });
     if (overlay) overlay.addEventListener('click', closeMenu);
 
-    // Swipe to close (panel → right)
+    // Swipe to close
     (function(){
       let startX = null;
       ocPanel.addEventListener('touchstart', (e)=>{ startX = e.touches[0].clientX; }, {passive:true});
@@ -175,7 +172,7 @@
       });
     })();
 
-    // Edge-swipe from right to open
+    // Edge-swipe open
     (function(){
       let startX = null, startedAtEdge = false;
       const EDGE = 16;
@@ -193,7 +190,7 @@
       });
     })();
 
-    // Footer nav (стаб)
+    // Footer nav
     document.querySelectorAll('.app-footer .nav-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.app-footer .nav-btn').forEach(b => b.classList.remove('active'));
@@ -212,12 +209,16 @@
       });
     }
 
-    // ---- Тогл языка ----
+    // ---- Тогл языка ---- (по умолчанию русский)
     const langToggle = document.getElementById('langToggle');
     if(langToggle){
+      // начальное состояние: русский
+      document.documentElement.dataset.lang = 'ru';
+      langToggle.checked = false;
+
       langToggle.addEventListener('change', e=>{
-        const ru = e.target.checked;
-        document.documentElement.dataset.lang = ru ? 'ru' : 'uk';
+        const uk = e.target.checked;
+        document.documentElement.dataset.lang = uk ? 'uk' : 'ru';
       });
     }
 
@@ -232,8 +233,8 @@
 
     // ---- Быстрые действия (нижний ряд)
     const actionsMap = {
-      guide(){ /* TODO: открыть «Инструкцию» */ },
-      donate(){ /* TODO: открыть экран поддержки */ },
+      guide(){ /* TODO */ },
+      donate(){ /* TODO */ },
       share(){
         const data = { title: 'MOYAMOVA', url: location.href };
         if (navigator.share) navigator.share(data).catch(()=>{});
@@ -242,7 +243,7 @@
           catch { prompt('Скопируйте ссылку:', location.href); }
         }
       },
-      legal(){ /* TODO: открыть «Юридическую информацию» */ },
+      legal(){ /* TODO */ },
       contact(){ location.href = 'mailto:support@moyamova.app'; }
     };
     document.querySelectorAll('.actions-row-bottom .action-btn').forEach(btn=>{
