@@ -349,3 +349,47 @@ input:checked + .slider:before{
 .lang-switch input:checked + .slider:before{
   transform:translateX(20px);
 }
+/* =========================
+   БУРГЕР → ПУНКТ "РЕЖИМ СЛОЖНОСТИ"
+   ========================= */
+.menu-item.level-toggle{
+  padding:14px 12px;
+  display:flex; flex-direction:column;
+  gap:8px;
+}
+.level-switch{
+  display:flex; align-items:center; justify-content:center;
+  gap:10px;
+}
+.level-label{
+  font-size:20px; line-height:1;
+  display:flex; align-items:center; justify-content:center;
+}
+.level-label.left{ margin-right:4px; }
+.level-label.right{ margin-left:4px; }
+
+.level-switch .switch{
+  position:relative; display:inline-block;
+  width:48px; height:28px;
+}
+.level-switch .switch input{ opacity:0; width:0; height:0; }
+.level-switch .slider{
+  position:absolute; inset:0; cursor:pointer;
+  background-color:#ccc;
+  border-radius:34px;
+  transition:background-color .25s;
+}
+.level-switch .slider:before{
+  content:""; position:absolute;
+  height:22px; width:22px;
+  left:3px; bottom:3px;
+  background-color:white;
+  border-radius:50%;
+  transition:transform .25s;
+}
+.level-switch input:checked + .slider{
+  background-color:var(--burger);
+}
+.level-switch input:checked + .slider:before{
+  transform:translateX(20px);
+}
