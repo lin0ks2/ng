@@ -235,7 +235,29 @@
         // позже добавим сохранение и влияние на тренировку
       });
     }
-
+// ---- Действия в пункте "Действия"
+const actionsMap = {
+  guide(){ /* TODO: открыть страницу/модал «Инструкция» */ },
+  donate(){ /* TODO: открыть экран поддержки (ссылка/модал) */ },
+  share(){
+    const data = { title: 'MOYAMOVA', url: location.href };
+    if (navigator.share) navigator.share(data).catch(()=>{});
+    else {
+      try { navigator.clipboard.writeText(location.href); alert('Ссылка скопирована'); }
+      catch { prompt('Скопируйте ссылку:', location.href); }
+    }
+  },
+  legal(){ /* TODO: открыть «Юридическая информация» */ },
+  contact(){ location.href = 'mailto:support@moyamova.app'; } // временно почта
+};
+document.querySelectorAll('.actions-row .action-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const act = btn.dataset.action;
+    (actionsMap[act]||function(){})();
+    // по UX меню закрываем после действия (кроме гида, если он внутри)
+    if (act !== 'guide') { try { closeMenu(); } catch(_){} }
+  });
+});
     // Service worker
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
