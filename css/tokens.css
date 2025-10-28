@@ -9,7 +9,7 @@
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --title-size: 26px;
-  --logo-size: 44px;
+  --logo-size: 48px;
   --gap-tight: 8px;
 
   --footer-h: 60px;
@@ -24,7 +24,7 @@
 }
 
 @media (min-width: 480px){
-  :root{ --title-size: 28px; --logo-size: 48px; --nav-icon-size: 30px; }
+  :root{ --title-size: 28px; --logo-size: 52px; --nav-icon-size: 30px; }
 }
 
 html, body { margin:0; padding:0; }
