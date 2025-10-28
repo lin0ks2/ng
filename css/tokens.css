@@ -1,3 +1,4 @@
+/* FIX: correct relative URLs for icons (css/ → ../img) */
 /* MOYAMOVA — tokens.css (footer icons: passive=*_dark, active=*, hover=*_hover) */
 :root{
   --brand: #1fb6ff;
@@ -87,7 +88,7 @@ body{
   width: 100%;
 }
 
-/* Иконки — как фон, чтобы менять версии по состояниям */
+/* Icon spans with background images */
 .nav-icon{
   width: var(--nav-icon-size);
   height: var(--nav-icon-size);
@@ -101,29 +102,29 @@ body{
   transition: filter .15s ease, opacity .15s ease, transform .1s ease;
 }
 
-/* ----- mapping: по умолчанию — PASSIVE (dark) ----- */
-.nav-btn [data-icon="home"]    { background-image:url("./img/home_dark.svg"); }
-.nav-btn [data-icon="book"]    { background-image:url("./img/book_dark.svg"); }
-.nav-btn [data-icon="star"]    { background-image:url("./img/star_dark.svg"); }
-.nav-btn [data-icon="warning"] { background-image:url("./img/warning_dark.svg"); }
-.nav-btn [data-icon="stats"]   { background-image:url("./img/stats_dark.svg"); }
+/* ----- mapping: default PASSIVE (dark) ----- */
+.nav-btn [data-icon="home"]    { background-image:url("../img/home_dark.svg"); }
+.nav-btn [data-icon="book"]    { background-image:url("../img/book_dark.svg"); }
+.nav-btn [data-icon="star"]    { background-image:url("../img/star_dark.svg"); }
+.nav-btn [data-icon="warning"] { background-image:url("../img/warning_dark.svg"); }
+.nav-btn [data-icon="stats"]   { background-image:url("../img/stats_dark.svg"); }
 
-/* ----- HOVER (desktop) → hover версии ----- */
+/* ----- HOVER (desktop) → hover versions ----- */
 @media (hover:hover){
-  .nav-btn:hover [data-icon="home"]    { background-image:url("./img/home_hover.svg"); }
-  .nav-btn:hover [data-icon="book"]    { background-image:url("./img/book_hover.svg"); }
-  .nav-btn:hover [data-icon="star"]    { background-image:url("./img/star_hover.svg"); }
-  .nav-btn:hover [data-icon="warning"] { background-image:url("./img/warning_hover.svg"); }
-  .nav-btn:hover [data-icon="stats"]   { background-image:url("./img/stats_hover.svg"); }
+  .nav-btn:hover [data-icon="home"]    { background-image:url("../img/home_hover.svg"); }
+  .nav-btn:hover [data-icon="book"]    { background-image:url("../img/book_hover.svg"); }
+  .nav-btn:hover [data-icon="star"]    { background-image:url("../img/star_hover.svg"); }
+  .nav-btn:hover [data-icon="warning"] { background-image:url("../img/warning_hover.svg"); }
+  .nav-btn:hover [data-icon="stats"]   { background-image:url("../img/stats_hover.svg"); }
   .nav-btn:hover .nav-icon{ transform: translateY(-1px); }
 }
 
-/* ----- ACTIVE → обычные (яркие) версии ----- */
-.nav-btn.active [data-icon="home"]    { background-image:url("./img/home.svg"); }
-.nav-btn.active [data-icon="book"]    { background-image:url("./img/book.svg"); }
-.nav-btn.active [data-icon="star"]    { background-image:url("./img/star.svg"); }
-.nav-btn.active [data-icon="warning"] { background-image:url("./img/warning.svg"); }
-.nav-btn.active [data-icon="stats"]   { background-image:url("./img/stats.svg"); }
+/* ----- ACTIVE → bright versions ----- */
+.nav-btn.active [data-icon="home"]    { background-image:url("../img/home.svg"); }
+.nav-btn.active [data-icon="book"]    { background-image:url("../img/book.svg"); }
+.nav-btn.active [data-icon="star"]    { background-image:url("../img/star.svg"); }
+.nav-btn.active [data-icon="warning"] { background-image:url("../img/warning.svg"); }
+.nav-btn.active [data-icon="stats"]   { background-image:url("../img/stats.svg"); }
 
 /* ---------- Safari / iOS branch ---------- */
 @supports (-webkit-touch-callout: none){
