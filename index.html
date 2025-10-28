@@ -88,15 +88,36 @@
           </div>
         </div>
       </div>
+        <!-- Пункт 4: Режим сложности -->
+        <div class="menu-item level-toggle">
+          <div class="menu-label">Режим сложности</div>
+          <div class="level-switch">
+            <span class="level-label left" role="img" aria-label="Обычный уровень">🐣</span>
+            <label class="switch">
+              <input type="checkbox" id="levelToggle" aria-label="Переключить уровень сложности">
+              <span class="slider"></span>
+            </label>
+            <span class="level-label right" role="img" aria-label="Сложный уровень">🦅</span>
+          </div>
+        </div>
 
-      <!-- ПРИЖАТЫЕ КНИЗУ 5 КНОПОК -->
-      <div class="actions-row-bottom" role="group" aria-label="Быстрые действия">
-        <button class="action-btn" data-action="guide"   aria-label="Инструкция">📘</button>
-        <button class="action-btn" data-action="donate"  aria-label="Поддержите проект">💰</button>
-        <button class="action-btn" data-action="contact" aria-label="Связаться">✉️</button>
-        <button class="action-btn" data-action="share"   aria-label="Поделиться">🔗</button>
-        <button class="action-btn" data-action="legal"   aria-label="Юридическая информация">⚖️</button>
-      </div>
+        <!-- Пункт 5: Резервное копирование -->
+        <div class="menu-item backup-tools">
+          <div class="menu-label">Резервное копирование</div>
+          <div class="backup-row">
+            <button class="backup-btn" data-action="export">Экспорт</button>
+            <button class="backup-btn" data-action="import">Импорт</button>
+          </div>
+        </div>
+
+        <!-- ПРИЖАТЫЕ КНИЗУ 5 КНОПОК -->
+        <div class="actions-row-bottom" role="group" aria-label="Быстрые действия">
+          <button class="action-btn" data-action="guide"   aria-label="Инструкция">📘</button>
+          <button class="action-btn" data-action="donate"  aria-label="Поддержите проект">💰</button>
+          <button class="action-btn" data-action="contact" aria-label="Связаться">✉️</button>
+          <button class="action-btn" data-action="share"   aria-label="Поделиться">🔗</button>
+          <button class="action-btn" data-action="legal"   aria-label="Юридическая информация">⚖️</button>
+        </div>
     </aside>
   </div>
 
@@ -264,7 +285,20 @@
     const guard = document.querySelector('.orientation-guard');
     if (guard) guard.setAttribute('aria-hidden', String(!isLandscape));
   }
-
+// ---- Экспорт/Импорт (резервное копирование)
+const backupButtons = document.querySelectorAll('.backup-btn');
+if (backupButtons.length){
+  backupButtons.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const act = btn.dataset.action;
+      if (act === 'export') {
+        alert('📤 Экспорт данных (заглушка)');
+      } else if (act === 'import') {
+        alert('📥 Импорт данных (заглушка)');
+      }
+    });
+  });
+}
   // Попытка залочить портрет (работает только в некоторых PWA/Android, после жеста)
   async function tryLockPortrait(){
     try{
