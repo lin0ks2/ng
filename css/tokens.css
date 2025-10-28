@@ -109,8 +109,8 @@ body.menu-open .oc-overlay{ opacity: 1; }
   top: var(--header-h-actual); bottom: var(--footer-h-actual);
   width: 50vw; max-width: 520px; min-width: 280px;
   background:#fff;
-  border-top: 1px solid #dfe3e8;     /* «рельсы» сверху */
-  border-bottom: 1px solid #dfe3e8;  /* «рельсы» снизу */
+  border-top: 0px solid #dfe3e8;     /* «рельсы» сверху */
+  border-bottom: 0px solid #dfe3e8;  /* «рельсы» снизу */
   box-shadow: -8px 0 24px rgba(0,0,0,.12);
   transform: translateX(100%); transition: transform .22s ease;
   display:flex; flex-direction:column;
@@ -125,7 +125,7 @@ body.menu-open .oc-panel{ transform: translateX(0); }
 
 /* --- Только для браузеров: сохраняем лёгкий визуальный сдвиг футера как раньше --- */
 @media all and (display-mode: browser){
-  .app-footer{ bottom: -4px; } /* как было — футер НЕ подпрыгивает при меню */
+  .app-footer{ bottom: 0px; } /* как было — футер НЕ подпрыгивает при меню */
 }
 
 /* Safari/iOS adjustments */
