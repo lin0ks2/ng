@@ -42,23 +42,29 @@
         display:flex; flex-direction:column;
       }
 
-      /* юр-сноска (теперь сверху) */
+      /* юр-сноска (вверху, спокойная) */
       .donate-note{
         flex:0 0 auto;
-        font-size:15px;
         border-bottom:1px solid #e5e7eb;
-        padding:12px; color:#374151; line-height:1.5;
-        display:flex; gap:10px; align-items:flex-start; background:#fff;
-        margin-bottom:14px;
+        padding:12px 10px;
+        color:#555; line-height:1.5; font-size:13px; font-weight:500; opacity:.95;
+        display:flex; align-items:center; justify-content:center; gap:8px;
+        text-align:center; background:#fff;
+        max-width:480px; margin:0 auto 14px;
       }
-      .donate-note .emoji{ font-size:20px; line-height:1; }
+      .donate-note .emoji{ font-size:18px; line-height:1; }
 
-      /* карточки донатов */
-      .donate-card{
-        border:1px solid #eef1f4; border-radius:14px; padding:16px; background:#fff;
-        margin:0 0 14px;
+      /* карточки донатов — мягкий фон секции, явная иерархия */
+      .donate-section{
+        background:#fafbfc;
+        border-radius:12px;
+        padding:16px;
+        margin:16px 0;
+        border:1px solid #eef1f4;
       }
-      .donate-card h3{ margin:0 0 12px; font-size:16px; line-height:1.35; text-align:center; }
+      .donate-section h3{
+        margin:0 0 12px; font-size:16px; line-height:1.35; text-align:center; font-weight:700;
+      }
       .donate-cta-wrap{ text-align:center; }
       .donate-cta{
         display:inline-flex; align-items:center; justify-content:center;
@@ -66,19 +72,23 @@
         background:#fff; color:#111; text-decoration:none; border:2px solid;
         min-width:240px;
       }
-      .donate-cta--mono   { border-color:#f7c948; }
-      .donate-cta--paypal { border-color:#0b57d0; }
+      .donate-cta--mono   { border-color:#f7c948; }  /* жёлтый контур */
+      .donate-cta--paypal { border-color:#0b57d0; }  /* синий контур */
       .donate-cta:active{ transform:scale(.98); }
 
-      /* мотивационный блок — теперь внизу */
-      .donate-intro{
-        flex:0 0 auto;
-        display:flex; gap:10px; align-items:flex-start;
-        background:#f8fafc; border-top:1px solid #e5e7eb;
-        padding:14px 14px 16px; margin-top:auto;
+      /* благодарность — завершение экрана */
+      .donate-message{
+        background:#f9fcff; border:1px solid #e2f2ff;
+        border-radius:10px;
+        padding:14px 16px;
+        margin:20px auto 0;
+        max-width:520px;
+        text-align:center;
+        color:#333; font-size:14px; line-height:1.5;
       }
-      .donate-intro .emoji{ font-size:20px; line-height:1; }
-      .donate-intro p{ margin:0; color:#334155; line-height:1.45; }
+      .donate-message::before{
+        content:"✨"; display:block; font-size:20px; margin-bottom:6px;
+      }
     `;
     styleTag = document.createElement('style');
     styleTag.id = 'donate-sheet-styles';
@@ -107,28 +117,27 @@
         <div>Ваше пожертвование является добровольным и не является оплатой товаров или услуг.</div>
       </div>
 
-      <div class="donate-card">
+      <section class="donate-section">
         <h3>Поддержать через Monobank</h3>
         <div class="donate-cta-wrap">
           <a class="donate-cta donate-cta--mono" href="${URL_MONO}" target="_blank" rel="noopener" data-dc="mono">
-            <span>Открыть Monobank</span>
+            Открыть Monobank
           </a>
         </div>
-      </div>
+      </section>
 
-      <div class="donate-card">
+      <section class="donate-section">
         <h3>Поддержать через PayPal</h3>
         <div class="donate-cta-wrap">
           <a class="donate-cta donate-cta--paypal" href="${URL_PAYPAL}" target="_blank" rel="noopener" data-dc="paypal">
-            <span>Открыть PayPal</span>
+            Открыть PayPal
           </a>
         </div>
-      </div>
+      </section>
 
-      <div class="donate-intro">
-        <div class="emoji">✨</div>
-        <p>Каждый донат помогает нам развивать проект MOYAMOVA — добавлять новые функции и словари, 
-        улучшать обучение и сохранять приложение свободным от рекламы. Спасибо за вашу поддержку!</p>
+      <div class="donate-message">
+        Каждый донат помогает нам развивать MOYAMOVA — добавлять новые функции и словари,
+        улучшать обучение и сохранять приложение свободным от рекламы. Спасибо за вашу поддержку!
       </div>
     `;
 
