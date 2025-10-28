@@ -242,3 +242,62 @@ body.menu-open .oc-panel{ transform:translateX(0); }      /* выезжает п
 
 /* iOS + PWA — тут НИЧЕГО НЕ ДОБАВЛЯЕМ, чтобы не возвращать «двойное» safe-bottom
    Кнопки должны быть у самого низа → оставляем поведение из ветки PWA выше. */
+/* =========================
+   БУРГЕР → ПУНКТ "ТЕМА" (ТОГЛ)
+   ========================= */
+.menu-item.theme-toggle{
+  padding:14px 12px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.menu-label{
+  font-weight:600;
+  font-size:15px;
+  color:#333;
+}
+
+.theme-switch{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+}
+.theme-label{
+  font-size:14px;
+  color:#666;
+}
+.switch{
+  position:relative;
+  display:inline-block;
+  width:48px;
+  height:28px;
+}
+.switch input{
+  opacity:0;
+  width:0;
+  height:0;
+}
+.slider{
+  position:absolute;
+  cursor:pointer;
+  top:0; left:0; right:0; bottom:0;
+  background-color:#ccc;
+  border-radius:34px;
+  transition:background-color .25s;
+}
+.slider:before{
+  position:absolute;
+  content:"";
+  height:22px; width:22px;
+  left:3px; bottom:3px;
+  background-color:white;
+  border-radius:50%;
+  transition:transform .25s;
+}
+input:checked + .slider{
+  background-color:var(--burger); /* брендовый цвет при включении */
+}
+input:checked + .slider:before{
+  transform:translateX(20px);
+}
