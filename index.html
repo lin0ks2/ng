@@ -298,6 +298,20 @@
   window.addEventListener('click', firstUserGesture, true);
   window.addEventListener('touchstart', firstUserGesture, true);
 })();
+    // ---- Экспорт/Импорт (резервное копирование)
+const backupButtons = document.querySelectorAll('.backup-btn');
+if (backupButtons.length){
+  backupButtons.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const act = btn.dataset.action;
+      if (act === 'export') {
+        alert('📤 Экспорт данных (заглушка)');
+      } else if (act === 'import') {
+        alert('📥 Импорт данных (заглушка)');
+      }
+    });
+  });
+}
     // Service worker
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
