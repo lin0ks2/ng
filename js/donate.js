@@ -1,25 +1,181 @@
-import { pageTemplate } from './page-template.js';
+// js/donate.js
+// Экран «Поддержать проект» — лист между шапкой и футером (как legal).
 
-export const Donate = {
-  open() {
-    const content = `
-      <p class="note-top">💡 Поддержка проекта помогает нам развиваться, улучшать качество обучения и оставаться без рекламы.</p>
+(function (root) {
+  const MONO_JAR_ID = '56HNLifwyr';                // Monobank Jar
+  const PAYPAL_BUTTON_ID = 'KFBR8BW5ZZTQ4';        // PayPal hosted button
 
-      <div class="donate-blocks">
-        <button class="donate-btn mono" onclick="window.open('https://send.monobank.ua/jar/XXXXXXX')">💳 Поддержать через Monobank</button>
-        <button class="donate-btn paypal" onclick="window.open('https://paypal.me/yourpaypal')">🌍 Поддержать через PayPal</button>
+  const URL_MONO   = `https://send.monobank.ua/jar/${MONO_JAR_ID}`;
+  const URL_PAYPAL = `https://www.paypal.com/donate/?hosted_button_id=${PAYPAL_BUTTON_ID}`;
+
+  let sheet, scroller, styleTag;
+
+  function gaEvent(action, label){
+    try { window.gtag && window.gtag('event', action, { event_category:'donate', event_label: label }); } catch(_){}
+  }
+
+  function ensureSheet(){
+    if (sheet) return;
+
+    const css = `
+      .donate-sheet{
+        position:fixed; left:0; right:0;
+        top:var(--header-h-actual); bottom:var(--footer-h-actual);
+        background:#fff; z-index:1200;
+        display:flex; flex-direction:column;
+        font-family:system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;
+      }
+      .donate-top{
+        display:flex; align-items:center; justify-content:space-between;
+        padding:10px 12px; border-bottom:1px solid #e5e7eb;
+      }
+      .donate-title{ font-weight:700; font-size:18px; }
+      .donate-close{
+        background:transparent; border:0; font-size:20px; cursor:pointer; color:#333;
+        -webkit-appearance:none; appearance:none; outline:none;
+      }
+
+      /* центральная часть листа */
+      .donate-content{
+        position:relative; flex:1 1 auto; overflow:auto; -webkit-overflow-scrolling:touch;
+        padding:14px 12px 20px; color:#111;
+        display:flex; flex-direction:column;
+      }
+
+      /* юр-сноска (вверху, спокойная) */
+      .donate-note{
+        flex:0 0 auto;
+        border-bottom:1px solid #e5e7eb;
+        padding:12px 10px;
+        color:#555; line-height:1.5; font-size:13px; font-weight:500; opacity:.95;
+        display:flex; align-items:center; justify-content:center; gap:8px;
+        text-align:center; background:#fff;
+        max-width:480px; margin:0 auto 14px;
+      }
+      .donate-note .emoji{ font-size:18px; line-height:1; }
+
+      /* карточки донатов — мягкий фон секции, явная иерархия */
+      .donate-section{
+        background:#fafbfc;
+        border-radius:12px;
+        padding:16px;
+        margin:16px 0;
+        border:1px solid #eef1f4;
+      }
+      .donate-section h3{
+        margin:0 0 12px; font-size:16px; line-height:1.35; text-align:center; font-weight:700;
+      }
+      .donate-cta-wrap{ text-align:center; }
+      .donate-cta{
+        display:inline-flex; align-items:center; justify-content:center;
+        padding:12px 16px; border-radius:12px; font-weight:600; cursor:pointer;
+        background:#fff; color:#111; text-decoration:none; border:2px solid;
+        min-width:240px;
+      }
+      .donate-cta--mono   { border-color:#f7c948; }  /* жёлтый контур */
+      .donate-cta--paypal { border-color:#0b57d0; }  /* синий контур */
+      .donate-cta:active{ transform:scale(.98); }
+
+      /* благодарность — завершение экрана */
+      .donate-message{
+        background:#f9fcff; border:1px solid #e2f2ff;
+        border-radius:10px;
+        padding:14px 16px;
+        margin:20px auto 0;
+        max-width:520px;
+        text-align:center;
+        color:#333; font-size:14px; line-height:1.5;
+      }
+      .donate-message::before{
+        content:"✨"; display:block; font-size:20px; margin-bottom:6px;
+      }
+    `;
+    styleTag = document.createElement('style');
+    styleTag.id = 'donate-sheet-styles';
+    styleTag.textContent = css;
+    document.head.appendChild(styleTag);
+
+    sheet = document.createElement('section');
+    sheet.className = 'donate-sheet';
+    sheet.setAttribute('role','dialog');
+    sheet.setAttribute('aria-label','Поддержать проект');
+    sheet.style.display = 'none';
+
+    const top = document.createElement('div');
+    top.className = 'donate-top';
+    top.innerHTML = `
+      <div class="donate-title">Поддержать проект</div>
+      <button class="donate-close" aria-label="Закрыть">✕</button>
+    `;
+    const closeBtn = top.querySelector('.donate-close');
+
+    scroller = document.createElement('div');
+    scroller.className = 'donate-content';
+    scroller.innerHTML = `
+      <div class="donate-note">
+        <div class="emoji">⚖️</div>
+        <div>Ваше пожертвование является добровольным и не является оплатой товаров или услуг.</div>
       </div>
 
-      <hr class="donate-sep">
-      <p class="note-bottom">⚠️ Донаты не являются покупкой и не дают дополнительных функций. Это добровольная поддержка проекта ❤️</p>
+      <section class="donate-section">
+        <h3>Поддержать через Monobank</h3>
+        <div class="donate-cta-wrap">
+          <a class="donate-cta donate-cta--mono" href="${URL_MONO}" target="_blank" rel="noopener" data-dc="mono">
+            Открыть Monobank
+          </a>
+        </div>
+      </section>
+
+      <section class="donate-section">
+        <h3>Поддержать через PayPal</h3>
+        <div class="donate-cta-wrap">
+          <a class="donate-cta donate-cta--paypal" href="${URL_PAYPAL}" target="_blank" rel="noopener" data-dc="paypal">
+            Открыть PayPal
+          </a>
+        </div>
+      </section>
+
+      <div class="donate-message">
+        Каждый донат помогает нам развивать MOYAMOVA — добавлять новые функции и словари,
+        улучшать обучение и сохранять приложение свободным от рекламы. Спасибо за вашу поддержку!
+      </div>
     `;
 
-    const app = document.getElementById('app');
-    app.innerHTML = '';
-    app.appendChild(pageTemplate({
-      title: 'Поддержите проект',
-      content,
-      backAction: () => app.innerHTML = ''
-    }));
+    sheet.appendChild(top);
+    sheet.appendChild(scroller);
+    document.body.appendChild(sheet);
+
+    // GA4 трекинг кликов
+    scroller.addEventListener('click', (e)=>{
+      const link = e.target.closest('[data-dc]');
+      if (link){
+        const kind = link.getAttribute('data-dc');
+        gaEvent('click', kind);
+      }
+    });
+
+    closeBtn.addEventListener('click', close);
+    document.addEventListener('keydown', (e)=>{
+      if (sheet.style.display !== 'none' && e.key === 'Escape') close();
+    }, {capture:true});
   }
-};
+
+  function open(){
+    ensureSheet();
+    if (document.body.classList.contains('menu-open')) {
+      document.body.classList.remove('menu-open');
+      document.querySelector('.oc-root')?.setAttribute('aria-hidden','true');
+    }
+    sheet.style.display = 'flex';
+    gaEvent('open','sheet');
+  }
+
+  function close(){
+    if (!sheet) return;
+    sheet.style.display = 'none';
+    gaEvent('close','sheet');
+  }
+
+  root.Donate = { open, close };
+
+})(window);
