@@ -156,7 +156,15 @@
         if (act === 'home') location.assign('./');
       });
     });
-
+// ---- Тогл темы ----
+const themeToggle = document.getElementById('themeToggle');
+if(themeToggle){
+  themeToggle.addEventListener('change', e=>{
+    const dark = e.target.checked;
+    document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+    // позже добавим сохранение в localStorage и смену цветов
+  });
+}
     // Service worker
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
