@@ -132,7 +132,7 @@ body.menu-open .oc-panel{ transform:translateX(0) }
 
 /* browsers: если был лёгкий сдвиг — оставляем как в базе */
 @media all and (display-mode:browser){
-  .app-footer{ bottom:-4px; }
+  .app-footer{ bottom:0px; }
 }
 
 /* PWA: прижать футер к самому низу, учесть safe-area, убрать нижний бордер */
