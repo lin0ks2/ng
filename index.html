@@ -49,6 +49,7 @@
       </div>
 
       <div class="oc-body">
+
         <!-- Пункт 1: Тема -->
         <div class="menu-item theme-toggle">
           <div class="menu-label">Тема</div>
@@ -91,9 +92,6 @@
         <!-- Пустой отступ -->
         <div class="menu-spacer" aria-hidden="true"></div>
 
-        <!-- Строка версии приложения (внутри oc-body, между секциями) -->
-        <div class="menu-version"><b>Версия:</b> <span id="appVersion">—</span></div>
-
         <!-- Пункт 4: Резервное копирование -->
         <div class="menu-item backup-tools">
           <div class="menu-label">Резервное копирование</div>
@@ -112,7 +110,7 @@
         </div>
       </div>
 
-      <!-- Нижний ряд быстрых действий (прижат к низу панели) -->
+      <!-- Нижний ряд быстрых действий -->
       <div class="actions-row-bottom" role="group" aria-label="Быстрые действия">
         <button class="action-btn" data-action="guide"   aria-label="Инструкция">📘</button>
         <button class="action-btn" data-action="donate"  aria-label="Поддержите проект">💰</button>
@@ -143,7 +141,6 @@
   </footer>
 
   <script>
-    // ——— Измеряем высоты header/footer для «рельс» offcanvas
     function updateHFVars(){
       const h = document.querySelector('.header');
       const f = document.querySelector('.app-footer');
@@ -169,7 +166,6 @@
       ocRoot.setAttribute('aria-hidden','true');
     }
 
-    // ——— Открыть/закрыть по кнопке «три линии»
     if (burger){
       burger.addEventListener('click', (e) => {
         e.preventDefault(); e.stopPropagation();
@@ -177,7 +173,6 @@
       }, { passive:false });
     }
 
-    // ——— Закрытие по overlay / «←» / «✕»
     document.addEventListener('click', (e) => {
       const t = e.target;
       const closeAttr = t.getAttribute && t.getAttribute('data-close');
@@ -185,7 +180,6 @@
     });
     if (overlay) overlay.addEventListener('click', closeMenu);
 
-    // ——— Свайп по панели вправо — закрыть
     (function(){
       let startX = null;
       ocPanel.addEventListener('touchstart', (e)=>{ startX = e.touches[0].clientX; }, {passive:true});
@@ -197,7 +191,6 @@
       });
     })();
 
-    // ——— Edge-свайп от правого края — открыть
     (function(){
       let startX = null, startedAtEdge = false;
       const EDGE = 16;
@@ -215,7 +208,6 @@
       });
     })();
 
-    // ——— Навигация футера (заглушки)
     document.querySelectorAll('.app-footer .nav-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.app-footer .nav-btn').forEach(b => b.classList.remove('active'));
@@ -225,43 +217,46 @@
       });
     });
 
-    // ——— Тогл темы
+    // Тема
     const themeToggle = document.getElementById('themeToggle');
-    if (themeToggle){
+    if(themeToggle){
       themeToggle.addEventListener('change', e=>{
         const dark = e.target.checked;
         document.documentElement.dataset.theme = dark ? 'dark' : 'light';
       });
     }
 
-    // ——— Тогл языка (checked = русский)
+    // Язык
     const langToggle = document.getElementById('langToggle');
-    if (langToggle){
+    if(langToggle){
       langToggle.addEventListener('change', e=>{
         const ru = e.target.checked;
-        document.documentElement.dataset.lang = ru ? 'ru' : 'uk';
+        document.documentElement.dataset.lang = ru ? 'uk' : 'ru';
       });
     }
 
-    // ——— Тогл сложности
+    // Сложность
     const levelToggle = document.getElementById('levelToggle');
-    if (levelToggle){
+    if(levelToggle){
       levelToggle.addEventListener('change', e=>{
         const hard = e.target.checked;
         document.documentElement.dataset.level = hard ? 'hard' : 'normal';
       });
     }
 
-    // ——— Экспорт / Импорт (заглушки)
-    document.querySelectorAll('.backup-btn').forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        const act = btn.dataset.action;
-        if (act === 'export') alert('📤 Экспорт данных (заглушка)');
-        else if (act === 'import') alert('📥 Импорт данных (заглушка)');
+    // Экспорт / Импорт
+    const backupButtons = document.querySelectorAll('.backup-btn');
+    if (backupButtons.length){
+      backupButtons.forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          const act = btn.dataset.action;
+          if (act === 'export') alert('📤 Экспорт данных (заглушка)');
+          else if (act === 'import') alert('📥 Импорт данных (заглушка)');
+        });
       });
-    });
+    }
 
-    // ——— Проверка обновлений (заглушка)
+    // Проверка обновлений
     const btnCheckUpdates = document.getElementById('btnCheckUpdates');
     if (btnCheckUpdates){
       btnCheckUpdates.addEventListener('click', ()=>{
@@ -269,10 +264,10 @@
       });
     }
 
-    // ——— Нижние действия
+    // Нижние действия
     const actionsMap = {
-      guide(){ /* TODO */ },
-      donate(){ /* TODO */ },
+      guide(){ /* TODO: инструкция */ },
+      donate(){ /* TODO: экран доната */ },
       share(){
         const data = { title: 'MOYAMOVA', url: location.href };
         if (navigator.share) navigator.share(data).catch(()=>{});
@@ -281,7 +276,7 @@
           catch { prompt('Скопируйте ссылку:', location.href); }
         }
       },
-      legal(){ /* TODO */ },
+      legal(){ /* TODO: юр страницы */ },
       contact(){ location.href = 'mailto:support@moyamova.app'; }
     };
     document.querySelectorAll('.actions-row-bottom .action-btn').forEach(btn=>{
@@ -292,21 +287,6 @@
       });
     });
 
-    // ——— Версия приложения (из манифеста, с fallback)
-    const APP_VERSION_FALLBACK = '0.1.0';
-    async function setAppVersion(){
-      let v = APP_VERSION_FALLBACK;
-      try{
-        const res = await fetch('./manifest.webmanifest', {cache:'no-store'});
-        const manifest = await res.json();
-        if (manifest && manifest.version) v = manifest.version;
-      }catch(_){}
-      const el = document.getElementById('appVersion');
-      if (el) el.textContent = v;
-    }
-    window.addEventListener('load', setAppVersion);
-
-    // ——— Service worker
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
         navigator.serviceWorker.register('./sw.js').catch(console.warn);
