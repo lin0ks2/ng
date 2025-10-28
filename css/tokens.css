@@ -59,7 +59,7 @@ body.menu-open .burger{ color: var(--footer-fg); transform: scale(1.06); }
   background: var(--footer-bg); color: var(--footer-fg);
   border-top: 1px solid var(--footer-sep);
   border-bottom: 1px solid var(--footer-sep);
-  z-index: 1000; padding-bottom: var(--safe-bottom);
+  z-index: 1000;
   box-shadow: none;
 }
 .app-footer .nav-btn{ display:flex; align-items:center; justify-content:center; margin:0; padding:8px 4px 10px; background:transparent; border:0; color:inherit; font:inherit; cursor:pointer; width:100%; -webkit-appearance:none; appearance:none; outline:none; }
