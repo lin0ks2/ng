@@ -1,4 +1,4 @@
-/* MOYAMOVA — tokens.css (footer icons centered, equal gaps) */
+/* MOYAMOVA — tokens.css (footer icons: passive=*_dark, active=*, hover=*_hover) */
 :root{
   --brand: #1fb6ff;
   --brand-dark: #0ea5e9;
@@ -22,11 +22,11 @@
   --footer-bg: #fff;
   --footer-fg: #333;
   --nav-gap: 12px;
-  --nav-icon-size: 32px; /* размер иконок в футере */
+  --nav-icon-size: 28px;
 }
 
 @media (min-width: 480px){
-  :root{ --title-size: 28px; --logo-size: 48px; --nav-icon-size: 32px; }
+  :root{ --title-size: 28px; --logo-size: 48px; --nav-icon-size: 30px; }
 }
 
 html, body { margin:0; padding:0; }
@@ -60,7 +60,7 @@ body{
 /* Content bottom padding so footer never overlaps */
 .content{ padding:16px; padding-bottom: calc(var(--footer-h) + var(--safe-bottom) + 12px); }
 
-/* Footer nav (5 равных колонок, равные внутренние/крайние отступы) */
+/* Footer nav */
 .app-footer{
   position: fixed;
   left:0; right:0; bottom:0;
@@ -86,15 +86,44 @@ body{
   cursor: pointer;
   width: 100%;
 }
+
+/* Иконки — как фон, чтобы менять версии по состояниям */
 .nav-icon{
   width: var(--nav-icon-size);
   height: var(--nav-icon-size);
-  object-fit: contain;
-  display: block;
-  pointer-events: none;
-  user-select: none;
-  -webkit-user-select: none;
+  display:block;
+  background-repeat:no-repeat;
+  background-position:center;
+  background-size:contain;
+  pointer-events:none;
+  user-select:none;
+  -webkit-user-select:none;
+  transition: filter .15s ease, opacity .15s ease, transform .1s ease;
 }
+
+/* ----- mapping: по умолчанию — PASSIVE (dark) ----- */
+.nav-btn [data-icon="home"]    { background-image:url("./img/home_dark.svg"); }
+.nav-btn [data-icon="book"]    { background-image:url("./img/book_dark.svg"); }
+.nav-btn [data-icon="star"]    { background-image:url("./img/star_dark.svg"); }
+.nav-btn [data-icon="warning"] { background-image:url("./img/warning_dark.svg"); }
+.nav-btn [data-icon="stats"]   { background-image:url("./img/stats_dark.svg"); }
+
+/* ----- HOVER (desktop) → hover версии ----- */
+@media (hover:hover){
+  .nav-btn:hover [data-icon="home"]    { background-image:url("./img/home_hover.svg"); }
+  .nav-btn:hover [data-icon="book"]    { background-image:url("./img/book_hover.svg"); }
+  .nav-btn:hover [data-icon="star"]    { background-image:url("./img/star_hover.svg"); }
+  .nav-btn:hover [data-icon="warning"] { background-image:url("./img/warning_hover.svg"); }
+  .nav-btn:hover [data-icon="stats"]   { background-image:url("./img/stats_hover.svg"); }
+  .nav-btn:hover .nav-icon{ transform: translateY(-1px); }
+}
+
+/* ----- ACTIVE → обычные (яркие) версии ----- */
+.nav-btn.active [data-icon="home"]    { background-image:url("./img/home.svg"); }
+.nav-btn.active [data-icon="book"]    { background-image:url("./img/book.svg"); }
+.nav-btn.active [data-icon="star"]    { background-image:url("./img/star.svg"); }
+.nav-btn.active [data-icon="warning"] { background-image:url("./img/warning.svg"); }
+.nav-btn.active [data-icon="stats"]   { background-image:url("./img/stats.svg"); }
 
 /* ---------- Safari / iOS branch ---------- */
 @supports (-webkit-touch-callout: none){
@@ -109,7 +138,7 @@ body{
 
 /* ---------- PWA (standalone) ---------- */
 @media all and (display-mode: standalone){
-  .app-footer{ bottom: calc(-2 * var(--safe-bottom)); }
+  .app-footer{ bottom: calc(-1 * var(--safe-bottom)); }
 }
 
 /* ---------- Browser (not PWA) ---------- */
