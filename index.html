@@ -36,9 +36,7 @@
     <button id="btnMenu" class="burger" aria-label="Меню">☰</button>
   </header>
 
-  <main id="app" class="content">
-    <!-- Контент появится здесь -->
-  </main>
+  <main id="app" class="content"></main>
 
   <!-- Offcanvas (гамбургер) -->
   <div class="oc-root" aria-hidden="true">
@@ -49,20 +47,23 @@
         <div class="oc-title">Меню</div>
         <button class="oc-close" aria-label="Закрыть" data-close="close">✕</button>
       </div>
+
       <div class="oc-body">
-<!-- Пункт 1: Тема -->
-<div class="menu-item theme-toggle">
-  <div class="menu-label">Тема</div>
-  <div class="theme-switch">
-    <span class="theme-label light" role="img" aria-label="Светлая тема">☀️</span>
-    <label class="switch">
-      <input type="checkbox" id="themeToggle" aria-label="Переключить тему">
-      <span class="slider"></span>
-    </label>
-    <span class="theme-label dark" role="img" aria-label="Тёмная тема">🌙</span>
-  </div>
-</div>
-<!-- Пункт 2: Язык интерфейса -->
+
+        <!-- Пункт 1: Тема -->
+        <div class="menu-item theme-toggle">
+          <div class="menu-label">Тема</div>
+          <div class="theme-switch">
+            <span class="theme-label light" role="img" aria-label="Светлая тема">☀️</span>
+            <label class="switch">
+              <input type="checkbox" id="themeToggle" aria-label="Переключить тему">
+              <span class="slider"></span>
+            </label>
+            <span class="theme-label dark" role="img" aria-label="Тёмная тема">🌙</span>
+          </div>
+        </div>
+
+        <!-- Пункт 2: Язык интерфейса -->
         <div class="menu-item lang-toggle">
           <div class="menu-label">Язык интерфейса</div>
           <div class="lang-switch">
@@ -75,21 +76,23 @@
           </div>
         </div>
 
+        <!-- Пункт 3: Режим сложности -->
+        <div class="menu-item level-toggle">
+          <div class="menu-label">Режим сложности</div>
+          <div class="level-switch">
+            <span class="level-label left" role="img" aria-label="Обычный уровень">🐣</span>
+            <label class="switch">
+              <input type="checkbox" id="levelToggle" aria-label="Переключить уровень сложности">
+              <span class="slider"></span>
+            </label>
+            <span class="level-label right" role="img" aria-label="Сложный уровень">🦅</span>
+          </div>
+        </div>
+
       </div>
     </aside>
   </div>
-<!-- Пункт 3: Режим сложности -->
-<div class="menu-item level-toggle">
-  <div class="menu-label">Режим сложности</div>
-  <div class="level-switch">
-    <span class="level-label left" role="img" aria-label="Обычный уровень">🐣</span>
-    <label class="switch">
-      <input type="checkbox" id="levelToggle" aria-label="Переключить уровень сложности">
-      <span class="slider"></span>
-    </label>
-    <span class="level-label right" role="img" aria-label="Сложный уровень">🦅</span>
-  </div>
-</div>
+
   <!-- Footer nav -->
   <footer class="app-footer" role="navigation" aria-label="Основная навигация">
     <button class="nav-btn active" data-action="home" aria-label="Главная">
@@ -209,6 +212,16 @@
         const ru = e.target.checked;
         document.documentElement.dataset.lang = ru ? 'ru' : 'uk';
         // позже добавим сохранение и обновление интерфейса
+      });
+    }
+
+    // ---- Тогл сложности ----
+    const levelToggle = document.getElementById('levelToggle');
+    if(levelToggle){
+      levelToggle.addEventListener('change', e=>{
+        const hard = e.target.checked;
+        document.documentElement.dataset.level = hard ? 'hard' : 'normal';
+        // позже добавим сохранение и влияние на тренировку
       });
     }
 
