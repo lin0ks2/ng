@@ -46,12 +46,12 @@ body{ font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-ser
 .brand-title{ font-family: 'Montserrat', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif; font-weight:700; font-size:var(--title-size); line-height:1.05; margin:0; }
 
 /* Burger */
-.burger{ font-size:32px; line-height:1; color:var(--burger); background:none; border:1; cursor:pointer; -webkit-appearance:none; appearance:none; outline:none; transition: transform .1s ease, color .12s ease; }
+.burger{ font-size:32px; line-height:1; color:var(--burger); background:none; border:0; cursor:pointer; -webkit-appearance:none; appearance:none; outline:none; transition: transform .1s ease, color .12s ease; }
 body.menu-open .burger{ color: var(--footer-fg); transform: scale(1.06); }
 .burger:active{ transform: scale(1.08); }
 
 /* Контент */
-.content{ padding:16px; padding-bottom: calc(var(--footer-h) + 12px); }
+.content{ padding:16px; padding-bottom: calc(var(--footer-h) + var(--safe-bottom) + 12px); }
 
 /* Footer (фиксирован, не подпрыгивает вообще) */
 .app-footer{
@@ -60,8 +60,8 @@ body.menu-open .burger{ color: var(--footer-fg); transform: scale(1.06); }
   display:grid; grid-template-columns: repeat(5, minmax(0, 1fr));
   column-gap: var(--nav-gap); padding-left: var(--nav-gap); padding-right: var(--nav-gap);
   background: var(--footer-bg); color: var(--footer-fg);
-  border-top: 1px solid var(--footer-sep); border-bottom: 0px solid var(--footer-sep);
-  z-index: 1000;
+  border-top: 1px solid var(--footer-sep); border-bottom: 1px solid var(--footer-sep);
+  z-index: 1000; padding-bottom: var(--safe-bottom);
   box-shadow: 0 -1px 2px rgba(0,0,0,.05);
 }
 .app-footer .nav-btn{ display:flex; align-items:center; justify-content:center; margin:0; padding: 8px 4px 10px; background:transparent; border:0; color:inherit; font:inherit; cursor:pointer; width:100%; -webkit-appearance:none; appearance:none; outline:none; }
@@ -117,7 +117,7 @@ body.menu-open .oc-overlay{ opacity: 1; }
 }
 body.menu-open .oc-panel{ transform: translateX(0); }
 
-.oc-header{ display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-bottom:0px solid #e5e7eb; }
+.oc-header{ display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-bottom:1px solid #e5e7eb; }
 .oc-title{ font-weight:700; text-align:center; flex:1; }
 .oc-back,.oc-close{ background:transparent; border:0; font-size:20px; cursor:pointer; color:#333; -webkit-appearance:none; appearance:none; outline:none; }
 .oc-back{ margin-right:8px; } .oc-close{ margin-left:8px; }
@@ -131,6 +131,6 @@ body.menu-open .oc-panel{ transform: translateX(0); }
 /* Safari/iOS adjustments */
 @supports (-webkit-touch-callout: none){
   .header{ padding-top: max(var(--safe-top), 8px); }
-  .app-footer{ height: calc(var(--footer-h)); padding-bottom: var(--safe-bottom); }
+  .app-footer{ height: calc(var(--footer-h) + var(--safe-bottom)); padding-bottom: var(--safe-bottom); }
 }
 /* PWA — не трогаем в этом патче */
