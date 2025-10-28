@@ -103,8 +103,8 @@ body.menu-open .burger{ color:var(--footer-fg); transform:scale(1.06); } /* пр
   column-gap:var(--nav-gap);                            /* горизонтальный зазор между кнопками */
   padding-left:var(--nav-gap); padding-right:var(--nav-gap); /* поля слева/справа внутри футера */
   background:var(--footer-bg); color:var(--footer-fg); /* фон и цвет иконок/текста */
-  border-top:1px solid var(--footer-sep);              /* линия сверху футера */
-  border-bottom:1px solid var(--footer-sep);           /* линия снизу футера (в PWA мы её отключим) */
+  border-top:1px solid #e5e7eb;                        /* линия сверху футера */
+  border-bottom:1px solid #e5e7eb;                     /* линия снизу футера (в PWA мы её отключим) */
   z-index:1000;                                        /* над контентом */
   padding-bottom:var(--safe-bottom);                   /* отступ под home-бар (в PWA уберём) */
   box-shadow:none;                                     /* тени убраны для чистых стыков */
@@ -242,6 +242,8 @@ body.menu-open .oc-panel{ transform:translateX(0); }      /* выезжает п
 
 /* iOS + PWA — тут НИЧЕГО НЕ ДОБАВЛЯЕМ, чтобы не возвращать «двойное» safe-bottom
    Кнопки должны быть у самого низа → оставляем поведение из ветки PWA выше. */
+
+
 /* =========================
    БУРГЕР → ПУНКТ "ТЕМА" (ТОГЛ)
    ========================= */
@@ -301,6 +303,8 @@ input:checked + .slider{
 input:checked + .slider:before{
   transform:translateX(20px);
 }
+
+
 /* =========================
    БУРГЕР → ПУНКТ "ЯЗЫК ИНТЕРФЕЙСА"
    ========================= */
@@ -349,6 +353,8 @@ input:checked + .slider:before{
 .lang-switch input:checked + .slider:before{
   transform:translateX(20px);
 }
+
+
 /* =========================
    БУРГЕР → ПУНКТ "РЕЖИМ СЛОЖНОСТИ"
    ========================= */
@@ -393,45 +399,29 @@ input:checked + .slider:before{
 .level-switch input:checked + .slider:before{
   transform:translateX(20px);
 }
+
+
 /* =========================
-   БУРГЕР → ПУНКТ "ДЕЙСТВИЯ" (5 КНОПОК)
+   БУРГЕР → НИЖНИЕ 5 КНОПОК (БЕЗ ПОДЛОЖЕК/НАДПИСИ)
    ========================= */
-.menu-item.actions-5{
-  padding:14px 0 8px;                 /* вертикальные поля секции */
-  display:flex; flex-direction:column; gap:8px; /* заголовок + ряд кнопок */
-}
-.actions-row{
+.actions-row-bottom{
+  position:absolute; bottom:0; left:0; right:0;      /* прижаты к самому низу панели */
   display:grid; grid-template-columns:repeat(5,1fr); /* 5 равных колонок */
-  align-items:stretch; justify-items:stretch;
-  border-top:1px solid #e5e7eb;                      /* разделители секции как в меню */
-  border-bottom:1px solid #e5e7eb;
-  background:#fff;
+  background:#fff; border-top:1px solid #e5e7eb;     /* тонкая верхняя линия ряда */
+  z-index:5;
 }
 .action-btn{
-  position:relative;
-  display:grid; place-items:center;                  /* иконка строго по центру */
-  min-height:64px;                                   /* крупная тач-зона (>=44px) */
-  background:transparent; border:0; width:100%;
-  cursor:pointer; -webkit-appearance:none; appearance:none; outline:none;
+  display:flex; align-items:center; justify-content:center;
+  height:60px; font-size:24px;                        /* крупная тач-зона, только эмодзи */
+  background:transparent; border:0; cursor:pointer;
+  -webkit-appearance:none; appearance:none; outline:none;
+  transition:transform .1s ease, color .12s ease;
 }
-.action-btn:not(:last-child){ border-right:1px solid #eef1f4; } /* тонкие вертикальные разделители */
-.action-btn::before{                                    /* «капсула» под эмодзи */
-  content:""; position:absolute; width:44px; height:44px; border-radius:999px;
-  border:1px solid #e8eaee; background:#fff;           /* спокойный нейтральный фон */
-  transition:transform .12s ease, border-color .12s ease, box-shadow .12s ease;
-}
-.action-emoji{
-  position:relative; z-index:1;                        /* эмодзи над «капсулой» */
-  font-size:22px; line-height:1;                       /* баланс с капсулой */
-}
-@media (min-width:420px){ .action-emoji{ font-size:24px; } }
-
-/* hover/active/focus — бренд */
+.action-btn:not(:last-child){ border-right:1px solid #eef1f4; } /* вертикальные разделители */
 @media (hover:hover){
-  .action-btn:hover::before{ border-color:var(--burger); box-shadow:0 0 0 3px color-mix(in srgb, var(--burger) 15%, transparent); }
+  .action-btn:hover{ color:var(--burger); }
 }
-.action-btn:active::before{ transform:scale(.97); }
-.action-btn:focus-visible::before{
-  border-color:var(--burger);
-  box-shadow:0 0 0 3px color-mix(in srgb, var(--burger) 20%, transparent);
-}
+.action-btn:active{ transform:scale(1.08); color:var(--burger); }
+
+/* чтобы содержимое меню не заезжало под нижний ряд */
+.oc-body{ padding-bottom:80px; }
