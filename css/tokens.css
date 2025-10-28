@@ -1,5 +1,9 @@
-/* FIX: correct relative URLs for icons (css/ → ../img) */
-/* MOYAMOVA — tokens.css (footer icons: passive=*_dark, active=*, hover=*_hover) */
+/* MOYAMOVA — tokens.css
+ * Patch: remove gray tap flash, scale icons on active/press, adjust burger active color/scale
+ * - No tap highlight on iOS/Android
+ * - Footer icons: passive=*_dark, hover=*_hover (desktop), active=*.svg
+ * - Active tab and press → icon scales up slightly (no gray flash)
+ */
 :root{
   --brand: #1fb6ff;
   --brand-dark: #0ea5e9;
@@ -21,7 +25,7 @@
   --footer-h: 60px;
   --footer-sep: #e5e7eb;
   --footer-bg: #fff;
-  --footer-fg: #333;
+  --footer-fg: #333;            /* пассивный цвет, также для бургер-актив */
   --nav-gap: 12px;
   --nav-icon-size: 28px;
 }
@@ -31,6 +35,7 @@
 }
 
 html, body { margin:0; padding:0; }
+*{ -webkit-tap-highlight-color: transparent; } /* убираем серый мерцательный хайлайт на iOS/Android */
 body{
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
   background:#fff; color:#111;
@@ -55,8 +60,16 @@ body{
   font-family: 'Montserrat', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
   font-weight:700; font-size:var(--title-size); line-height:1.05; margin:0;
 }
-.burger{ font-size:32px; line-height:1; color:var(--burger); background:none; border:0; cursor:pointer; }
-.burger:active{ color:var(--brand-dark); transform:scale(.98); }
+
+/* Burger */
+.burger{
+  font-size:32px; line-height:1; color:var(--burger);
+  background:none; border:0; cursor:pointer;
+  -webkit-appearance:none; appearance:none; outline: none;
+  transition: transform .1s ease, color .12s ease;
+}
+/* На нажатие — увеличиваем и красим как пассивные иконки из футера */
+.burger:active{ color: var(--footer-fg); transform: scale(1.06); }
 
 /* Content bottom padding so footer never overlaps */
 .content{ padding:16px; padding-bottom: calc(var(--footer-h) + var(--safe-bottom) + 12px); }
@@ -83,9 +96,9 @@ body{
   display:flex; align-items:center; justify-content:center;
   margin:0; padding: 8px 4px 10px;
   background: transparent; border: 0;
-  color: inherit;
-  cursor: pointer;
-  width: 100%;
+  color: inherit; font: inherit;
+  cursor: pointer; width: 100%;
+  -webkit-appearance:none; appearance:none; outline: none;
 }
 
 /* Icon spans with background images */
@@ -99,7 +112,7 @@ body{
   pointer-events:none;
   user-select:none;
   -webkit-user-select:none;
-  transition: filter .15s ease, opacity .15s ease, transform .1s ease;
+  transition: transform .12s ease, opacity .15s ease;
 }
 
 /* ----- mapping: default PASSIVE (dark) ----- */
@@ -119,12 +132,16 @@ body{
   .nav-btn:hover .nav-icon{ transform: translateY(-1px); }
 }
 
-/* ----- ACTIVE → bright versions ----- */
+/* ----- ACTIVE TAB → bright versions + немного крупнее постоянно ----- */
+.nav-btn.active .nav-icon{ transform: scale(1.06); } /* активная вкладка чуть больше всегда */
 .nav-btn.active [data-icon="home"]    { background-image:url("../img/home.svg"); }
 .nav-btn.active [data-icon="book"]    { background-image:url("../img/book.svg"); }
 .nav-btn.active [data-icon="star"]    { background-image:url("../img/star.svg"); }
 .nav-btn.active [data-icon="warning"] { background-image:url("../img/warning.svg"); }
 .nav-btn.active [data-icon="stats"]   { background-image:url("../img/stats.svg"); }
+
+/* ----- PRESS FEEDBACK (без серой заливки) → просто лёгкое увеличение ----- */
+.nav-btn:active .nav-icon{ transform: scale(1.08); } /* на тап ещё +2px ощущение */
 
 /* ---------- Safari / iOS branch ---------- */
 @supports (-webkit-touch-callout: none){
