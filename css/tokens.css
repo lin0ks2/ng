@@ -4,7 +4,6 @@
 /*  PWA отделён в свою ветку и не дублирует safe-area снизу.                   */
 /* ========================================================================== */
 
-
 /* =========================
    БАЗОВЫЕ ПЕРЕМЕННЫЕ (CSS)
    ========================= */
@@ -443,9 +442,7 @@ input:checked + .slider:before{
 }
 
 /* отступ-«прокладка» между секциями меню */
-.menu-spacer{ height:12px; }
-
-/* уже у тебя есть .menu-item.backup-tools {...} и .backup-btn {...} */
+.menu-spacer{ height:48px; }
 
 /* общий стиль «основной кнопки» в меню (как у бэкапа, но центрируется) */
 .primary-btn{
@@ -499,36 +496,7 @@ input:checked + .slider:before{
 /* чтобы содержимое меню не заезжало под нижний ряд */
 .oc-body{ padding-bottom:80px; }
 /* =========================
-   /* =========================
-   ДОСТУПНОСТЬ: ФОКУС И REDUCED MOTION
-   ========================= */
-a:focus-visible,
-button:focus-visible,
-[role="button"]:focus-visible,
-input[type="checkbox"]:focus-visible,
-input[type="radio"]:focus-visible,
-select:focus-visible,
-textarea:focus-visible,
-.nav-btn:focus-visible,
-.burger:focus-visible,
-.oc-close:focus-visible,
-.oc-back:focus-visible,
-.backup-btn:focus-visible,
-.primary-btn:focus-visible {
-  outline: 2px solid var(--brand);
-  outline-offset: 2px;
-  border-radius: 8px;
-}
-
-@media (prefers-reduced-motion: reduce){
-  *{
-    animation: none !important;
-    transition: none !important;
-    scroll-behavior: auto !important;
-  }
-}
-
-/* ОРИЕНТАЦИЯ: ЗАГЛУШКА ДЛЯ LANDSCAPE
+   ОРИЕНТАЦИЯ: ЗАГЛУШКА ДЛЯ LANDSCAPE
    ========================= */
 .orientation-guard{
   position:fixed; inset:0; z-index:1500;        /* поверх всего (выше legal/donate) */
@@ -553,29 +521,86 @@ textarea:focus-visible,
   .orientation-guard{ display:flex; }
   body.landscape-block{ overflow:hidden; touch-action:none; }
 }
-
-
-/* =========================
-   ОРИЕНТАЦИЯ: ЗАГЛУШКА ДЛЯ LANDSCAPE (совместимость с .og-cover/.og-card)
-   ========================= */
-.og-cover{
-  position:fixed; inset:0; z-index:1500;
-  display:none; align-items:center; justify-content:center;
-  padding:calc(16px + var(--safe-top)) 16px calc(16px + var(--safe-bottom));
-  background:#fff;
-  text-align:center; color:#111;
-  font-family:system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;
+.page-screen {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--bg-main);
+  color: var(--text-main);
 }
-.og-card{
-  max-width:520px;
-  border:1px solid #eef1f4; border-radius:14px; background:#fff;
-  padding:16px 14px;
-  box-shadow:none;
+
+.page-header {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-elevated);
 }
-.og-emoji{ font-size:28px; line-height:1; margin-bottom:8px; }
-.og-title{ font-weight:700; font-size:18px; margin:0 0 6px; }
-.og-text{ margin:0; font-size:14px; color:#374151; line-height:1.5; }
-@media (orientation:landscape){
-  .og-cover{ display:flex; }
-  body.landscape-block{ overflow:hidden; touch-action:none; }
+
+.page-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.page-back {
+  font-size: 1.5rem;
+  margin-right: 0.75rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary);
+}
+
+.page-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+.page-footer {
+  border-top: 1px solid var(--border-color);
+  padding: 0.75rem;
+  display: flex;
+  justify-content: center;
+  background: var(--bg-elevated);
+}
+
+.page-close {
+  background: var(--brand-color);
+  color: #fff;
+  border: none;
+  border-radius: 0.6rem;
+  font-weight: 600;
+  padding: 0.6rem 1.4rem;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+.page-close:hover {
+  opacity: 0.8;
+}
+
+/* LEGAL NAV */
+.legal-nav {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  flex-wrap: wrap;
+}
+
+.legal-nav.top {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.legal-nav.bottom {
+  border-top: 1px solid var(--border-color);
+}
+
+.legal-nav button {
+  background: none;
+  border: none;
+  color: var(--brand-color);
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
 }
