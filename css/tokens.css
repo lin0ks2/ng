@@ -442,7 +442,7 @@ input:checked + .slider:before{
 }
 
 /* отступ-«прокладка» между секциями меню */
-.menu-spacer{ height:0px; }
+.menu-spacer{ height:60px; }
 
 /* общий стиль «основной кнопки» в меню (как у бэкапа, но центрируется) */
 .primary-btn{
