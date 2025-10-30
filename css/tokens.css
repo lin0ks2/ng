@@ -528,7 +528,7 @@ textarea:focus-visible,
   }
 }
 
-ОРИЕНТАЦИЯ: ЗАГЛУШКА ДЛЯ LANDSCAPE
+/* ОРИЕНТАЦИЯ: ЗАГЛУШКА ДЛЯ LANDSCAPE
    ========================= */
 .orientation-guard{
   position:fixed; inset:0; z-index:1500;        /* поверх всего (выше legal/donate) */
@@ -551,5 +551,31 @@ textarea:focus-visible,
 /* показываем заглушку и блокируем фон в альбомной ориентации */
 @media (orientation:landscape){
   .orientation-guard{ display:flex; }
+  body.landscape-block{ overflow:hidden; touch-action:none; }
+}
+
+
+/* =========================
+   ОРИЕНТАЦИЯ: ЗАГЛУШКА ДЛЯ LANDSCAPE (совместимость с .og-cover/.og-card)
+   ========================= */
+.og-cover{
+  position:fixed; inset:0; z-index:1500;
+  display:none; align-items:center; justify-content:center;
+  padding:calc(16px + var(--safe-top)) 16px calc(16px + var(--safe-bottom));
+  background:#fff;
+  text-align:center; color:#111;
+  font-family:system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;
+}
+.og-card{
+  max-width:520px;
+  border:1px solid #eef1f4; border-radius:14px; background:#fff;
+  padding:16px 14px;
+  box-shadow:none;
+}
+.og-emoji{ font-size:28px; line-height:1; margin-bottom:8px; }
+.og-title{ font-weight:700; font-size:18px; margin:0 0 6px; }
+.og-text{ margin:0; font-size:14px; color:#374151; line-height:1.5; }
+@media (orientation:landscape){
+  .og-cover{ display:flex; }
   body.landscape-block{ overflow:hidden; touch-action:none; }
 }
