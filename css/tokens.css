@@ -604,3 +604,76 @@ input:checked + .slider:before{
   font-size: 0.95rem;
   cursor: pointer;
 }
+
+/* =========================
+   ROTATE LOCK (ландшафт → блок)
+   ========================= */
+.rotate-lock{
+  position: fixed;
+  z-index: 3000;
+  inset: 0;
+  display: none;                       /* по умолчанию скрыта */
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background:
+    linear-gradient(0deg, rgba(255,255,255,0.92), rgba(255,255,255,0.92));
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  color: #111;
+  text-align: center;
+  pointer-events: none;                /* включим только в landscape */
+}
+
+.rotate-card{
+  max-width: 520px;
+  width: min(92vw, 520px);
+  border: 1px solid rgba(0,0,0,.08);
+  border-radius: 16px;
+  padding: 20px 18px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(0,0,0,.06);
+}
+
+.rotate-emoji{ font-size: 44px; line-height: 1; margin-bottom: 10px; }
+.rotate-title{ font-weight: 700; font-size: 20px; margin-bottom: 6px; }
+.rotate-text{ font-size: 15px; opacity: .85; }
+
+/* Блокировка взаимодействия и показ заглушки только в ландшафте */
+body.landscape .rotate-lock{
+  display: flex;
+  pointer-events: auto;
+}
+
+/* Блокируем фон (скролл/клики) когда показана заглушка */
+body.landscape{
+  overflow: hidden;
+  touch-action: none;
+}
+body.landscape .app-header,
+body.landscape .content,
+body.landscape .app-footer{
+  pointer-events: none;
+}
+
+/* Корректный vh на iOS (используем --vh из JS, см. ниже) */
+.rotate-lock{
+  min-height: calc(var(--vh, 1vh) * 100);
+}
+
+/* === Ветка для Safari (мобильный) — мелкие визуальные правки === */
+@supports (-webkit-touch-callout: none) {
+  body.landscape .rotate-lock{
+    background: rgba(255,255,255,0.94);
+  }
+}
+
+/* === PWA режим: учитываем нижнюю safe-area, не дублируем то, что уже учтено в макете === */
+@media (display-mode: standalone) {
+  .rotate-lock{
+    padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+    padding-top:    calc(24px + env(safe-area-inset-top, 0px));
+    padding-left:   calc(24px + env(safe-area-inset-left, 0px));
+    padding-right:  calc(24px + env(safe-area-inset-right, 0px));
+  }
+}
