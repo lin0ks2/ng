@@ -223,6 +223,44 @@
       });
     });
 
+<script>
+  (function(){
+    // 1) Фикс 100vh на iOS: --vh = 1% от внутренней высоты
+    function setVhUnit(){
+      document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px');
+    }
+
+    // 2) Обновляем класс body.landscape по медиазапросу (надёжно в Safari/Chrome)
+    const mqLandscape = window.matchMedia('(orientation: landscape)');
+    function applyOrientation(){
+      const isLandscape = mqLandscape.matches;
+      document.body.classList.toggle('landscape', isLandscape);
+
+      // Скрываем фон от скринридеров, когда заглушка активна:
+      const app = document.getElementById('app'); // корневой контейнер приложения
+      if (app) app.setAttribute('aria-hidden', isLandscape ? 'true' : 'false');
+
+      // Протягиваем i18n-тексты для заголовка/текста заглушки (если уже загружен I18N)
+      try {
+        if (window.App && App.applyI18nTitles) {
+          App.applyI18nTitles(document.querySelector('.rotate-lock'));
+        }
+      } catch (_) {}
+    }
+
+    // 3) Слушатели
+    try { mqLandscape.addEventListener('change', applyOrientation); }
+    catch(_) { mqLandscape.addListener && mqLandscape.addListener(applyOrientation); } // старые Safari
+
+    window.addEventListener('resize', setVhUnit);
+    window.addEventListener('orientationchange', function(){ setVhUnit(); applyOrientation(); });
+
+    // 4) Первый проход
+    setVhUnit();
+    applyOrientation();
+  })();
+</script>
+    
     // Тема
     const themeToggle = document.getElementById('themeToggle');
     if(themeToggle){
@@ -310,5 +348,17 @@
 
   <!-- Подключаем модуль для юридических страниц -->
   <script type="module" src="./js/legal.js"></script>
+  <!-- Заглушка для альбомной ориентации -->
+<div class="rotate-lock" role="dialog" aria-modal="true" aria-live="polite">
+  <div class="rotate-card">
+    <div class="rotate-emoji" aria-hidden="true">📱</div>
+    <div class="rotate-title" data-title-key="rotateToPortraitTitle" data-title-fallback="Поверните устройство">
+      Поверните устройство
+    </div>
+    <div class="rotate-text" data-title-key="rotateToPortraitText" data-title-fallback="Доступен только портретный режим. Пожалуйста, используйте приложение вертикально.">
+      Доступен только портретный режим. Пожалуйста, используйте приложение вертикально.
+    </div>
+  </div>
+</div>
 </body>
 </html>
