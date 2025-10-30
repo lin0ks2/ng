@@ -4,7 +4,7 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
   <title>MOYAMOVA</title>
-
+  
   <!-- Fonts & CSS -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./css/tokens.css">
@@ -17,12 +17,12 @@
   <link rel="apple-touch-icon" sizes="180x180" href="./img/apple-touch-icon-180x180.png">
 
   <!-- Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXX"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-DZL66KME4H"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){ dataLayer.push(arguments); }
     gtag('js', new Date());
-    gtag('config', 'G-XXXXXXX', { transport_type: 'beacon' });
+    gtag('config', 'G-DZL66KME4H', { transport_type: 'beacon' });
   </script>
 </head>
 <body>
@@ -300,59 +300,7 @@
       });
     });
 
-    
-// === Orientation Guard (phones only, iOS-safe) ===
-(function(){
-  var overlay = document.getElementById('og-overlay');
-  if (!overlay) return;
-
-  var PHONE_SHORT_EDGE_MAX = 768; // при необходимости можно 736
-
-  function isLandscape(){
-    if (typeof window.orientation === 'number') return Math.abs(window.orientation) === 90;
-    if (screen.orientation && typeof screen.orientation.angle === 'number') {
-      return Math.abs(screen.orientation.angle) === 90;
-    }
-    return window.matchMedia('(orientation: landscape)').matches;
-  }
-
-  function viewportShortEdge(){
-    var vw = (window.visualViewport && window.visualViewport.width) || window.innerWidth;
-    var vh = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
-    return Math.min(vw, vh);
-  }
-
-  function isPhoneish(){
-    return viewportShortEdge() < PHONE_SHORT_EDGE_MAX;
-  }
-
-  function freeze(on){
-    document.body.classList.toggle('landscape-block', !!on);
-  }
-
-  function apply(){
-    var show = isLandscape() && isPhoneish();
-    overlay.style.display = show ? 'flex' : 'none';
-    overlay.classList.toggle('show', show);
-    freeze(show);
-  }
-
-  function rafApply(){ requestAnimationFrame(function(){ setTimeout(apply, 120); }); }
-
-  if (document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', rafApply, { once: true });
-  } else { rafApply(); }
-
-  var applyDebounced;
-  function schedule(){ clearTimeout(applyDebounced); applyDebounced = setTimeout(apply, 120); }
-
-  window.addEventListener('resize', schedule, { passive:true });
-  window.addEventListener('orientationchange', function(){ setTimeout(apply, 150); }, { passive:true });
-  if (window.visualViewport){
-    visualViewport.addEventListener('resize', schedule, { passive:true });
-  }
-})();
-// Service worker
+    // Service worker
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
         navigator.serviceWorker.register('./sw.js').catch(console.warn);
@@ -361,15 +309,6 @@
   </script>
 
   <!-- Подключаем модуль для юридических страниц -->
-  
-<!-- ===== Orientation Overlay (внизу body; статичный блок) ===== -->
-<div class="og-cover" id="og-overlay" role="dialog" aria-modal="true" aria-label="Поверните устройство" style="display:none">
-  <div class="og-card" role="document">
-    <div class="og-emoji">📱</div>
-    <p class="og-title">Поверните устройство</p>
-    <p class="og-text">Приложение лучше работает в портретной ориентации.</p>
-  </div>
-</div>
-<script type="module" src="./js/legal.js"></script>
+  <script type="module" src="./js/legal.js"></script>
 </body>
 </html>
