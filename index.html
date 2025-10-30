@@ -301,32 +301,56 @@
     });
 
     
-// === Orientation Guard (phones only) ===
+// === Orientation Guard (phones only, iOS-safe) ===
 (function(){
   var overlay = document.getElementById('og-overlay');
   if (!overlay) return;
+
+  var PHONE_SHORT_EDGE_MAX = 768; // при необходимости можно 736
+
   function isLandscape(){
-    return (window.matchMedia && window.matchMedia('(orientation: landscape)').matches) ||
-           (window.innerWidth > window.innerHeight);
+    if (typeof window.orientation === 'number') return Math.abs(window.orientation) === 90;
+    if (screen.orientation && typeof screen.orientation.angle === 'number') {
+      return Math.abs(screen.orientation.angle) === 90;
+    }
+    return window.matchMedia('(orientation: landscape)').matches;
   }
+
+  function viewportShortEdge(){
+    var vw = (window.visualViewport && window.visualViewport.width) || window.innerWidth;
+    var vh = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
+    return Math.min(vw, vh);
+  }
+
   function isPhoneish(){
-    var shortEdge = Math.min(window.innerWidth, window.innerHeight);
-    return shortEdge < 768;
+    return viewportShortEdge() < PHONE_SHORT_EDGE_MAX;
   }
+
   function freeze(on){
     document.body.classList.toggle('landscape-block', !!on);
   }
+
   function apply(){
     var show = isLandscape() && isPhoneish();
     overlay.style.display = show ? 'flex' : 'none';
     overlay.classList.toggle('show', show);
     freeze(show);
   }
+
+  function rafApply(){ requestAnimationFrame(function(){ setTimeout(apply, 120); }); }
+
   if (document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', apply);
-  } else { apply(); }
-  window.addEventListener('resize', apply, { passive:true });
-  window.addEventListener('orientationchange', function(){ setTimeout(apply, 100); }, { passive:true });
+    document.addEventListener('DOMContentLoaded', rafApply, { once: true });
+  } else { rafApply(); }
+
+  var applyDebounced;
+  function schedule(){ clearTimeout(applyDebounced); applyDebounced = setTimeout(apply, 120); }
+
+  window.addEventListener('resize', schedule, { passive:true });
+  window.addEventListener('orientationchange', function(){ setTimeout(apply, 150); }, { passive:true });
+  if (window.visualViewport){
+    visualViewport.addEventListener('resize', schedule, { passive:true });
+  }
 })();
 // Service worker
     if ('serviceWorker' in navigator) {
@@ -339,7 +363,7 @@
   <!-- Подключаем модуль для юридических страниц -->
   
 <!-- ===== Orientation Overlay (внизу body; статичный блок) ===== -->
-<div class="orientation-guard" id="og-overlay" role="dialog" aria-modal="true" aria-label="Поверните устройство">
+<div class="orientation-guard" id="og-overlay" role="dialog" aria-modal="true" aria-label="Поверните устройство" style="display:none">
   <div class="og-inner" role="document">
     <div class="og-emoji">📱</div>
     <p class="og-title">Поверните устройство</p>
