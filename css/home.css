@@ -1,5 +1,5 @@
 /* ==========================================================
- * home.css — Главная страница
+ * home.css — Главная страница (Сеты, Подсказки, Тренер)
  * ========================================================== */
 
 /* Контейнер между шапкой и футером */
@@ -9,17 +9,15 @@
   overflow:auto;
   -webkit-overflow-scrolling:touch;
   height:calc(var(--vh,1vh)*100 - var(--header-h-actual) - var(--footer-h-actual));
+  padding:8px 0; /* комфортный вертикальный отступ */
 }
 
 .home{
   display:flex;
   flex-direction:column;
   min-height:100%;
+  gap:12px; /* равномерное расстояние между карточками */
 }
-
-/* --- Зоны --- */
-.home-sets, .home-hints{ flex:0 0 auto; margin-bottom:12px; }
-.home-trainer{ margin-top:auto; flex-shrink:0; margin-bottom:12px; }
 
 /* --- Общие карточки --- */
 .home .card{
@@ -35,7 +33,11 @@
   display:flex; align-items:center; justify-content:center; gap:8px;
   margin-bottom:8px;
 }
-.home-sets .sets-title{ font-size:16px; font-weight:700; margin:0; }
+.home-sets .sets-title{ 
+  font-size:16px; 
+  font-weight:700; 
+  margin:0; 
+}
 .home-sets .sets-grid{
   display:grid;
   grid-template-columns:repeat(10,15px);
@@ -83,12 +85,13 @@
   align-items:center;
   justify-content:center;
   position:relative;
+  margin-bottom:4px;
 }
 .home-trainer .trainer-word{
   text-align:center;
   font-weight:700;
   font-size:26px;
-  margin-bottom:6px;
+  margin:0;
 }
 .fav-toggle{
   position:absolute;
@@ -98,16 +101,16 @@
   border:none;
   opacity:.6;
   cursor:pointer;
-  transition:opacity .2s;
+  transition:opacity .2s, transform .15s;
 }
-.fav-toggle:hover{ opacity:1; }
+.fav-toggle:hover{ opacity:1; transform:scale(1.1); }
 .fav-toggle.is-fav{ opacity:1; color:var(--brand); }
 
 .home-trainer .trainer-subtitle{
   text-align:center;
   font-size:14px;
   opacity:.7;
-  margin-bottom:10px;
+  margin:4px 0 10px;
 }
 .home-trainer .answers-grid{
   display:grid;
@@ -144,9 +147,9 @@
   margin-top:6px;
 }
 
-/* Safe-area для PWA */
-@media (display-mode: standalone){
-  .home-trainer{
-    margin-bottom:calc(12px + env(safe-area-inset-bottom,0px));
-  }
+/* --- Адаптивные улучшения --- */
+@media (max-width: 480px){
+  .home-sets .sets-grid{ gap:6px; }
+  .home .card{ padding:10px; border-radius:14px; }
+  .home-trainer .trainer-word{ font-size:22px; }
 }
