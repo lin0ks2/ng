@@ -280,23 +280,14 @@
       });
     }
 
-  // Сложность
-const levelToggle = document.getElementById('levelToggle');
-if (levelToggle) {
-  levelToggle.addEventListener('change', e => {
-    const hard = e.target.checked;
-    // фиксируем в App.Mode и на <html>
-    if (window.App && App.Mode) App.Mode.set(hard ? 'hard' : 'normal');
-    else document.documentElement.dataset.level = hard ? 'hard' : 'normal';
-  });
-
-  // при загрузке подтянуть сохранённый режим
-  try {
-    const m = (window.App && App.Mode && App.Mode.get()) || 'normal';
-    levelToggle.checked = (m === 'hard');
-    document.documentElement.dataset.level = m;
-  } catch(_) {}
-}
+    // Сложность
+    const levelToggle = document.getElementById('levelToggle');
+    if(levelToggle){
+      levelToggle.addEventListener('change', e=>{
+        const hard = e.target.checked;
+        document.documentElement.dataset.level = hard ? 'hard' : 'normal';
+      });
+    }
 
     // Экспорт / Импорт
     document.querySelectorAll('.backup-btn').forEach(btn=>{
