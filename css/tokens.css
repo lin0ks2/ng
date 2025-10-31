@@ -716,3 +716,12 @@ body.landscape .app-footer{
   opacity: .6;                 /* приглушённый текст */
   letter-spacing: .2px;
 }
+/* === Burger: отключаем внутренний скролл === */
+.oc-body {
+  overflow: hidden !important;   /* полностью отключаем прокрутку */
+  -webkit-overflow-scrolling: auto !important;
+}
+
+.oc-panel {
+  overflow: hidden !important;   /* страховка для Chrome/PWA */
+}
