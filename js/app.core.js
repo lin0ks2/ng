@@ -2,7 +2,7 @@
  * Project: MOYAMOVA
  * File: app.core.js
  * Purpose: Инициализация и глобальные константы
- * Version: 1.0
+ * Version: 1.1
  * Last modified: 2025-10-19
 */
 
@@ -376,4 +376,57 @@ try{
       localStorage.removeItem('updateJustApplied');
     }
   } catch (_) {}
+})();
+/* ===== Mode + Stars helpers (извлечено из app.ui.view.js) ===== */
+(function () {
+  window.App = window.App || {};
+  const A = window.App;
+
+  const LS_MODE_KEY = 'lexitron.mode'; // 'normal' | 'hard'
+
+  A.Mode = A.Mode || {
+    get() {
+      try { return (localStorage.getItem(LS_MODE_KEY) === 'hard') ? 'hard' : 'normal'; }
+      catch { return 'normal'; }
+    },
+    set(v) {
+      const val = (v === 'hard') ? 'hard' : 'normal';
+      try { localStorage.setItem(LS_MODE_KEY, val); } catch {}
+      try { document.documentElement.dataset.level = val; } catch {}
+      return val;
+    }
+  };
+
+  A.getStarStep = function getStarStep() {
+    return (A.Mode.get() === 'hard') ? 0.5 : 1.0;
+  };
+
+  A.getReverseThreshold = function getReverseThreshold() {
+    return (A.Mode.get() === 'hard') ? 2.5 : 3.0;
+  };
+
+  A.starsMax = function starsMax() {
+    try { return A.Trainer && A.Trainer.starsMax ? A.Trainer.starsMax() : 5; }
+    catch { return 5; }
+  };
+
+  A.getStars = function getStars(wordId, deckKey) {
+    const k = A.starKey ? A.starKey(wordId, deckKey) : `${deckKey || ''}:${wordId}`;
+    const v = (A.state && A.state.stars && A.state.stars[k]) || 0;
+    return Number.isFinite(v) ? v : 0;
+  };
+
+  A.setStars = function setStars(wordId, deckKey, val) {
+    const max = A.starsMax();
+    const k = A.starKey ? A.starKey(wordId, deckKey) : `${deckKey || ''}:${wordId}`;
+    A.state = A.state || {};
+    A.state.stars = A.state.stars || {};
+    A.state.stars[k] = Math.max(0, Math.min(max, val));
+    try { A.saveState && A.saveState(); } catch {}
+    return A.state.stars[k];
+  };
+
+  A.addStars = function addStars(wordId, deckKey, delta) {
+    return A.setStars(wordId, deckKey, A.getStars(wordId, deckKey) + delta);
+  };
 })();
