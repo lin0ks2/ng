@@ -366,28 +366,29 @@
     }
   </script>
 
-    <!-- === CORE / MAIN APP MODULES === -->
-  <script src="./js/app.core.js" defer></script>
-  <script src="./js/app.decks.js" defer></script>
-  <script src="./js/app.trainer.js" defer></script>
-  <script src="./js/app.favorites.js" defer></script>
-  <script src="./js/app.mistakes.js" defer></script>
-  <script src="./js/app.ui.js" defer></script>
-  <script src="./js/i18n.js" defer></script>
+<!-- CORE + I18N -->
+<script src="./js/app.core.js" defer></script>
+<script src="./js/i18n.js" defer></script>
 
-  <!-- === DICTIONARIES === -->
-  <script src="./js/deck.de.js" defer></script>  <!-- 🇩🇪 Немецкий словарь -->
-  <script src="./js/deck.en.js" defer></script>  <!-- 🇬🇧 Английский словарь -->
+<!-- ИНИЦИАЛИЗАЦИЯ РЕЕСТРА СЛОВАРЕЙ (ОБЯЗАТЕЛЬНО перед deck.*.js) -->
+<script src="./js/dicts.js" defer></script>
 
-  <!-- === FEATURES === -->
-  <script src="./js/donate.js" defer></script>
-  <script src="./js/updates.js" defer></script>
+<!-- ДАННЫЕ СЛОВАРЕЙ -->
+<script src="./js/deck.de.js" defer></script>
+<script src="./js/deck.en.js" defer></script>
 
-  <!-- === MAIN PAGE LOGIC === -->
-  <script src="./js/home.js" defer></script>
+<!-- ЛОГИКА -->
+<script src="./js/app.decks.js" defer></script>
+<script src="./js/app.trainer.js" defer></script>
+<script src="./js/app.favorites.js" defer></script>
+<script src="./js/app.mistakes.js" defer></script>
+<script src="./js/app.ui.js" defer></script>
 
-  <!-- === MODULES === -->
-  <script type="module" src="./js/legal.js"></script>
+<!-- ГЛАВНАЯ -->
+<script src="./js/home.js" defer></script>
+
+<!-- МОДУЛИ -->
+<script type="module" src="./js/legal.js"></script>
   
   <!-- Заглушка для альбомной ориентации -->
 <div class="rotate-lock" role="dialog" aria-modal="true" aria-live="polite">
