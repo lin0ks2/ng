@@ -2,26 +2,25 @@
  * home.css — Главная страница (в фирменном стиле MOYAMOVA)
  * ========================================================== */
 
-#app.content{
-  display:flex;
-  flex-direction:column;
-  overflow:auto;
-  -webkit-overflow-scrolling:touch;
-  height:calc(var(--vh,1vh)*100 - var(--header-h-actual) - var(--footer-h-actual));
-  padding:8px 0;
+/* === Базовая компоновка контента === */
+#app.content {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  height: calc(var(--vh, 1vh) * 100 - var(--header-h-actual) - var(--footer-h-actual));
+  padding: 0;
+  margin: 0;
 }
 
-.home{
-  display:flex;
-  flex-direction:column;
-  min-height:100%;
-  gap:12px;
-  padding:0 10px;
+/* Основной контейнер */
+.home {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 8px 10px 12px;
+  min-height: 100%;
 }
-
-/* ==========================================================
- * home.css — Зоны 1–3 (финальная версия)
- * ========================================================== */
 
 /* === ЗОНА 1: Сеты === */
 .home-sets.card {
@@ -241,7 +240,7 @@
   margin-top: 6px;
 }
 
-/* === Общие карточки и адаптив === */
+/* === Общие карточки и визуальный баланс === */
 .home > .card,
 .home section.card {
   background: #fff;
@@ -249,95 +248,20 @@
   border-radius: 16px;
   box-shadow: 0 2px 8px rgba(0,0,0,.03);
   padding: 14px 12px;
-}
-
-@media (max-width: 480px) {
-  .home .card { padding: 12px; border-radius: 14px; }
-  .home-trainer .trainer-word { font-size: 24px; }
-}
-/* --- Кнопки ответов --- */
-.home-trainer .answers-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-  margin-bottom:10px;
-}
-
-.answer-btn{
-  height:44px;
-  border:0;
-  border-radius:14px;
-  background:var(--brand, #35b6ff);
-  color:#fff;
-  font-weight:700;
-  font-size:15px;
-  letter-spacing:.2px;
-  box-shadow:0 2px 0 rgba(0,0,0,.06);
-  transition:transform .06s ease, filter .15s ease;
-}
-.answer-btn:hover{
-  filter:brightness(1.05);
-}
-.answer-btn:active{
-  transform:translateY(1px);
-}
-
-/* --- Кнопка "Не знаю" --- */
-.btn-ghost.idk-btn{
-  display:block;
-  margin:4px auto 0;
-  height:38px;
-  padding:0 16px;
-  border:1px solid #dfe3e8;
-  border-radius:12px;
-  background:#fff;
-  font-weight:600;
-  color:#444;
-}
-.btn-ghost.idk-btn:hover{
-  border-color:var(--brand, #35b6ff);
-  color:var(--brand, #35b6ff);
-}
-
-/* --- Нижняя статистика --- */
-.dict-stats{
-  font-size:13px;
-  opacity:.7;
-  text-align:center;
-  margin-top:6px;
-}
-
-/* --- Адаптив --- */
-@media (max-width:480px){
-  .home .card{ padding:12px; border-radius:14px; }
-  .home-trainer .trainer-word{ font-size:24px; }
-}
-
-/* === Унификация внешних отступов между зонами === */
-.home {
-  display: flex;
-  flex-direction: column;
-  gap: 12px; /* равный отступ между карточками */
-  padding: 8px 10px 12px; /* сбалансировано под хедер и футер */
-}
-
-.home > .card {
-  margin: 0; /* убираем случайные внешние отступы у зон */
-}
-
-/* Точная настройка верхнего и нижнего пространства */
-#app.content {
-  padding: 0;
   margin: 0;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  height: calc(var(--vh, 1vh) * 100 - var(--header-h-actual) - var(--footer-h-actual));
 }
 
-/* Визуальный баланс для маленьких экранов */
+/* === Адаптив: мобильные экраны === */
 @media (max-width: 480px) {
   .home {
     gap: 10px;
     padding: 6px 8px 10px;
+  }
+  .home .card {
+    padding: 12px;
+    border-radius: 14px;
+  }
+  .home-trainer .trainer-word {
+    font-size: 24px;
   }
 }
