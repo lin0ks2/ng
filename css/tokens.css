@@ -191,7 +191,7 @@ body.menu-open .oc-panel{ transform:translateX(0); }      /* выезжает п
 /* шапка внутри панели (стрелка ←, заголовок «Меню», крестик ✕) */
 .oc-header{
   display:flex; align-items:center; justify-content:space-between; /* стрелка слева, крестик справа, заголовок по центру */
-  padding:10px 12px; border-bottom:1px solid #e5e7eb;              /* внутренние отступы и нижняя линия */
+  padding:4px 8px; border-bottom:1px solid #e5e7eb;              /* внутренние отступы и нижняя линия */
 }
 .oc-title{ font-weight:700; text-align:center; flex:1; }           /* заголовок занимает центр */
 .oc-back,.oc-close{
