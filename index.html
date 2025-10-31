@@ -36,87 +36,7 @@
     <button id="btnMenu" class="burger" aria-label="Меню">☰</button>
   </header>
 
-  <main id="app" class="content">
-<main id="app" class="content">
-  <div class="home" aria-label="Главная страница">
-
-    <!-- ЗОНА 1: Сеты/наборы -->
-    <section class="card home-sets" aria-labelledby="setsTitle">
-      <header class="sets-header">
-        <span class="flag" aria-hidden="true">🇩🇪</span>
-        <h2 class="sets-title" id="setsTitle">Глаголы</h2>
-        <!-- стрелка-указатель места (можно скрыть) -->
-        <span class="sets-caret" aria-hidden="true">▾</span>
-      </header>
-
-      <div class="sets-grid" role="list">
-        <!-- 1..20 просто для визуала -->
-        <button class="set-pill is-done"   role="listitem">1</button>
-        <button class="set-pill is-done"   role="listitem">2</button>
-        <button class="set-pill is-done"   role="listitem">3</button>
-        <button class="set-pill is-done"   role="listitem">4</button>
-        <button class="set-pill is-done"   role="listitem">5</button>
-        <button class="set-pill is-done"   role="listitem">6</button>
-        <button class="set-pill is-done"   role="listitem">7</button>
-        <button class="set-pill is-done"   role="listitem">8</button>
-        <button class="set-pill is-done"   role="listitem">9</button>
-        <button class="set-pill is-active" role="listitem">10</button>
-        <button class="set-pill" role="listitem">11</button>
-        <button class="set-pill" role="listitem">12</button>
-        <button class="set-pill" role="listitem">13</button>
-        <button class="set-pill" role="listitem">14</button>
-        <button class="set-pill" role="listitem">15</button>
-        <button class="set-pill" role="listitem">16</button>
-        <button class="set-pill" role="listitem">17</button>
-        <button class="set-pill" role="listitem">18</button>
-        <button class="set-pill" role="listitem">19</button>
-        <button class="set-pill" role="listitem">20</button>
-      </div>
-
-      <p class="sets-stats" aria-live="polite">
-        Слов в наборе: / Выучено:
-      </p>
-    </section>
-<!-- ЗОНА 2: Подсказки -->
-    <section class="card home-hints" aria-labelledby="hintsTitle">
-      <h4 class="hints-title" id="hintsTitle">Подсказки</h4>
-      <ul class="hints-list">
-        <li>Нажмите на слово, чтобы увидеть примеры (позже).</li>
-        <li>Долгое нажатие — быстрые действия (позже).</li>
-      </ul>
-    </section>
-    <!-- ЗОНА 3: Карточка тренера -->
-    <section class="card home-trainer" aria-labelledby="trainerTitle">
-      <div class="trainer-top">
-        <div class="stars" aria-label="Прогресс">
-          <span class="star is-on">★</span><span class="star is-on">★</span><span class="star is-half">★</span><span class="star">★</span><span class="star">★</span>
-        </div>
-        <button class="fav-btn" id="favToggle" aria-label="Добавить в избранное" aria-pressed="false">
-          <span class="fav-icon" aria-hidden="true">♡</span>
-        </button>
-      </div>
-
-      <h3 class="trainer-word" id="trainerTitle">schützen</h3>
-      <p class="trainer-subtitle">Выберите перевод</p>
-
-      <div class="answers-grid" role="group" aria-label="Варианты ответа">
-        <button class="answer-btn">поставлять</button>
-        <button class="answer-btn">монтировать</button>
-        <button class="answer-btn">защищать</button>
-        <button class="answer-btn">запоминать</button>
-      </div>
-
-      <button class="btn-ghost idk-btn">Не знаю</button>
-
-      <p class="dict-stats" aria-live="polite">
-        Всего слов в словаре: 800 / Выучено: 370
-      </p>
-    </section>
-
-  </div>
-</main>
-    
-  </main>
+  <main id="app" class="content"></main>
 
   <!-- Offcanvas (гамбургер) -->
   <div class="oc-root" aria-hidden="true">
@@ -468,6 +388,7 @@
 
   <!-- === MODULES === -->
   <script type="module" src="./js/legal.js"></script>
+  
   <!-- Заглушка для альбомной ориентации -->
 <div class="rotate-lock" role="dialog" aria-modal="true" aria-live="polite">
   <div class="rotate-card">
