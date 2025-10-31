@@ -677,51 +677,52 @@ body.landscape .app-footer{
     padding-right:  calc(24px + env(safe-area-inset-right, 0px));
   }
 }
+/* ========================================================================== */
+/*  BURGER / OFF-CANVAS — финальный блок                                       */
+/*  - .oc-panel: колонка без внутренних «схлопов»                              */
+/*  - .oc-body: без прокрутки, гибкая колонка, низ прибит через margin-top     */
+/*  - .app-version: приглушённый центрированный текст                          */
+/*  - spacer удалён из потока                                                  */
+/* ========================================================================== */
 
-/* ==========================================================
-   ФИКС: прибиваем нижние пункты меню к низу панели
-   ========================================================== */
-/* === Burger: прибиваем нижние блоки к низу панели (исправление) === */
+/* Корневая панель бургера */
 .oc-panel{
-  /* уже flex-колонка — добавим страховку для Safari, чтобы дети могли скроллиться */
-  min-height: 0;
+  display:flex;
+  flex-direction:column;
+  min-height:0;                 /* важно для Safari: не схлопывать детей */
+  overflow:hidden;              /* отключаем любые внутренние скроллы у панели */
 }
 
+/* Тело панели (зона пунктов) */
 .oc-body{
-  display: flex;
-  flex-direction: column;
-  flex: 1 1 auto;             /* ← критично: даём телу расти и занимать высоту */
-  min-height: 0;              /* ← критично для Safari, чтобы скролл не «схлопывался» */
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  padding-bottom: var(--footer-h, 60px); /* высота нижнего ряда действий (у тебя 60px) */
+  display:flex;
+  flex-direction:column;
+  flex:1 1 auto;                /* тело занимает доступную высоту между хедером и низом */
+  min-height:0;                 /* Safari fix для переполнения */
+  overflow:hidden;              /* скролл полностью отключён по требованию */
+  -webkit-overflow-scrolling:auto;
+  padding-bottom:var(--footer-h, 60px); /* запас под нижний ряд кнопок бургера */
 }
 
-/* прижимаем нижние служебные пункты */
+/* Прибиваем нижние служебные пункты к низу тела */
 .oc-body > .menu-item.backup-tools{
-  margin-top: auto;
+  margin-top:auto;
 }
 
-/* если spacer ещё в DOM — обнулим его влияние безопасно */
-.oc-body > .menu-spacer{ height:0 !important; margin:0 !important; padding:0 !important; }
+/* Если spacer остался в разметке — обнулим влияние (без !important) */
+.oc-body > .menu-spacer{
+  height:0;
+  margin:0;
+  padding:0;
+}
 
-/* === Burger: "Версия приложения" === */
+/* Пункт: «Версия приложения» */
 .menu-item.app-version{
-  text-align: center;
-  padding: 10px 0 14px;
+  text-align:center;
+  padding:10px 0 14px;
 }
-
 .menu-item.app-version .app-version-value{
-  font-size: 0.95rem;
-  opacity: .6;                 /* приглушённый текст */
-  letter-spacing: .2px;
-}
-/* === Burger: отключаем внутренний скролл === */
-.oc-body {
-  overflow: hidden !important;   /* полностью отключаем прокрутку */
-  -webkit-overflow-scrolling: auto !important;
-}
-
-.oc-panel {
-  overflow: hidden !important;   /* страховка для Chrome/PWA */
+  font-size:.95rem;
+  opacity:.6;                   /* приглушённый текст */
+  letter-spacing:.2px;
 }
