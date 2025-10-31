@@ -339,6 +339,18 @@
 
   <!-- === МОДУЛИ === -->
   <script type="module" src="./js/legal.js"></script>
+
+  <script>
+  // Шим: в нашем app.decks.js нет list()/keys(), но есть builtinKeys().
+  (function(){
+    if (window.App && App.Decks) {
+      if (!App.Decks.list && typeof App.Decks.builtinKeys === 'function') {
+        App.Decks.list = App.Decks.builtinKeys;
+      }
+    }
+  })();
+</script>
+  
   <script type="module" src="./js/view.dicts.js"></script>
 
   <!-- Заглушка для альбомной ориентации -->
