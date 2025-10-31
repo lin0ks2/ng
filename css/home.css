@@ -1,22 +1,22 @@
 /* ==========================================================
- * home.css — Главная страница (Сеты, Подсказки, Тренер)
+ * home.css — Главная страница (в фирменном стиле MOYAMOVA)
  * ========================================================== */
 
-/* Контейнер между шапкой и футером */
 #app.content{
   display:flex;
   flex-direction:column;
   overflow:auto;
   -webkit-overflow-scrolling:touch;
   height:calc(var(--vh,1vh)*100 - var(--header-h-actual) - var(--footer-h-actual));
-  padding:8px 0; /* комфортный вертикальный отступ */
+  padding:8px 0;
 }
 
 .home{
   display:flex;
   flex-direction:column;
   min-height:100%;
-  gap:12px; /* равномерное расстояние между карточками */
+  gap:12px;
+  padding:0 10px;
 }
 
 /* --- Общие карточки --- */
@@ -24,9 +24,11 @@
   background:#fff;
   border:1px solid #e9eef3;
   border-radius:16px;
-  padding:12px;
-  box-shadow:0 2px 10px rgba(0,0,0,.03);
+  padding:14px 12px;
+  box-shadow:0 2px 8px rgba(0,0,0,.03);
+  transition: box-shadow .2s ease;
 }
+.home .card:hover{ box-shadow:0 2px 10px rgba(0,0,0,.05); }
 
 /* --- Зона 1: Сеты --- */
 .home-sets .sets-header{
@@ -46,16 +48,19 @@
   margin:6px 0 10px;
 }
 .set-pill{
-  width:15px; height:15px; border-radius:4px;
-  border:1px solid #dfe6ed; background:#f6f9fc;
+  width:15px; height:15px;
+  border-radius:4px;
+  border:1px solid #d8e2eb;
+  background:#f7fafd;
+  transition: all .2s ease;
 }
 .set-pill.is-done{
-  background:color-mix(in srgb, var(--brand) 18%, #f6fffb);
-  border-color:color-mix(in srgb, var(--brand) 35%, #dfe6ed);
+  background: var(--brand-tint, #d5f3ff);
+  border-color: var(--brand, #35b6ff);
 }
 .set-pill.is-active{
   background:#fff;
-  border-color:var(--brand);
+  border-color: var(--brand, #35b6ff);
   box-shadow:0 0 0 2px color-mix(in srgb, var(--brand) 25%, transparent);
 }
 .sets-stats{
@@ -74,37 +79,48 @@
 }
 .home-hints .hints-body{
   min-height:2.6em;
-  opacity:.65;
-  font-size:13px;
-  line-height:1.3;
-}
-
-/* --- Зона 3: Тренер --- */
-.home-trainer .trainer-header{
   display:flex;
   align-items:center;
   justify-content:center;
-  position:relative;
-  margin-bottom:4px;
-}
-.home-trainer .trainer-word{
   text-align:center;
-  font-weight:700;
-  font-size:26px;
-  margin:0;
+  opacity:.75;
+  font-size:13px;
+  line-height:1.4;
 }
+
+/* --- Зона 3: Тренер --- */
+.home-trainer .trainer-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:6px;
+}
+.stars{
+  display:flex;
+  gap:2px;
+  color: var(--brand, #35b6ff);
+  font-size:18px;
+}
+.star.is-on{ opacity:1; }
+.star{ opacity:.25; }
+
 .fav-toggle{
-  position:absolute;
-  left:4px; top:0;
   font-size:18px;
   background:none;
   border:none;
-  opacity:.6;
+  color:#ccc;
   cursor:pointer;
-  transition:opacity .2s, transform .15s;
+  transition:color .2s, transform .15s;
 }
-.fav-toggle:hover{ opacity:1; transform:scale(1.1); }
-.fav-toggle.is-fav{ opacity:1; color:var(--brand); }
+.fav-toggle:hover{ color:var(--brand, #35b6ff); transform:scale(1.1); }
+.fav-toggle.is-fav{ color:var(--brand, #35b6ff); }
+
+.home-trainer .trainer-word{
+  text-align:center;
+  font-weight:700;
+  font-size:28px;
+  margin:4px 0 2px;
+}
 
 .home-trainer .trainer-subtitle{
   text-align:center;
@@ -112,34 +128,52 @@
   opacity:.7;
   margin:4px 0 10px;
 }
+
+/* --- Кнопки ответов --- */
 .home-trainer .answers-grid{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:10px;
   margin-bottom:10px;
 }
+
 .answer-btn{
   height:44px;
+  border:0;
   border-radius:14px;
-  border:1px solid #ccc;
-  background:#fff;
-  font-weight:600;
-  font-size:14px;
-  cursor:pointer;
+  background:var(--brand, #35b6ff);
+  color:#fff;
+  font-weight:700;
+  font-size:15px;
+  letter-spacing:.2px;
+  box-shadow:0 2px 0 rgba(0,0,0,.06);
+  transition:transform .06s ease, filter .15s ease;
 }
 .answer-btn:hover{
-  background:#f6f8fa;
+  filter:brightness(1.05);
 }
+.answer-btn:active{
+  transform:translateY(1px);
+}
+
+/* --- Кнопка "Не знаю" --- */
 .btn-ghost.idk-btn{
   display:block;
-  margin:0 auto;
+  margin:4px auto 0;
   height:38px;
-  border:1px solid #ddd;
-  border-radius:10px;
-  background:#fff;
   padding:0 16px;
-  cursor:pointer;
+  border:1px solid #dfe3e8;
+  border-radius:12px;
+  background:#fff;
+  font-weight:600;
+  color:#444;
 }
+.btn-ghost.idk-btn:hover{
+  border-color:var(--brand, #35b6ff);
+  color:var(--brand, #35b6ff);
+}
+
+/* --- Нижняя статистика --- */
 .dict-stats{
   font-size:13px;
   opacity:.7;
@@ -147,9 +181,8 @@
   margin-top:6px;
 }
 
-/* --- Адаптивные улучшения --- */
-@media (max-width: 480px){
-  .home-sets .sets-grid{ gap:6px; }
-  .home .card{ padding:10px; border-radius:14px; }
-  .home-trainer .trainer-word{ font-size:22px; }
+/* --- Адаптив --- */
+@media (max-width:480px){
+  .home .card{ padding:12px; border-radius:14px; }
+  .home-trainer .trainer-word{ font-size:24px; }
 }
