@@ -677,3 +677,20 @@ body.landscape .app-footer{
     padding-right:  calc(24px + env(safe-area-inset-right, 0px));
   }
 }
+
+/* ==========================================================
+   ФИКС: прибиваем нижние пункты меню к низу панели
+   ========================================================== */
+.oc-body {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  /* если actions-row-bottom остаётся абсолютным —
+     добавим безопасный отступ снизу (истинная высота ряда) */
+  padding-bottom: var(--footer-h, 60px);
+}
+
+.menu-item.backup-tools {
+  margin-top: auto; /* прибивает этот блок к низу .oc-body */
+}
