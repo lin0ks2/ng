@@ -265,3 +265,34 @@
     font-size: 24px;
   }
 }
+/* === Подсветка кнопок ответов (правильно / неправильно) === */
+
+.answer-btn.correct {
+  background: #3ecf7a;           /* зелёный — верно */
+  border-color: #36b86b;
+  color: #fff;
+  box-shadow: 0 0 0 2px rgba(62,207,122,0.25);
+}
+
+.answer-btn.wrong {
+  background: #ff5b5b;           /* красный — ошибка */
+  border-color: #e64a4a;
+  color: #fff;
+  box-shadow: 0 0 0 2px rgba(255,91,91,0.25);
+}
+
+.answer-btn.correct:active,
+.answer-btn.wrong:active {
+  transform: translateY(1px);
+  filter: brightness(0.95);
+}
+
+/* плавное переключение между состояниями */
+.answer-btn {
+  transition:
+    transform 0.06s ease,
+    filter 0.15s ease,
+    background 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
