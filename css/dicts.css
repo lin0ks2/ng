@@ -1,0 +1,115 @@
+/* ==========================================================
+ * dicts.css — Экран «Словари» (MOYAMOVA)
+ * ========================================================== */
+
+.dicts {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 8px 10px 12px;
+}
+
+/* Панель табов (языки) */
+.dicts-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  position: sticky;
+  top: calc(var(--header-h-actual, 56px) + 0px);
+  z-index: 1;
+}
+
+.dicts-tab {
+  appearance: none;
+  border: 1px solid #e0e7ef;
+  background: #fff;
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-weight: 700;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: box-shadow .15s ease, border-color .15s ease, background .15s ease;
+}
+.dicts-tab .flag { font-size: 16px; line-height: 1; }
+.dicts-tab.active {
+  border-color: var(--brand, #35b6ff);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--brand) 20%, transparent);
+}
+
+/* Карточка-контейнер списка словарей */
+.dicts-card {
+  background: #fff;
+  border: 1px solid #e9eef3;
+  border-radius: 16px;
+  padding: 14px 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.03);
+}
+
+/* Таблица словарей */
+.dicts-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.dicts-table thead th {
+  text-align: left;
+  font-size: 12px;
+  font-weight: 700;
+  opacity: .7;
+  padding: 8px 6px;
+  border-bottom: 1px solid #eef3f7;
+}
+
+.dicts-table tbody td {
+  padding: 10px 6px;
+  border-bottom: 1px solid #f2f5f9;
+  vertical-align: middle;
+}
+
+.dicts-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+}
+.dicts-name .flag { font-size: 18px; line-height: 1; }
+
+.dicts-count {
+  font-size: 13px;
+  opacity: .8;
+}
+
+.dicts-preview-btn {
+  height: 34px;
+  padding: 0 12px;
+  border: 1px solid #dfe3e8;
+  border-radius: 10px;
+  background: #fff;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color .15s ease, color .15s ease;
+}
+.dicts-preview-btn:hover {
+  border-color: var(--brand, #35b6ff);
+  color: var(--brand, #35b6ff);
+}
+
+/* Пустое состояние */
+.dicts-empty {
+  text-align: center;
+  font-size: 13px;
+  opacity: .7;
+  padding: 16px 6px;
+}
+
+/* Адаптив */
+@media (max-width: 520px) {
+  .dicts-table thead { display: none; }
+  .dicts-table tr { display: grid; grid-template-columns: 1fr auto; row-gap: 4px; padding: 8px 0; }
+  .dicts-table tbody td { border: 0; padding: 4px 6px; }
+  .dicts-count { text-align: right; }
+}
