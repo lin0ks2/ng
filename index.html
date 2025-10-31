@@ -207,19 +207,24 @@
       });
     })();
 
-    // Навигация футера — без перезагрузки
-    document.querySelectorAll('.app-footer .nav-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.app-footer .nav-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        const act = btn.getAttribute('data-action');
-        if (act === 'home') {
-          try { window.App && App.Home && App.Home.mount && App.Home.mount(); } catch(_){}
-        }
-        // дальше добавим dicts/fav/mistakes по мере готовности экранов
-      });
-    });
+  // Навигация футера — без перезагрузки
+  document.querySelectorAll('.app-footer .nav-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.app-footer .nav-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
 
+      const act = btn.getAttribute('data-action');
+      try {
+        if (act === 'home') {
+          App?.Home?.mount && App.Home.mount();
+        } else if (act === 'dicts') {
+          App?.Views?.DictList?.init && App.Views.DictList.init();
+        }
+        // fav, mistakes, stats — подключим позже их экраны
+      } catch(_) {}
+    });
+  });
+    
     // iOS 100vh фиксы + портретная заглушка
     (function(){
       function setVhUnit(){ document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px'); }
