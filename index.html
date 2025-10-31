@@ -99,7 +99,7 @@
           </div>
         </div>
 
-                <!-- Пункт 5: Обновления -->
+        <!-- Пункт 5: Обновления -->
         <div class="menu-item updates-check">
           <div class="menu-label">Обновления</div>
           <div class="updates-row">
@@ -112,7 +112,7 @@
           <div class="menu-label">Версия приложения</div>
           <div class="app-version-value" id="appVersion">—</div>
         </div>
-      </div> <!-- конец .oc-body -->
+      </div>
 
       <!-- Нижний ряд быстрых действий -->
       <div class="actions-row-bottom" role="group" aria-label="Быстрые действия">
@@ -144,9 +144,9 @@
     </button>
   </footer>
 
-  <!-- Логика -->
+  <!-- Локальная логика страницы -->
   <script>
-    // Высоты header/footer для offcanvas
+    // Высоты header/footer для offcanvas и #app.content
     function updateHFVars(){
       const h = document.querySelector('.header');
       const f = document.querySelector('.app-footer');
@@ -162,17 +162,9 @@
     const ocPanel = document.querySelector('.oc-panel');
     const overlay = document.querySelector('.oc-overlay');
 
-    function openMenu(){
-      document.body.classList.add('menu-open');
-      ocRoot.setAttribute('aria-hidden','false');
-      updateHFVars();
-    }
-    function closeMenu(){
-      document.body.classList.remove('menu-open');
-      ocRoot.setAttribute('aria-hidden','true');
-    }
+    function openMenu(){ document.body.classList.add('menu-open'); ocRoot.setAttribute('aria-hidden','false'); updateHFVars(); }
+    function closeMenu(){ document.body.classList.remove('menu-open'); ocRoot.setAttribute('aria-hidden','true'); }
 
-    // Клик по бургеру
     if (burger){
       burger.addEventListener('click', (e) => {
         e.preventDefault(); e.stopPropagation();
@@ -180,7 +172,6 @@
       }, { passive:false });
     }
 
-    // Закрытие меню
     document.addEventListener('click', (e) => {
       const t = e.target;
       const closeAttr = t.getAttribute && t.getAttribute('data-close');
@@ -188,7 +179,7 @@
     });
     if (overlay) overlay.addEventListener('click', closeMenu);
 
-    // Свайп вправо — закрыть
+    // свайпы
     (function(){
       let startX = null;
       ocPanel.addEventListener('touchstart', (e)=>{ startX = e.touches[0].clientX; }, {passive:true});
@@ -199,8 +190,6 @@
         startX = null;
       });
     })();
-
-    // Edge-свайп от края — открыть
     (function(){
       let startX = null, startedAtEdge = false;
       const EDGE = 16;
@@ -218,80 +207,46 @@
       });
     })();
 
-    // Навигация футера
+    // Навигация футера — без перезагрузки
     document.querySelectorAll('.app-footer .nav-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.app-footer .nav-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         const act = btn.getAttribute('data-action');
-        if (act === 'home') location.assign('./');
+        if (act === 'home') {
+          try { window.App && App.Home && App.Home.mount && App.Home.mount(); } catch(_){}
+        }
+        // дальше добавим dicts/fav/mistakes по мере готовности экранов
       });
     });
 
-  (function(){
-    // 1) Фикс 100vh на iOS: --vh = 1% от внутренней высоты
-    function setVhUnit(){
-      document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px');
-    }
+    // iOS 100vh фиксы + портретная заглушка
+    (function(){
+      function setVhUnit(){ document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px'); }
+      const mqLandscape = window.matchMedia('(orientation: landscape)');
+      function applyOrientation(){
+        const isLandscape = mqLandscape.matches;
+        document.body.classList.toggle('landscape', isLandscape);
+        const app = document.getElementById('app');
+        if (app) app.setAttribute('aria-hidden', isLandscape ? 'true' : 'false');
+        try { if (window.App && App.applyI18nTitles) { App.applyI18nTitles(document.querySelector('.rotate-lock')); } } catch (_) {}
+      }
+      try { mqLandscape.addEventListener('change', applyOrientation); }
+      catch(_) { mqLandscape.addListener && mqLandscape.addListener(applyOrientation); }
+      window.addEventListener('resize', setVhUnit);
+      window.addEventListener('orientationchange', function(){ setVhUnit(); applyOrientation(); });
+      setVhUnit(); applyOrientation();
+    })();
 
-    // 2) Обновляем класс body.landscape по медиазапросу (надёжно в Safari/Chrome)
-    const mqLandscape = window.matchMedia('(orientation: landscape)');
-    function applyOrientation(){
-      const isLandscape = mqLandscape.matches;
-      document.body.classList.toggle('landscape', isLandscape);
-
-      // Скрываем фон от скринридеров, когда заглушка активна:
-      const app = document.getElementById('app'); // корневой контейнер приложения
-      if (app) app.setAttribute('aria-hidden', isLandscape ? 'true' : 'false');
-
-      // Протягиваем i18n-тексты для заголовка/текста заглушки (если уже загружен I18N)
-      try {
-        if (window.App && App.applyI18nTitles) {
-          App.applyI18nTitles(document.querySelector('.rotate-lock'));
-        }
-      } catch (_) {}
-    }
-
-    // 3) Слушатели
-    try { mqLandscape.addEventListener('change', applyOrientation); }
-    catch(_) { mqLandscape.addListener && mqLandscape.addListener(applyOrientation); } // старые Safari
-
-    window.addEventListener('resize', setVhUnit);
-    window.addEventListener('orientationchange', function(){ setVhUnit(); applyOrientation(); });
-
-    // 4) Первый проход
-    setVhUnit();
-    applyOrientation();
-  })();
-    
-    // Тема
+    // Тема / язык / сложность — как было
     const themeToggle = document.getElementById('themeToggle');
-    if(themeToggle){
-      themeToggle.addEventListener('change', e=>{
-        const dark = e.target.checked;
-        document.documentElement.dataset.theme = dark ? 'dark' : 'light';
-      });
-    }
-
-    // Язык
+    if(themeToggle){ themeToggle.addEventListener('change', e=>{ document.documentElement.dataset.theme = e.target.checked ? 'dark' : 'light'; }); }
     const langToggle = document.getElementById('langToggle');
-    if(langToggle){
-      langToggle.addEventListener('change', e=>{
-        const ru = e.target.checked;
-        document.documentElement.dataset.lang = ru ? 'ru' : 'uk';
-      });
-    }
-
-    // Сложность
+    if(langToggle){ langToggle.addEventListener('change', e=>{ document.documentElement.dataset.lang = e.target.checked ? 'ru' : 'uk'; }); }
     const levelToggle = document.getElementById('levelToggle');
-    if(levelToggle){
-      levelToggle.addEventListener('change', e=>{
-        const hard = e.target.checked;
-        document.documentElement.dataset.level = hard ? 'hard' : 'normal';
-      });
-    }
+    if(levelToggle){ levelToggle.addEventListener('change', e=>{ document.documentElement.dataset.level = e.target.checked ? 'hard' : 'normal'; }); }
 
-    // Экспорт / Импорт
+    // Экспорт / Импорт (заглушки)
     document.querySelectorAll('.backup-btn').forEach(btn=>{
       btn.addEventListener('click', ()=>{
         const act = btn.dataset.action;
@@ -300,58 +255,46 @@
       });
     });
 
-    // Проверка обновлений
+    // Проверка обновлений (заглушка)
     const btnCheckUpdates = document.getElementById('btnCheckUpdates');
-    if(btnCheckUpdates){
-      btnCheckUpdates.addEventListener('click', ()=>{
-        alert('Проверка обновлений (заглушка)');
-      });
-    }
-// Версия приложения (источник: app.core.js → App.APP_VER)
-(function(){
-  function renderVersion(){
-    var el = document.getElementById('appVersion');
-    if (!el) return;
-    var v = (window.App && App.APP_VER) || null;
-    if (v) el.textContent = v;
-  }
+    if(btnCheckUpdates){ btnCheckUpdates.addEventListener('click', ()=>{ alert('Проверка обновлений (заглушка)'); }); }
 
-  if (!(window.App && App.APP_VER)) {
-    // ядро ещё не загружено на этой странице — подгружаем лениво
-    var s = document.createElement('script');
-    s.src = './js/app.core.js';
-    s.onload = renderVersion;
-    s.onerror = function(){ /* тихо игнорируем, оставим "—" */ };
-    document.head.appendChild(s);
-  } else {
-    renderVersion();
-  }
-})();
-    // Нижние действия
+    // Версия приложения (app.core.js → App.APP_VER)
+    (function(){
+      function renderVersion(){
+        var el = document.getElementById('appVersion');
+        if (!el) return;
+        var v = (window.App && App.APP_VER) || null;
+        if (v) el.textContent = v;
+      }
+      if (!(window.App && App.APP_VER)) {
+        var s = document.createElement('script');
+        s.src = './js/app.core.js';
+        s.onload = renderVersion;
+        s.onerror = function(){};
+        document.head.appendChild(s);
+      } else { renderVersion(); }
+    })();
+
+    // Actions внизу
     const actionsMap = {
-      guide(){ /* TODO: инструкция */ },
+      guide(){ /* TODO */ },
       donate(){
-  if (!window.Donate) {
-    const s = document.createElement('script');
-    s.src = './js/donate.js';
-    s.onload = () => window.Donate?.open();
-    document.head.appendChild(s);
-  } else {
-    window.Donate.open();
-  }
-},
+        if (!window.Donate) {
+          const s = document.createElement('script');
+          s.src = './js/donate.js';
+          s.onload = () => window.Donate?.open();
+          document.head.appendChild(s);
+        } else { window.Donate.open(); }
+      },
       share(){
         const data = { title: 'MOYAMOVA', url: location.href };
         if (navigator.share) navigator.share(data).catch(()=>{});
-        else {
-          try { navigator.clipboard.writeText(location.href); alert('Ссылка скопирована'); }
-          catch { prompt('Скопируйте ссылку:', location.href); }
-        }
+        else { try { navigator.clipboard.writeText(location.href); alert('Ссылка скопирована'); } catch { prompt('Скопируйте ссылку:', location.href); } }
       },
       legal(){ import('./js/legal.js').then(m => m.Legal.open('terms')).catch(console.warn); },
       contact(){ location.href = 'mailto:support@moyamova.app'; }
     };
-
     document.querySelectorAll('.actions-row-bottom .action-btn').forEach(btn=>{
       btn.addEventListener('click', ()=>{
         const act = btn.dataset.action;
@@ -368,43 +311,42 @@
     }
   </script>
 
-<!-- CORE + I18N -->
-<script src="./js/app.core.js" defer></script>
-<script src="./js/i18n.js" defer></script>
+  <!-- === CORE + I18N === -->
+  <script src="./js/app.core.js" defer></script>
+  <script src="./js/i18n.js" defer></script>
 
-<!-- ИНИЦИАЛИЗАЦИЯ РЕЕСТРА СЛОВАРЕЙ (ОБЯЗАТЕЛЬНО перед deck.*.js) -->
-<script src="./js/dicts.js" defer></script>
+  <!-- === РЕЕСТР СЛОВАРЕЙ (должен быть ДО deck.*.js) === -->
+  <script src="./js/dicts.js" defer></script>
 
-<!-- ДАННЫЕ СЛОВАРЕЙ -->
-<script src="./js/deck.de.js" defer></script>
-<script src="./js/deck.en.js" defer></script>
+  <!-- === ДАННЫЕ СЛОВАРЕЙ === -->
+  <script src="./js/deck.de.js" defer></script>
+  <script src="./js/deck.en.js" defer></script>
 
-<!-- ЛОГИКА -->
-<script src="./js/app.decks.js" defer></script>
-<script src="./js/app.trainer.js" defer></script>
-<script src="./js/app.favorites.js" defer></script>
-<script src="./js/app.mistakes.js" defer></script>
-<script src="./js/app.ui.js" defer></script>
+  <!-- === ЛОГИКА === -->
+  <script src="./js/app.decks.js" defer></script>
+  <script src="./js/app.trainer.js" defer></script>
+  <script src="./js/app.favorites.js" defer></script>
+  <script src="./js/app.mistakes.js" defer></script>
+  <script src="./js/app.ui.js" defer></script>
 
-<!-- ГЛАВНАЯ -->
-<script src="./js/home.js" defer></script>
+  <!-- === ГЛАВНАЯ === -->
+  <script src="./js/home.js" defer></script>
 
-<!-- МОДУЛИ -->
-<script type="module" src="./js/legal.js"></script>
-<!-- модуль "Словари" -->
-<script type="module" src="./js/view.dicts.js"></script>
-  
-<!-- Заглушка для альбомной ориентации -->
-<div class="rotate-lock" role="dialog" aria-modal="true" aria-live="polite">
-  <div class="rotate-card">
-    <div class="rotate-emoji" aria-hidden="true">📱</div>
-    <div class="rotate-title" data-title-key="rotateToPortraitTitle" data-title-fallback="Поверните устройство">
-      Поверните устройство
-    </div>
-    <div class="rotate-text" data-title-key="rotateToPortraitText" data-title-fallback="Доступен только портретный режим. Пожалуйста, используйте приложение вертикально.">
-      Доступен только портретный режим. Пожалуйста, используйте приложение вертикально.
+  <!-- === МОДУЛИ === -->
+  <script type="module" src="./js/legal.js"></script>
+  <script type="module" src="./js/view.dicts.js"></script>
+
+  <!-- Заглушка для альбомной ориентации -->
+  <div class="rotate-lock" role="dialog" aria-modal="true" aria-live="polite">
+    <div class="rotate-card">
+      <div class="rotate-emoji" aria-hidden="true">📱</div>
+      <div class="rotate-title" data-title-key="rotateToPortraitTitle" data-title-fallback="Поверните устройство">
+        Поверните устройство
+      </div>
+      <div class="rotate-text" data-title-key="rotateToPortraitText" data-title-fallback="Доступен только портретный режим. Пожалуйста, используйте приложение вертикально.">
+        Доступен только портретный режим. Пожалуйста, используйте приложение вертикально.
+      </div>
     </div>
   </div>
-</div>
 </body>
 </html>
