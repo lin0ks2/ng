@@ -1,301 +1,149 @@
 /* ==========================================================
- * home.js — главная: сеты, тренер, статистика, избранное, ошибки
- * Источник данных — window.App.*   (core, decks, trainer, favorites, mistakes)
- * Никаких дублей ключей: используем существующие методы/хранилища
+ * home.js — Главная: Сеты + Подсказки + Тренер
  * ========================================================== */
 (function(){
   'use strict';
   const A = (window.App = window.App || {});
-  const SET_SIZE = 40;
+  const ACTIVE_KEY = 'de_verbs';
+  const SET_SIZE   = A.Config?.setSizeDefault || 40;
 
-  // ---------- helpers ----------
-  const starsMax = ()=> { try{ return A.Trainer && A.Trainer.starsMax ? A.Trainer.starsMax() : 5; }catch(_){ return 5; } };
-  const uiLang   = ()=> { try{ return (A.settings && (A.settings.uiLang || A.settings.lang)) || 'ru'; }catch(_){ return 'ru'; } };
-
-  function saveState(){ try{ A.saveState && A.saveState(); }catch(_){} }
-  function saveFavorites(){ try{ A.Favorites && A.Favorites.save && A.Favorites.save(); }catch(_){} }
-
-  function starKey(dictKey, id){
-    try{ return A.starKey ? A.starKey(id, dictKey) : (dictKey + '#' + id); }
-    catch(_){ return dictKey + '#' + id; }
-  }
-  function starOf(dictKey, id){
-    try{ return (A.state && A.state.stars && (A.state.stars[starKey(dictKey,id)]|0)) || 0; } catch(_){ return 0; }
-  }
-  function incStar(dictKey, id){
-    try{
-      A.state = A.state || {};
-      A.state.stars = A.state.stars || {};
-      const k = starKey(dictKey,id);
-      A.state.stars[k] = Math.min((A.state.stars[k]|0)+1, starsMax());
-      saveState();
-    }catch(_){}
-  }
-
-  function isFav(dictKey, id){
-    try{ return !!(A.Favorites && A.Favorites.isFav && A.Favorites.isFav(uiLang(), dictKey, id)); }catch(_){ return false; }
-  }
-  function toggleFav(dictKey, id){
-    try{
-      if (A.Favorites && A.Favorites.toggle) A.Favorites.toggle(uiLang(), dictKey, id);
-      else if (A.Favorites && A.Favorites.set) A.Favorites.set(uiLang(), dictKey, id, !isFav(dictKey,id));
-      saveFavorites();
-    }catch(_){}
-  }
-  function pushMistake(dictKey, id){
-    try{ if (A.Mistakes && A.Mistakes.push) A.Mistakes.push(dictKey, id); }catch(_){}
-  }
-
-  // ---------- decks ----------
-  function resolveDeckByKey(key){
-    try{
-      if (A.Decks && A.Decks.resolveDeckByKey) return A.Decks.resolveDeckByKey(key) || [];
-      return [];
-    }catch(_){ return []; }
-  }
-  function findGermanVerbsKey(){
-    // Пытаемся умно найти ключ «немецкие глаголы» по доступным реестрам
-    try{
-      const keys = (A.Decks && A.Decks.keys) ? A.Decks.keys() : Object.keys(A.Decks || {});
-      // приоритетные кандидаты по шаблонам
-      const candidates = ['de_verbs','de.verbs','verbs.de','de:verbs','de-verbs','de/verbs','de'];
-      for (const c of candidates){ if (resolveDeckByKey(c).length) return c; }
-      // fallback: первый ключ, где lang de и в title встречается «глагол»
-      for (const k of keys){
-        const deck = resolveDeckByKey(k);
-        if (!deck.length) continue;
-        const meta = (A.Decks.meta && A.Decks.meta(k)) || {};
-        const lang = meta.lang || (k.includes('de') ? 'de' : '');
-        const name = (meta.title || meta.name || '').toLowerCase();
-        if (lang==='de' && /глагол|verb/i.test(name)) return k;
-      }
-      // последний запас — первый непустой
-      for (const k of keys){ if (resolveDeckByKey(k).length) return k; }
-    }catch(_){}
-    return 'de'; // совсем крайний случай
-  }
-
-  function getActiveKey(){
-    if (A.dictRegistry && A.dictRegistry.activeKey) return A.dictRegistry.activeKey;
-    const k = findGermanVerbsKey();
-    A.dictRegistry = A.dictRegistry || {};
-    A.dictRegistry.activeKey = k;
-    try{ A.saveDictRegistry && A.saveDictRegistry(); }catch(_){}
-    return k;
-  }
-  function setActiveKey(k){
-    A.dictRegistry = A.dictRegistry || {};
-    A.dictRegistry.activeKey = k;
-    try{ A.saveDictRegistry && A.saveDictRegistry(); }catch(_){}
-  }
-
-  // ---------- UI build ----------
+  /* ---------- Разметка ---------- */
   function mountMarkup(){
     const app = document.getElementById('app');
-    if (!app) return null;
+    if (!app) return;
     app.innerHTML = `
-      <div class="home" aria-label="Главная страница">
-
-        <section class="card home-sets" aria-labelledby="setsTitle">
+      <div class="home">
+        <!-- ЗОНА 1: Сеты -->
+        <section class="card home-sets">
           <header class="sets-header">
-            <span class="flag" aria-hidden="true">🇩🇪</span>
-            <h2 class="sets-title" id="setsTitle">Глаголы</h2>
+            <span class="flag" aria-hidden="true">${A.Decks.flagForKey(ACTIVE_KEY) || '🇩🇪'}</span>
+            <h2 class="sets-title">${A.Decks.resolveNameByKey(ACTIVE_KEY) || 'Глаголы'}</h2>
           </header>
-          <div class="sets-grid" role="list"></div>
-          <p class="sets-stats" aria-live="polite"></p>
+          <div class="sets-grid"></div>
+          <p class="sets-stats"></p>
         </section>
 
-        <section class="card home-hints" aria-labelledby="hintsTitle">
-          <h4 class="hints-title" id="hintsTitle">Подсказки</h4>
+        <!-- ЗОНА 2: Подсказки -->
+        <section class="card home-hints">
+          <h4 class="hints-title">Подсказки</h4>
+          <div class="hints-body" id="hintsBody"></div>
         </section>
 
-        <section class="card home-trainer" aria-labelledby="trainerTitle">
-          <div class="trainer-top">
-            <div class="stars" aria-label="Прогресс"></div>
-            <button class="fav-btn" id="favToggle" aria-label="Добавить в избранное" aria-pressed="false">
-              <span class="fav-icon" aria-hidden="true">♡</span>
-            </button>
+        <!-- ЗОНА 3: Тренер -->
+        <section class="card home-trainer">
+          <div class="trainer-header">
+            <button class="fav-toggle" title="В избранное" aria-label="Добавить в избранное">🤍</button>
+            <h3 class="trainer-word"></h3>
           </div>
-          <h3 class="trainer-word" id="trainerTitle"></h3>
           <p class="trainer-subtitle">Выберите перевод</p>
-          <div class="answers-grid" role="group" aria-label="Варианты ответа"></div>
+          <div class="answers-grid"></div>
           <button class="btn-ghost idk-btn">Не знаю</button>
-          <p class="dict-stats" aria-live="polite"></p>
+          <p class="dict-stats"></p>
         </section>
-
       </div>`;
-    return app.querySelector('.home');
   }
 
-  function renderStars(el, value){
-    const max = starsMax();
-    el.innerHTML = '';
-    for (let i=0;i<max;i++){
-      const s = document.createElement('span');
-      s.className = 'star' + (i < (value|0) ? ' is-on' : '');
-      s.textContent = '★';
-      el.appendChild(s);
-    }
-  }
-
-  function currentSetIndex(dictKey, deckLen){
-    const idx = Number(A.state && A.state.setByDeck && A.state.setByDeck[dictKey] || 0);
-    const maxIdx = Math.max(0, Math.ceil(deckLen / SET_SIZE) - 1);
-    return Math.min(idx, maxIdx);
-  }
-
-  function renderSets(dictKey){
-    const deck = resolveDeckByKey(dictKey);
-    const grid = document.querySelector('.home-sets .sets-grid');
-    const statsEl = document.querySelector('.home-sets .sets-stats');
-    const titleEl = document.querySelector('.home-sets .sets-title');
-    const flagEl  = document.querySelector('.home-sets .flag');
-
-    if (!grid || !deck) return;
-    // заголовок/флаг: берём из meta (если есть)
-    try{
-      if (A.Decks.meta){
-        const meta = A.Decks.meta(dictKey) || {};
-        if (meta.title) titleEl.textContent = meta.title;
-        if (meta.flag)  flagEl.textContent  = meta.flag;
-      }
-    }catch(_){}
-
-    const setsCount = Math.max(1, Math.ceil(deck.length / SET_SIZE));
+  /* ---------- Зона 1: Сеты ---------- */
+  function renderSets(){
+    const deck = A.Decks.resolveDeckByKey(ACTIVE_KEY);
+    const grid = document.querySelector('.sets-grid');
+    const stats = document.querySelector('.sets-stats');
+    if (!deck || !grid) return;
+    const totalSets = Math.ceil(deck.length / SET_SIZE);
+    const activeIdx = A.Trainer?.getBatchIndex?.(ACTIVE_KEY) || 0;
     grid.innerHTML = '';
-    const activeIdx = currentSetIndex(dictKey, deck.length);
 
-    for (let i=0;i<setsCount;i++){
-      const from = i*SET_SIZE, to = Math.min(deck.length, (i+1)*SET_SIZE);
-      const inSet = deck.slice(from, to);
-      const learned = inSet.filter(w => starOf(dictKey, w.id) >= starsMax()).length;
+    for (let i=0;i<totalSets;i++){
+      const from = i*SET_SIZE;
+      const to = Math.min(deck.length, (i+1)*SET_SIZE);
+      const sub = deck.slice(from,to);
+      const done = sub.filter(w => (A.state?.stars?.[A.starKey(w.id,ACTIVE_KEY)]||0) >= 5).length === sub.length;
 
       const b = document.createElement('button');
-      b.className = 'set-pill' + (i===activeIdx ? ' is-active' : '') + (learned && learned===inSet.length ? ' is-done' : '');
-      b.textContent = String(i+1);
-      b.addEventListener('click', ()=>{
-        if (i===activeIdx) return;
-        A.state = A.state || {};
-        A.state.setByDeck = A.state.setByDeck || {};
-        A.state.setByDeck[dictKey] = i;
-        saveState();
-        renderSets(dictKey);
-        renderTrainer(dictKey);
-      });
+      b.className = 'set-pill' + (i===activeIdx?' is-active':'') + (done?' is-done':'');
+      b.textContent = i+1;
+      b.onclick = ()=>{ 
+        A.Trainer?.setBatchIndex(i,ACTIVE_KEY); 
+        renderSets(); 
+        renderTrainer(); 
+      };
       grid.appendChild(b);
     }
 
-    // верхняя статистика по активному сету
-    const from = activeIdx*SET_SIZE, to = Math.min(deck.length, (activeIdx+1)*SET_SIZE);
-    const inSet = deck.slice(from, to);
-    const learned = inSet.filter(w => starOf(dictKey, w.id) >= starsMax()).length;
-    statsEl.textContent = `Слов в наборе: ${inSet.length} / Выучено: ${learned}`;
+    const batchMeta = A.Trainer?.getBatchesMeta?.(ACTIVE_KEY);
+    stats.textContent = `Слов в наборе: ${batchMeta?.totalWords || 0} / Выучено: ${batchMeta?.learnedWords || 0}`;
   }
 
-  function pickWord(dictKey){
-    const deck = resolveDeckByKey(dictKey);
-    const setIdx = currentSetIndex(dictKey, deck.length);
-    const from = setIdx*SET_SIZE, to = Math.min(deck.length, (setIdx+1)*SET_SIZE);
-    const inSet = deck.slice(from, to);
-    if (!inSet.length) return null;
-    const notLearned = inSet.filter(w => starOf(dictKey, w.id) < starsMax());
-    const pool = notLearned.length ? notLearned : inSet;
-    return pool[(Math.random()*pool.length)|0];
-  }
-  function pickDistractors(dictKey, correctId, count=3){
-    const deck = resolveDeckByKey(dictKey);
-    const ids = new Set([String(correctId)]);
-    const out = [];
-    while (out.length < count && deck.length){
-      const w = deck[(Math.random()*deck.length)|0];
-      if (!w || ids.has(String(w.id))) continue;
-      ids.add(String(w.id)); out.push(w);
-    }
-    return out;
+  /* ---------- Зона 2: Подсказки ---------- */
+  function renderHints(text){
+    const el = document.getElementById('hintsBody');
+    if (!el) return;
+    el.textContent = text || ' ';
   }
 
-  function renderTrainer(dictKey){
-    const word = pickWord(dictKey);
-    const wordEl   = document.querySelector('.home-trainer .trainer-word');
-    const starsEl  = document.querySelector('.home-trainer .stars');
-    const answers  = document.querySelector('.home-trainer .answers-grid');
-    const statsEl  = document.querySelector('.home-trainer .dict-stats');
-    const favBtn   = document.getElementById('favToggle');
-    const idkBtn   = document.querySelector('.home-trainer .idk-btn');
+  /* ---------- Зона 3: Тренер ---------- */
+  function renderTrainer(){
+    const deck = A.Trainer?.getDeckSlice?.(ACTIVE_KEY) || [];
+    if (!deck.length) return;
+    const idx = A.Trainer.sampleNextIndexWeighted(deck);
+    const word = deck[idx];
+    const answers = document.querySelector('.answers-grid');
+    const wordEl  = document.querySelector('.trainer-word');
+    const favBtn  = document.querySelector('.fav-toggle');
+    const stats   = document.querySelector('.dict-stats');
+    const idk     = document.querySelector('.idk-btn');
 
-    if (!word || !wordEl || !answers) return;
+    wordEl.textContent = word.word || word.term;
+    favBtn.classList.toggle('is-fav', !!A.Favorites.has(ACTIVE_KEY, word.id));
 
-    // слово
-    wordEl.textContent = word.word || word.term || String(word.id);
-    renderStars(starsEl, starOf(dictKey, word.id));
-
-    // варианты ответа
-    const distractors = pickDistractors(dictKey, word.id, 3);
-    const opts = [word, ...distractors].sort(()=>Math.random()-0.5);
+    // генерим варианты ответов
+    const wrongs = A.Decks.sampleWrongAnswers(ACTIVE_KEY, word.id, 3);
+    const opts = [word, ...wrongs].sort(()=>Math.random()-0.5);
     answers.innerHTML = '';
     opts.forEach(opt=>{
-      const b = document.createElement('button');
-      b.className = 'answer-btn';
-      b.textContent = opt.translation || opt.trans || opt.meaning || opt.word || '';
-      b.addEventListener('click', ()=>{
-        const ok = String(opt.id) === String(word.id);
-        if (ok) incStar(dictKey, word.id); else pushMistake(dictKey, word.id);
-        renderSets(dictKey);
-        renderTrainer(dictKey);
-      });
+      const b=document.createElement('button');
+      b.className='answer-btn';
+      b.textContent=opt.translation||opt.trans;
+      b.onclick=()=>{
+        const ok=opt.id===word.id;
+        if(ok) {
+          A.Trainer.handleAnswer(ACTIVE_KEY, word.id, true);
+          renderHints('✅ Отлично! Так держать!');
+        } else {
+          A.Trainer.handleAnswer(ACTIVE_KEY, word.id, false);
+          A.Mistakes.push(ACTIVE_KEY, word.id);
+          renderHints(`❌ Ошибка: правильный перевод — "${word.translation}".`);
+        }
+        renderSets(); 
+        renderTrainer();
+      };
       answers.appendChild(b);
     });
 
-    // фаворит
-    if (favBtn){
-      favBtn.setAttribute('aria-pressed', isFav(dictKey, word.id) ? 'true' : 'false');
-      favBtn.onclick = ()=>{
-        toggleFav(dictKey, word.id);
-        favBtn.setAttribute('aria-pressed', isFav(dictKey, word.id) ? 'true' : 'false');
-      };
-    }
+    favBtn.onclick = ()=>{
+      A.Favorites.toggle(ACTIVE_KEY, word.id);
+      favBtn.classList.toggle('is-fav');
+    };
 
-    // «Не знаю»
-    if (idkBtn){
-      idkBtn.onclick = ()=>{
-        pushMistake(dictKey, word.id);
-        renderTrainer(dictKey);
-      };
-    }
+    idk.onclick=()=>{
+      A.Mistakes.push(ACTIVE_KEY, word.id);
+      renderHints(`Пропущено слово: "${word.word}".`);
+      renderTrainer();
+    };
 
-    // нижняя статистика
-    const deck = resolveDeckByKey(dictKey);
-    const learnedAll = deck.filter(w => starOf(dictKey, w.id) >= starsMax()).length;
-    statsEl.textContent = `Всего слов в словаре: ${deck.length} / Выучено: ${learnedAll}`;
+    const deckAll = A.Decks.resolveDeckByKey(ACTIVE_KEY);
+    const learned = deckAll.filter(w => (A.state?.stars?.[A.starKey(w.id,ACTIVE_KEY)]||0)>=5).length;
+    stats.textContent = `Всего слов: ${deckAll.length} / Выучено: ${learned}`;
   }
 
-  // ---------- публичное API главной ----------
-  A.Home = A.Home || {};
-  A.Home.mount = function(){
+  /* ---------- Инициализация ---------- */
+  function init(){
     mountMarkup();
-    const k = getActiveKey(); // стартуем с «немецких глаголов» (ищем умно)
-    renderSets(k);
-    renderTrainer(k);
-  };
-
-  // ---------- привязка к кнопке «Дом» ----------
-  function bindHomeNav(){
-    try{
-      document.querySelectorAll('.app-footer .nav-btn').forEach(btn=>{
-        if (btn.getAttribute('data-action') === 'home'){
-          btn.addEventListener('click', ()=>{
-            // вместо перезагрузки — отрисовать главную
-            A.Home.mount();
-          }, { passive:true });
-        }
-      });
-    }catch(_){}
+    renderSets();
+    renderTrainer();
+    renderHints(' ');
   }
 
-  // init
-  if (document.readyState === 'complete' || document.readyState === 'interactive'){
-    A.Home.mount(); bindHomeNav();
-  } else {
-    document.addEventListener('DOMContentLoaded', function(){ A.Home.mount(); bindHomeNav(); });
-  }
+  if(document.readyState!=='loading') init();
+  else document.addEventListener('DOMContentLoaded', init);
 })();
