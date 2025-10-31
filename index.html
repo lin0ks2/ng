@@ -105,7 +105,11 @@
           </div>
         </div>
       </div>
-
+<!-- Пункт 6: Версия приложения -->
+<div class="menu-item app-version" aria-live="polite">
+  <div class="menu-label">Версия приложения</div>
+  <div class="app-version-value" id="appVersion">—</div>
+</div>
       <!-- Нижний ряд быстрых действий -->
       <div class="actions-row-bottom" role="group" aria-label="Быстрые действия">
         <button class="action-btn" data-action="guide"   aria-label="Инструкция">📘</button>
@@ -299,7 +303,26 @@
         alert('Проверка обновлений (заглушка)');
       });
     }
+// Версия приложения (источник: app.core.js → App.APP_VER)
+(function(){
+  function renderVersion(){
+    var el = document.getElementById('appVersion');
+    if (!el) return;
+    var v = (window.App && App.APP_VER) || null;
+    if (v) el.textContent = v;
+  }
 
+  if (!(window.App && App.APP_VER)) {
+    // ядро ещё не загружено на этой странице — подгружаем лениво
+    var s = document.createElement('script');
+    s.src = './js/app.core.js';
+    s.onload = renderVersion;
+    s.onerror = function(){ /* тихо игнорируем, оставим "—" */ };
+    document.head.appendChild(s);
+  } else {
+    renderVersion();
+  }
+})();
     // Нижние действия
     const actionsMap = {
       guide(){ /* TODO: инструкция */ },
