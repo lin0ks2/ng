@@ -704,3 +704,15 @@ body.landscape .app-footer{
 
 /* если spacer ещё в DOM — обнулим его влияние безопасно */
 .oc-body > .menu-spacer{ height:0 !important; margin:0 !important; padding:0 !important; }
+
+/* === Burger: "Версия приложения" === */
+.menu-item.app-version{
+  text-align: center;
+  padding: 10px 0 14px;
+}
+
+.menu-item.app-version .app-version-value{
+  font-size: 0.95rem;
+  opacity: .6;                 /* приглушённый текст */
+  letter-spacing: .2px;
+}
