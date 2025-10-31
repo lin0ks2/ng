@@ -681,16 +681,26 @@ body.landscape .app-footer{
 /* ==========================================================
    ФИКС: прибиваем нижние пункты меню к низу панели
    ========================================================== */
-.oc-body {
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  /* если actions-row-bottom остаётся абсолютным —
-     добавим безопасный отступ снизу (истинная высота ряда) */
-  padding-bottom: var(--footer-h, 60px);
+/* === Burger: прибиваем нижние блоки к низу панели (исправление) === */
+.oc-panel{
+  /* уже flex-колонка — добавим страховку для Safari, чтобы дети могли скроллиться */
+  min-height: 0;
 }
 
-.menu-item.backup-tools {
-  margin-top: auto; /* прибивает этот блок к низу .oc-body */
+.oc-body{
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;             /* ← критично: даём телу расти и занимать высоту */
+  min-height: 0;              /* ← критично для Safari, чтобы скролл не «схлопывался» */
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: var(--footer-h, 60px); /* высота нижнего ряда действий (у тебя 60px) */
 }
+
+/* прижимаем нижние служебные пункты */
+.oc-body > .menu-item.backup-tools{
+  margin-top: auto;
+}
+
+/* если spacer ещё в DOM — обнулим его влияние безопасно */
+.oc-body > .menu-spacer{ height:0 !important; margin:0 !important; padding:0 !important; }
