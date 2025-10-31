@@ -218,6 +218,38 @@ const TRAINER_DEFAULT_LEARNED_REPEAT = 'never'; // ← переключай ре
   });
 })();
 
+/* ===== Trainer hooks (reverse threshold + star step) ===== */
+(function(){
+  if (!window.App) return;
+  const A = window.App;
+
+  // 1) Порог разблокировки обратного режима — проксируем из App.getReverseThreshold()
+  try {
+    if (A.Trainer) {
+      A.Trainer.unlockThreshold = function(){ return A.getReverseThreshold(); };
+    }
+  } catch(_){}
+
+  // 2) Оборачиваем handleAnswer, чтобы звёзды менялись по текущему шагу режима
+  try {
+    if (A.Trainer && typeof A.Trainer.handleAnswer === 'function') {
+      const _orig = A.Trainer.handleAnswer;
+      A.Trainer.handleAnswer = function(deckKey, wordId, isCorrect){
+        const step = A.getStarStep(); // normal=+1, hard=+0.5
+        const res = _orig.call(A.Trainer, deckKey, wordId, isCorrect);
+
+        if (isCorrect === true) {
+          A.addStars(wordId, deckKey, +step);
+        } else if (isCorrect === false) {
+          A.addStars(wordId, deckKey, -step);
+        } // "Не знаю" — не трогаем
+
+        return res;
+      };
+    }
+  } catch(_){}
+})();
+
 /* ====================== End of file =======================
  * File: app.trainer.js • Version: 1.0 • 2025-10-19
 */
