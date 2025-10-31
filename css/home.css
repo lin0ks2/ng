@@ -30,43 +30,39 @@
 }
 .home .card:hover{ box-shadow:0 2px 10px rgba(0,0,0,.05); }
 
-/* --- Зона 1: Сеты --- */
-.home-sets .sets-header{
-  display:flex; align-items:center; justify-content:center; gap:8px;
-  margin-bottom:8px;
-}
-.home-sets .sets-title{ 
-  font-size:16px; 
-  font-weight:700; 
-  margin:0; 
-}
+/* Сеты: 10 в ряд, авто-размер, идеальные квадраты */
 .home-sets .sets-grid{
-  display:grid;
-  grid-template-columns:repeat(10,15px);
-  gap:8px;
-  justify-content:center;
-  margin:6px 0 10px;
+  --sets-gap: 8px;
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: var(--sets-gap);
+  justify-content: center;
 }
+
 .set-pill{
-  width:15px; height:15px;
-  border-radius:4px;
-  border:1px solid #d8e2eb;
-  background:#f7fafd;
-  transition: all .2s ease;
+  aspect-ratio: 1 / 1;        /* квадрат */
+  width: 100%;
+  border-radius: 6px;
+  border: 1px solid #d8e2eb;
+  background: #f7fafd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: clamp(10px, 2.2vw, 13px); /* читабельная цифра */
+  line-height: 1;
+  box-sizing: border-box;
+  transition: box-shadow .2s ease, border-color .2s ease, background .2s ease;
 }
+
 .set-pill.is-done{
   background: var(--brand-tint, #d5f3ff);
   border-color: var(--brand, #35b6ff);
 }
 .set-pill.is-active{
   background:#fff;
-  border-color: var(--brand, #35b6ff);
+  border-color:var(--brand, #35b6ff);
   box-shadow:0 0 0 2px color-mix(in srgb, var(--brand) 25%, transparent);
-}
-.sets-stats{
-  font-size:13px;
-  opacity:.7;
-  text-align:center;
 }
 
 /* --- Зона 2: Подсказки --- */
