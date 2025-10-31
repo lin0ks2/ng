@@ -19,28 +19,43 @@
   padding:0 10px;
 }
 
-/* --- Общие карточки --- */
-.home .card{
-  background:#fff;
-  border:1px solid #e9eef3;
-  border-radius:16px;
-  padding:14px 12px;
-  box-shadow:0 2px 8px rgba(0,0,0,.03);
-  transition: box-shadow .2s ease;
+/* === ЗОНА 1: Сеты (визуал обновлён) === */
+.home-sets {
+  text-align: center;
 }
-.home .card:hover{ box-shadow:0 2px 10px rgba(0,0,0,.05); }
 
-/* Сеты: 10 в ряд, авто-размер, идеальные квадраты */
+/* заголовок с флагом и названием */
+.home-sets .sets-header{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.home-sets .flag{
+  font-size: 16px;       /* немного меньше */
+  line-height: 1;
+}
+
+.home-sets .sets-title{
+  font-size: 14px;       /* размер как у "Подсказки" */
+  font-weight: 700;
+  margin: 0;
+}
+
+/* сет-таблица (10 в ряд, авто-размер квадратов) */
 .home-sets .sets-grid{
   --sets-gap: 8px;
   display: grid;
   grid-template-columns: repeat(10, 1fr);
   gap: var(--sets-gap);
   justify-content: center;
+  margin: 4px 0 8px;
 }
 
 .set-pill{
-  aspect-ratio: 1 / 1;        /* квадрат */
+  aspect-ratio: 1 / 1;
   width: 100%;
   border-radius: 6px;
   border: 1px solid #d8e2eb;
@@ -48,10 +63,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  font-size: clamp(10px, 2.2vw, 13px); /* читабельная цифра */
+  font-weight: 600;
+  font-size: clamp(10px, 2vw, 12px);
   line-height: 1;
-  box-sizing: border-box;
   transition: box-shadow .2s ease, border-color .2s ease, background .2s ease;
 }
 
@@ -65,6 +79,13 @@
   box-shadow:0 0 0 2px color-mix(in srgb, var(--brand) 25%, transparent);
 }
 
+/* верхняя статистика — как нижняя */
+.home-sets .sets-stats{
+  font-size: 13px;
+  opacity: .7;
+  text-align: center;
+  margin-top: 4px;
+}
 /* --- Зона 2: Подсказки --- */
 .home-hints .hints-title{
   margin:0 0 6px;
