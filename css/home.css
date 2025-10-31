@@ -119,3 +119,42 @@
 .home-hints{ padding-bottom: calc(2 * 1.4em); } /* имитация двух строк */
 
 .home .card + .card{ margin-top:4px; }
+
+
+/* === Контейнер контента: скролл между шапкой и футером === */
+#app.content{
+  display:flex;
+  flex-direction:column;
+  overflow:auto;
+  -webkit-overflow-scrolling:touch;
+  height:calc(var(--vh,1vh)*100 - var(--header-h-actual) - var(--footer-h-actual));
+}
+
+/* Внутренний контейнер home — растягиваем на всю высоту scroll-контейнера */
+.home{
+  display:flex;
+  flex-direction:column;
+  min-height:100%;
+}
+
+/* Сеты и подсказки идут сверху и занимают естественную высоту */
+.home-sets,
+.home-hints{
+  flex:0 0 auto;
+}
+
+/* Тренер всегда у футера: выталкиваем вниз + зазор 8–12px */
+:root { --trainer-gap-bottom: 12px; } /* можно 8..12px по вкусу */
+
+.home-trainer{
+  margin-top:auto;         /* ← ключ: прижимает к низу .home */
+  flex-shrink:0;
+  margin-bottom: var(--trainer-gap-bottom);
+}
+
+/* В PWA учитываем нижнюю safe-area */
+@media (display-mode: standalone){
+  .home-trainer{
+    margin-bottom: calc(var(--trainer-gap-bottom) + env(safe-area-inset-bottom,0px));
+  }
+}
