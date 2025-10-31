@@ -9,6 +9,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./css/tokens.css">
   <link rel="stylesheet" href="./css/home.css">
+  <!-- стили экрана "Словари" -->
+<link rel="stylesheet" href="./css/dicts.css">
   <!-- PWA -->
   <link rel="manifest" href="./manifest.webmanifest">
   <meta name="theme-color" content="#ffffff">
@@ -372,7 +374,8 @@
 
 <!-- ИНИЦИАЛИЗАЦИЯ РЕЕСТРА СЛОВАРЕЙ (ОБЯЗАТЕЛЬНО перед deck.*.js) -->
 <script src="./js/dicts.js" defer></script>
-
+<!-- модуль "Словари" -->
+<script type="module" src="./js/view.dicts.js"></script>
 <!-- ДАННЫЕ СЛОВАРЕЙ -->
 <script src="./js/deck.de.js" defer></script>
 <script src="./js/deck.en.js" defer></script>
