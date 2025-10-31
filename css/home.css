@@ -312,3 +312,32 @@
   .home .card{ padding:12px; border-radius:14px; }
   .home-trainer .trainer-word{ font-size:24px; }
 }
+
+/* === Унификация внешних отступов между зонами === */
+.home {
+  display: flex;
+  flex-direction: column;
+  gap: 12px; /* равный отступ между карточками */
+  padding: 8px 10px 12px; /* сбалансировано под хедер и футер */
+}
+
+.home > .card {
+  margin: 0; /* убираем случайные внешние отступы у зон */
+}
+
+/* Точная настройка верхнего и нижнего пространства */
+#app.content {
+  padding: 0;
+  margin: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  height: calc(var(--vh, 1vh) * 100 - var(--header-h-actual) - var(--footer-h-actual));
+}
+
+/* Визуальный баланс для маленьких экранов */
+@media (max-width: 480px) {
+  .home {
+    gap: 10px;
+    padding: 6px 8px 10px;
+  }
+}
