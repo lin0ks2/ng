@@ -312,3 +312,8 @@
   .home .card{ padding:12px; border-radius:14px; }
   .home-trainer .trainer-word{ font-size:24px; }
 }
+
+.home-trainer .trainer-header{ display:flex; align-items:center; gap:12px; justify-content:space-between; }
+.home-trainer .trainer-stars{ display:flex; gap:4px; margin-left:auto; font-size:18px; line-height:1; opacity:.9; }
+.home-trainer .trainer-stars .star{ opacity:.3; transition:opacity .15s ease; }
+.home-trainer .trainer-stars .star.on{ opacity:1; }
