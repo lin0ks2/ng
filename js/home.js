@@ -1,5 +1,5 @@
 /* ==========================================================
- * home.js — Главная: Сеты + Подсказки + Тренер (lang sync + stars/heart swap)
+ * home.js — Главная: Сеты + Подсказки + Тренер (lang sync + stars/heart layout)
  * ========================================================== */
 (function(){
   'use strict';
@@ -93,14 +93,25 @@
 
         <!-- ЗОНА 3: Тренер -->
         <section class="card home-trainer">
-          <div class="trainer-header">
-            <h3 class="trainer-word"></h3>
+          <!-- верхняя строка: звезды + сердце -->
+          <div class="trainer-top">
             <div class="trainer-stars" aria-hidden="true"></div>
             <button class="fav-toggle" title="${t('fav')}" aria-label="${t('fav')}">🤍</button>
           </div>
+
+          <!-- слово — отдельной строкой по центру -->
+          <h3 class="trainer-word"></h3>
+
+          <!-- подпись -->
           <p class="trainer-subtitle">${t('choose')}</p>
+
+          <!-- варианты -->
           <div class="answers-grid"></div>
+
+          <!-- Не знаю -->
           <button class="btn-ghost idk-btn">${t('idk')}</button>
+
+          <!-- нижняя статистика -->
           <p class="dict-stats" id="dictStats"></p>
         </section>
       </div>`;
@@ -132,7 +143,7 @@
       const btn = document.createElement('button');
       btn.className = 'set-pill' + (i===activeIdx?' is-active':'') + (done?' is-done':'');
       btn.textContent = i+1;
-      btn.setAttribute('data-set-index', String(i)); // для ui.sets.done.js
+      btn.setAttribute('data-set-index', String(i));
       btn.onclick = ()=>{
         A.Trainer?.setBatchIndex?.(i,ACTIVE_KEY);
         renderSets(); renderTrainer();
@@ -178,11 +189,9 @@
   }
 
   function buildOptions(word){
-    // если есть безопасный генератор — используем
     if (A.UI && typeof A.UI.safeOptions === 'function') {
       return A.UI.safeOptions(word, { key: ACTIVE_KEY, size: 4, t: tWord });
     }
-    // локальный надёжный генератор
     const deck = A.Decks?.resolveDeckByKey?.(ACTIVE_KEY) || [];
     let pool = [];
     try { if (A.Mistakes?.getDistractors) pool = A.Mistakes.getDistractors(ACTIVE_KEY, word.id) || []; } catch(_){}
@@ -281,17 +290,14 @@
   function normalizeLangFromToggle(){
     const toggle = document.getElementById('langToggle');
     if (!toggle) return;
-    // checked => RU, unchecked => UK (как в твоём index.html)
+    // checked => RU, unchecked => UK
     document.documentElement.dataset.lang = toggle.checked ? 'ru' : 'uk';
   }
   function bindLangToggle(){
     const toggle = document.getElementById('langToggle');
     if (!toggle) return;
-    // синхронизируем чекбокс с текущим состоянием
     toggle.checked = (getUiLang()==='ru');
-    // на старте нормализуем dataset.lang под положение тоггла (исправляет рассинхрон)
     normalizeLangFromToggle();
-    // реакция на изменение
     toggle.addEventListener('change', ()=>{
       normalizeLangFromToggle();
       try { A.Home.mount(); } catch(_){}
