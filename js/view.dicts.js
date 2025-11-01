@@ -51,7 +51,7 @@
           <td>${name}</td>
           <td class="t-center">${deck.length}</td>
           <td class="t-center">
-            <span class="dicts-preview" title="${T.preview}" data-key="${key}" role="button" aria-label="${T.preview}">🔍</span>
+            <span class="dicts-preview" title="${T.preview}" data-key="${key}" role="button" aria-label="${T.preview}">👁‍🗨</span>
           </td>
         </tr>`;
     }).join('');
