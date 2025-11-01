@@ -1,16 +1,21 @@
 /* ==========================================================
- * view.dicts.js — Экран "Словари"
- *  - Список всех словарей (разделов) с сортировкой
- *  - Preview-модалка с таблицей слов (переводы → язык интерфейса)
+ * view.dicts.js — Экран "Словари" (robust keys discovery)
  * ========================================================== */
 (function(){
   'use strict';
   const A = (window.App = window.App || {});
 
-  // ——— helpers ———
+  /* ---------- helpers ---------- */
   function getUiLang(){
     const s = (A.settings && (A.settings.lang || A.settings.uiLang)) || 'ru';
     return (String(s).toLowerCase() === 'uk') ? 'uk' : 'ru';
+  }
+  function deckLangOfKey(key){
+    const m = /^([a-z]{2})[_-]/i.exec(key || '');
+    return m ? m[1].toLowerCase() : '';
+  }
+  function deckFlag(key){
+    try{ return A.Decks?.flagForKey?.(key) || '🏳️'; } catch(_){ return '🏳️'; }
   }
   function tDeckName(key){
     const lang = getUiLang();
@@ -32,16 +37,7 @@
           : (d.name_ru || d.title_ru || d.ru || d.name || d.title);
       }
     }catch(_){}
-    // фолбэк
     return (lang === 'uk') ? 'Словник' : 'Словарь';
-  }
-  function deckLangOfKey(key){
-    // из ключа "de_verbs", "en_nouns" → "de" / "en" / …
-    const m = /^([a-z]{2})[_-]/i.exec(key || '');
-    return m ? m[1].toLowerCase() : '';
-  }
-  function deckFlag(key){
-    try{ return A.Decks?.flagForKey?.(key) || '🏳️'; } catch(_){ return '🏳️'; }
   }
   function tWordByUiLang(w){
     const ui = getUiLang();
@@ -52,11 +48,56 @@
       || w.translation || w.trans || w.meaning || '';
   }
 
-  // ——— сбор данных ———
+  /* ---------- robust: собрать ВСЕ ключи словарей ---------- */
+  function discoverDeckKeys(){
+    const set = new Set();
+
+    // 1) Явный реестр словарей
+    try { Object.keys(A.Dicts || {}).forEach(k => set.add(k)); } catch(_){}
+
+    // 2) Возможные внутренние структуры App.Decks
+    const candidates = [
+      A.Decks && A.Decks.dicts,
+      A.Decks && A.Decks.registry,
+      A.Decks && A.Decks._dicts,
+      A.Decks && A.Decks._registry,
+      A.Decks && A.Decks.store,
+      A.Decks && A.Decks._store
+    ];
+    candidates.forEach(obj=>{
+      try {
+        if (obj && typeof obj === 'object') {
+          Object.keys(obj).forEach(k=> set.add(k));
+        }
+      } catch(_){}
+    });
+
+    // 3) Методы-помощники, если есть
+    try {
+      if (typeof A.Decks?.keys === 'function') {
+        (A.Decks.keys() || []).forEach(k=> set.add(k));
+      }
+    } catch(_){}
+    try {
+      if (typeof A.Decks?.allKeys === 'function') {
+        (A.Decks.allKeys() || []).forEach(k=> set.add(k));
+      }
+    } catch(_){}
+
+    // 4) Фолбэк: если активный ключ явно существует — включим его
+    try {
+      if (A.Trainer?.getActiveKey && A.Trainer.getActiveKey()) set.add(A.Trainer.getActiveKey());
+    } catch(_){}
+
+    return Array.from(set);
+  }
+
+  /* ---------- данные для таблицы ---------- */
   function getAllDecks(){
-    const keys = Object.keys(A.Dicts || {});
+    const keys = discoverDeckKeys();
     return keys.map(key=>{
-      const items = A.Decks?.resolveDeckByKey?.(key) || [];
+      let items = [];
+      try { items = A.Decks?.resolveDeckByKey?.(key) || []; } catch(_){}
       return {
         key,
         lang: deckLangOfKey(key),
@@ -64,15 +105,15 @@
         name: tDeckName(key),
         count: items.length
       };
-    });
+    }).filter(d => d.count >= 0); // показываем и пустые, если надо
   }
 
-  // ——— модалка предпросмотра ———
+  /* ---------- модалка предпросмотра ---------- */
   function openPreview(key){
     const ui = getUiLang();
     const items = A.Decks?.resolveDeckByKey?.(key) || [];
     const name  = tDeckName(key);
-    // контейнер
+
     const wrap = document.createElement('div');
     wrap.className = 'mmodal is-open';
     wrap.innerHTML = `
@@ -97,29 +138,25 @@
       </div>`;
     document.body.appendChild(wrap);
 
-    // наполнение
     const tb = wrap.querySelector('tbody');
-    const rows = items.map((w, i)=>`
+    tb.innerHTML = items.map((w, i)=>`
       <tr>
         <td>${i+1}</td>
         <td>${w.word || w.term || ''}</td>
         <td>${tWordByUiLang(w)}</td>
-      </tr>`).join('');
-    tb.innerHTML = rows || `<tr><td colspan="3" style="opacity:.7;text-align:center">${ui==='uk'?'Порожньо':'Пусто'}</td></tr>`;
+      </tr>`).join('') || `<tr><td colspan="3" style="opacity:.7;text-align:center">${ui==='uk'?'Порожньо':'Пусто'}</td></tr>`;
 
-    // закрытие
     function close(){ wrap.remove(); }
     wrap.querySelector('.mmodal__close').onclick = close;
     wrap.querySelector('.mmodal__overlay').onclick = close;
     document.addEventListener('keydown', function esc(e){ if(e.key==='Escape'){ close(); document.removeEventListener('keydown', esc);} });
   }
 
-  // ——— отрисовка списка словарей ———
+  /* ---------- рендер списка ---------- */
   function renderList(into){
     const ui = getUiLang();
     const decks = getAllDecks();
 
-    // сортировка: по языку словаря, затем по названию (на языке интерфейса)
     decks.sort((a,b)=>{
       if (a.lang === b.lang) return a.name.localeCompare(b.name, ui==='uk'?'uk':'ru');
       return a.lang.localeCompare(b.lang);
@@ -158,16 +195,13 @@
             ${ui==='uk'?'Переглянути':'Предпросмотр'}
           </button>
         </td>
-      </tr>
-    `).join('');
+      </tr>`).join('') || `<tr><td colspan="4" style="opacity:.7;padding:10px 8px">${ui==='uk'?'Словників не знайдено':'Словари не найдены'}</td></tr>`;
 
-    // события на кнопки
     tbody.querySelectorAll('.btn-preview').forEach(b=>{
       b.addEventListener('click', ()=> openPreview(b.dataset.key));
     });
   }
 
-  // ——— API вьюхи ———
   function mountInto(appRoot){
     if (!appRoot) return;
     appRoot.innerHTML = `<div class="home" id="dictsView"></div>`;
