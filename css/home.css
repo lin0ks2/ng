@@ -317,3 +317,70 @@
 .home-trainer .trainer-stars{ display:flex; gap:4px; margin-left:auto; font-size:18px; line-height:1; opacity:.9; }
 .home-trainer .trainer-stars .star{ opacity:.3; transition:opacity .15s ease; }
 .home-trainer .trainer-stars .star.on{ opacity:1; }
+
+/* Тренер: раскладка под макет */
+.home-trainer {
+  display: grid;
+  grid-template-columns: 1fr;
+  row-gap: 10px;
+}
+
+/* 1-я строка: звезды слева, сердце справа */
+.home-trainer .trainer-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+
+/* звезды */
+.home-trainer .trainer-stars{
+  display:flex;
+  gap:4px;
+  font-size:18px;
+  line-height:1;
+  opacity:.9;
+}
+.home-trainer .trainer-stars .star{ opacity:.3; transition:opacity .15s ease; }
+.home-trainer .trainer-stars .star.on{ opacity:1; }
+
+/* сердце справа */
+.home-trainer .fav-toggle{
+  line-height:1;
+  font-size:18px;
+  opacity:.8;
+}
+.home-trainer .fav-toggle.is-fav{ opacity:1; }
+
+/* слово — отдельной строкой по центру */
+.home-trainer .trainer-word{
+  text-align:center;
+  font-size:1.4rem;
+  font-weight:600;
+}
+
+/* подпись */
+.home-trainer .trainer-subtitle{
+  text-align:center;
+  opacity:.7;
+  margin-top:-4px;
+}
+
+/* варианты 2×2 */
+.home-trainer .answers-grid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:8px;
+}
+
+/* кнопка "Не знаю" по центру */
+.home-trainer .idk-btn{
+  margin: 4px auto 0;
+}
+
+/* нижняя статистика */
+.home-trainer .dict-stats{
+  text-align:center;
+  opacity:.7;
+  margin-top:-2px;
+}
