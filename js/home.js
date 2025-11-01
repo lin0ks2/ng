@@ -342,13 +342,17 @@
       if (!app) return;
 
       if (action === 'home'){
-        mountMarkup();
-        renderSets();
-        renderTrainer();
-        renderHints(' ');
-        return;
-      }
+  mountMarkup();
+  renderSets();
+  renderTrainer();
+  renderHints(' ');
+  return;
+}
 
+if (action === 'dicts'){
+  A.ViewDicts?.mountInto?.(app);
+  return;
+}
       const uk = getUiLang()==='uk';
       const titles = {
         dicts: uk ? 'Словники' : 'Словари',
