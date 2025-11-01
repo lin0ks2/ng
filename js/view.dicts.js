@@ -1,6 +1,5 @@
 /* ==========================================================
- * view.dicts.js — Экран "Словари" для MOYAMOVA
- * Работает с app.decks.js / deck.*.js / dicts.js
+ * view.dicts.js — Экран "Словари" (обновлён: кнопка → эмодзи 🔍)
  * ========================================================== */
 (function(){
   'use strict';
@@ -51,8 +50,8 @@
           <td class="t-center">${flag}</td>
           <td>${name}</td>
           <td class="t-center">${deck.length}</td>
-          <td class="t-right">
-            <button class="btn btn-preview" data-key="${key}">${T.preview}</button>
+          <td class="t-center">
+            <span class="dicts-preview" title="${T.preview}" data-key="${key}" role="button" aria-label="${T.preview}">🔍</span>
           </td>
         </tr>`;
     }).join('');
@@ -75,7 +74,7 @@
         </section>
       </div>`;
 
-    app.querySelectorAll('.btn-preview').forEach(btn=>{
+    app.querySelectorAll('.dicts-preview').forEach(btn=>{
       btn.addEventListener('click',()=>openPreview(btn.dataset.key));
     });
   }
