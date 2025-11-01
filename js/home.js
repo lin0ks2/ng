@@ -1,5 +1,5 @@
 /* ==========================================================
- * home.js — Главная: Сеты + Подсказки + Тренер (reactive lang)
+ * home.js — Главная: Сеты + Подсказки + Тренер (RU/UK + Stars)
  * ========================================================== */
 (function(){
   'use strict';
@@ -11,20 +11,17 @@
 
   // ---------- utils ----------
   function getUiLang(){
-    // первичен data-lang на <html> — его меняет твой тоггл
     const htmlLang = document.documentElement?.dataset?.lang;
     if (htmlLang === 'ru' || htmlLang === 'uk') return htmlLang;
-    // запасной источник
     const s = (A.settings && (A.settings.uiLang || A.settings.lang)) || 'ru';
     return (s === 'uk') ? 'uk' : 'ru';
   }
   function tWord(w){
     const lang = getUiLang();
-    // предпочтительно w.ru / w.uk, аккуратные фоллбеки
     if (!w) return '';
     return (lang === 'uk'
       ? (w.uk || w.translation_uk || w.trans_uk || w.ua)
-      : (w.ru || w.translation_ru || w.trans_ru)) 
+      : (w.ru || w.translation_ru || w.trans_ru))
       || w.translation || w.trans || w.meaning || '';
   }
   function shuffle(arr){
@@ -59,7 +56,6 @@
           : (d.name_ru || d.title_ru || d.ru || d.name || d.title);
       }
     } catch(_){}
-    // фоллбек
     return (lang === 'uk') ? 'Дієслова' : 'Глаголы';
   }
 
@@ -69,6 +65,13 @@
     if (!app) return;
     const flag  = (A.Decks && A.Decks.flagForKey && A.Decks.flagForKey(ACTIVE_KEY)) || '🇩🇪';
     const title = getDeckTitleByLang(ACTIVE_KEY);
+
+    const t = (k)=>({
+      hints  : getUiLang()==='uk' ? 'Підказки' : 'Подсказки',
+      choose : getUiLang()==='uk' ? 'Оберіть переклад' : 'Выберите перевод',
+      idk    : getUiLang()==='uk' ? 'Не знаю' : 'Не знаю',
+      fav    : getUiLang()==='uk' ? 'У вибране' : 'В избранное'
+    })[k];
 
     app.innerHTML = `
       <div class="home">
@@ -84,19 +87,20 @@
 
         <!-- ЗОНА 2: Подсказки -->
         <section class="card home-hints">
-          <h4 class="hints-title">${getUiLang()==='uk' ? 'Підказки' : 'Подсказки'}</h4>
+          <h4 class="hints-title">${t('hints')}</h4>
           <div class="hints-body" id="hintsBody"></div>
         </section>
 
         <!-- ЗОНА 3: Тренер -->
         <section class="card home-trainer">
           <div class="trainer-header">
-            <button class="fav-toggle" title="${getUiLang()==='uk'?'У вибране':'В избранное'}" aria-label="${getUiLang()==='uk'?'Додати у вибране':'Добавить в избранное'}">🤍</button>
+            <button class="fav-toggle" title="${t('fav')}" aria-label="${t('fav')}">🤍</button>
             <h3 class="trainer-word"></h3>
+            <div class="trainer-stars" aria-hidden="true"></div>
           </div>
-          <p class="trainer-subtitle">${getUiLang()==='uk' ? 'Оберіть переклад' : 'Выберите перевод'}</p>
+          <p class="trainer-subtitle">${t('choose')}</p>
           <div class="answers-grid"></div>
-          <button class="btn-ghost idk-btn">${getUiLang()==='uk' ? 'Не знаю' : 'Не знаю'}</button>
+          <button class="btn-ghost idk-btn">${t('idk')}</button>
           <p class="dict-stats" id="dictStats"></p>
         </section>
       </div>`;
@@ -128,7 +132,7 @@
       const btn = document.createElement('button');
       btn.className = 'set-pill' + (i===activeIdx?' is-active':'') + (done?' is-done':'');
       btn.textContent = i+1;
-      btn.setAttribute('data-set-index', String(i));
+      btn.setAttribute('data-set-index', String(i)); // для ui.sets.done.js
       btn.onclick = ()=>{
         A.Trainer?.setBatchIndex?.(i,ACTIVE_KEY);
         renderSets(); renderTrainer();
@@ -156,6 +160,23 @@
   }
 
   // ---------- Зона 3: Тренер ----------
+  // звёзды
+  function getStars(wordId){
+    const val = (A.state && A.state.stars && A.state.stars[starKey(wordId, ACTIVE_KEY)]) || 0;
+    return Number(val) || 0;
+  }
+  function renderStarsFor(word){
+    const box = document.querySelector('.trainer-stars');
+    if (!box || !word) return;
+    const max  = A.Trainer?.starsMax?.() || 5;
+    const have = getStars(word.id);
+    let html = '';
+    for (let i = 1; i <= max; i++){
+      html += `<span class="star ${i <= have ? 'on' : ''}" aria-hidden="true">★</span>`;
+    }
+    box.innerHTML = html;
+  }
+
   function buildOptions(word){
     // если есть безопасный генератор — используем
     if (A.UI && typeof A.UI.safeOptions === 'function') {
@@ -164,15 +185,8 @@
     // локальный надёжный генератор
     const deck = A.Decks?.resolveDeckByKey?.(ACTIVE_KEY) || [];
     let pool = [];
-    try {
-      if (A.Mistakes?.getDistractors) {
-        pool = A.Mistakes.getDistractors(ACTIVE_KEY, word.id) || [];
-      }
-    } catch(_){}
-    if (pool.length < 3) {
-      const more = deck.filter(w => String(w.id) !== String(word.id));
-      pool = pool.concat(more);
-    }
+    try { if (A.Mistakes?.getDistractors) pool = A.Mistakes.getDistractors(ACTIVE_KEY, word.id) || []; } catch(_){}
+    if (pool.length < 3) pool = pool.concat(deck.filter(w => String(w.id)!==String(word.id)));
     const wrongs = shuffle(pool).filter(w => String(w.id)!==String(word.id)).slice(0,3);
     const opts = shuffle(uniqueById([word, ...wrongs])).slice(0,4);
     while (opts.length < 4 && deck.length) {
@@ -198,6 +212,7 @@
     const idkBtn  = document.querySelector('.idk-btn');
 
     wordEl.textContent = word.word || word.term || '';
+    renderStarsFor(word);
 
     const opts = buildOptions(word);
     answers.innerHTML = '';
@@ -238,8 +253,8 @@
     try {
       const has = A.Favorites?.has?.(ACTIVE_KEY, word.id);
       if (favBtn) {
-        favBtn.title = (getUiLang()==='uk' ? 'У вибране' : 'В избранное');
-        favBtn.ariaLabel = favBtn.title;
+        const favTitle = (getUiLang()==='uk' ? 'У вибране' : 'В избранное');
+        favBtn.title = favTitle; favBtn.ariaLabel = favTitle;
         favBtn.classList.toggle('is-fav', !!has);
         favBtn.onclick = ()=>{
           try { A.Favorites?.toggle?.(ACTIVE_KEY, word.id); } catch(_){}
@@ -266,11 +281,10 @@
   function bindLangToggle(){
     const toggle = document.getElementById('langToggle');
     if (!toggle) return;
-    // На всякий случай синхронизируем чекбокс с текущим lang
-    toggle.checked = (getUiLang()==='ru'); // у тебя checked = RU
+    // синхронизируем чекбокс с текущим состоянием (в твоём index.html checked=RU)
+    toggle.checked = (getUiLang()==='ru');
     toggle.addEventListener('change', ()=>{
-      // твой index.html уже меняет data-lang.
-      // здесь просто перерисовываем.
+      // index.html меняет data-lang; здесь просто перерисовываем
       try { A.Home.mount(); } catch(_){}
     });
   }
