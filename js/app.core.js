@@ -17,6 +17,13 @@
   const I18N_FALLBACK = window.I18N;
 
   App.settings = loadSettings();
+
+try{
+  var __lang = (App.settings && (App.settings.uiLang || App.settings.lang)) || 'ru';
+  document.documentElement.dataset.lang = __lang;
+  document.documentElement.setAttribute('lang', __lang);
+}catch(_){}
+  
   App.state = loadState() || {
     index:0,lastIndex:-1,favorites:{},stars:{},successes:{},
     lastShownWordId:null, totals:{shown:0,errors:0}, lastSeen:{}
@@ -47,7 +54,7 @@ App.starKey = function(wid, dk){
 
   App.i18n = function(lang){
     try{
-      lang = (lang || (App.settings && (App.settings.uiLang || App.settings.lang)) || 'uk').toLowerCase();
+      lang = (lang || (App.settings && (App.settings.uiLang || App.settings.lang)) || 'ru').toLowerCase();
       const base = (I18N_FALLBACK && I18N_FALLBACK[lang]) ? I18N_FALLBACK[lang] : (I18N_FALLBACK && I18N_FALLBACK.uk) || {};
       return base;
     }catch(_){ return (I18N_FALLBACK && I18N_FALLBACK.uk) || {}; }
@@ -93,7 +100,7 @@ App.clamp = (n,min,max)=>Math.max(min,Math.min(max,n));
   App.shuffle = (a)=>{const arr=a.slice();for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;};
   App.escapeHtml = (s)=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-  function loadSettings(){ try{ const raw=localStorage.getItem(LS_SETTINGS); if(raw) return Object.assign({lang:'uk',theme:'auto',repeats:6}, JSON.parse(raw)); }catch(e){} return {lang:'uk',theme:'auto',repeats:6}; }
+  function loadSettings(){ try{ const raw=localStorage.getItem(LS_SETTINGS); if(raw) return Object.assign({lang:'ru',theme:'auto',repeats:6}, JSON.parse(raw)); }catch(e){} return {lang:'ru',theme:'auto',repeats:6}; }
   App.saveSettings = function(s){
   try{ localStorage.setItem(LS_SETTINGS, JSON.stringify(s)); }catch(e){}
   try{
