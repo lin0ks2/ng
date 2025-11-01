@@ -1,0 +1,48 @@
+/* ===== Экран "Словари" ===== */
+.dicts-card{
+  background:#fff; border:1px solid #e9eef3; border-radius:16px;
+  padding:14px 12px; box-shadow:0 2px 8px rgba(0,0,0,.03);
+}
+.dicts-header h3{ margin:0 0 4px; font-size:16px; }
+.dicts-note{ opacity:.65; font-size:12px; margin-bottom:8px; }
+
+.dicts-table-wrap{ overflow:auto; -webkit-overflow-scrolling:touch; }
+.dicts-table{ width:100%; border-collapse:separate; border-spacing:0 6px; }
+.dicts-table thead th{
+  font-weight:700; font-size:13px; opacity:.75; text-align:left; padding:0 8px;
+}
+.dicts-table tbody td{
+  background:#f9fbfe; border:1px solid #e3eaf2; padding:10px 8px; font-size:14px;
+}
+.dicts-table tbody tr td:first-child{ border-radius:10px 0 0 10px; }
+.dicts-table tbody tr td:last-child{ border-radius:0 10px 10px 0; }
+
+.t-center{ text-align:center; }
+.t-right{ text-align:right; }
+
+.btn.btn-preview{
+  height:34px; padding:0 12px; border:0; border-radius:10px;
+  background:var(--brand,#35b6ff); color:#fff; font-weight:700; font-size:13px;
+}
+.btn.btn-preview:hover{ filter:brightness(1.05); }
+
+/* ===== Модалка предпросмотра ===== */
+.mmodal{ position:fixed; inset:0; display:none; }
+.mmodal.is-open{ display:block; }
+.mmodal__overlay{ position:absolute; inset:0; background:rgba(0,0,0,.3); }
+.mmodal__panel{
+  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+  width:min(720px, 92vw); max-height:80vh; background:#fff; border-radius:14px;
+  box-shadow:0 8px 28px rgba(0,0,0,.25); display:flex; flex-direction:column;
+}
+.mmodal__header{ display:flex; align-items:center; justify-content:space-between;
+  padding:10px 12px; border-bottom:1px solid #eef3f7; }
+.mmodal__title{ font-weight:700; }
+.mmodal__close{ border:0; background:none; font-size:18px; opacity:.8; }
+.mmodal__body{ padding:10px 12px; overflow:auto; }
+
+.dict-table{ width:100%; border-collapse:collapse; }
+.dict-table thead th{
+  text-align:left; padding:6px 8px; border-bottom:1px solid #e9eef3; font-size:13px;
+}
+.dict-table tbody td{ padding:6px 8px; font-size:14px; border-bottom:1px solid #f1f4f8; }
