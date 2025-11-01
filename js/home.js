@@ -1,21 +1,22 @@
 /* ==========================================================
- * home.js — Главная: Сеты + Подсказки + Тренер (lang sync + stars/heart layout)
+ * home.js — Главная страница MOYAMOVA (финальная базовая версия)
  * ========================================================== */
 (function(){
   'use strict';
   const A = (window.App = window.App || {});
 
-  // какой словарь показываем на главной
+  // --- настройки ---
   const ACTIVE_KEY = 'de_verbs';
   const SET_SIZE   = (A.Config && A.Config.setSizeDefault) || 40;
 
-  // ---------- utils ----------
+  // --- утилиты ---
   function getUiLang(){
     const htmlLang = document.documentElement?.dataset?.lang;
     if (htmlLang === 'ru' || htmlLang === 'uk') return htmlLang;
     const s = (A.settings && (A.settings.uiLang || A.settings.lang)) || 'ru';
     return (s === 'uk') ? 'uk' : 'ru';
   }
+
   function tWord(w){
     const lang = getUiLang();
     if (!w) return '';
@@ -24,14 +25,25 @@
       : (w.ru || w.translation_ru || w.trans_ru))
       || w.translation || w.trans || w.meaning || '';
   }
+
   function shuffle(arr){
-    for (let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
+    for (let i = arr.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
     return arr;
   }
+
   function uniqueById(arr){
-    const seen=new Set();
-    return arr.filter(x=>{ const id=String(x.id); if(seen.has(id)) return false; seen.add(id); return true; });
+    const seen = new Set();
+    return arr.filter(x=>{
+      const id = String(x.id);
+      if (seen.has(id)) return false;
+      seen.add(id);
+      return true;
+    });
   }
+
   const starKey = (typeof A.starKey === 'function')
     ? A.starKey
     : (id, key)=> `${key}:${id}`;
@@ -59,22 +71,25 @@
     return (lang === 'uk') ? 'Дієслова' : 'Глаголы';
   }
 
-  // ---------- markup ----------
+  // --- вёрстка главного окна ---
   function mountMarkup(){
     const app = document.getElementById('app');
     if (!app) return;
+
     const flag  = (A.Decks && A.Decks.flagForKey && A.Decks.flagForKey(ACTIVE_KEY)) || '🇩🇪';
     const title = getDeckTitleByLang(ACTIVE_KEY);
 
-    const t = (k)=>({
-      hints  : getUiLang()==='uk' ? 'Підказки' : 'Подсказки',
-      choose : getUiLang()==='uk' ? 'Оберіть переклад' : 'Выберите перевод',
-      idk    : getUiLang()==='uk' ? 'Не знаю' : 'Не знаю',
-      fav    : getUiLang()==='uk' ? 'У вибране' : 'В избранное'
-    })[k];
+    const t = (k)=>{
+      const uk = getUiLang() === 'uk';
+      const dict = uk
+        ? { hints:'Підказки', choose:'Оберіть переклад', idk:'Не знаю', fav:'У вибране' }
+        : { hints:'Подсказки', choose:'Выберите перевод', idk:'Не знаю', fav:'В избранное' };
+      return dict[k];
+    };
 
     app.innerHTML = `
       <div class="home">
+
         <!-- ЗОНА 1: Сеты -->
         <section class="card home-sets">
           <header class="sets-header">
@@ -93,35 +108,29 @@
 
         <!-- ЗОНА 3: Тренер -->
         <section class="card home-trainer">
-          <!-- верхняя строка: звезды + сердце -->
           <div class="trainer-top">
             <div class="trainer-stars" aria-hidden="true"></div>
             <button class="fav-toggle" title="${t('fav')}" aria-label="${t('fav')}">🤍</button>
           </div>
 
-          <!-- слово — отдельной строкой по центру -->
           <h3 class="trainer-word"></h3>
-
-          <!-- подпись -->
           <p class="trainer-subtitle">${t('choose')}</p>
 
-          <!-- варианты -->
           <div class="answers-grid"></div>
 
-          <!-- Не знаю -->
           <button class="btn-ghost idk-btn">${t('idk')}</button>
 
-          <!-- нижняя статистика -->
           <p class="dict-stats" id="dictStats"></p>
         </section>
       </div>`;
   }
 
-  // ---------- Зона 1: Сеты ----------
+  // --- зона 1: сеты ---
   function getActiveBatchIndex(){
     try { return A.Trainer?.getBatchIndex ? A.Trainer.getBatchIndex(ACTIVE_KEY) : 0; }
     catch(_) { return 0; }
   }
+
   function renderSets(){
     const deck = A.Decks?.resolveDeckByKey?.(ACTIVE_KEY) || [];
     const grid = document.getElementById('setsBar');
@@ -143,7 +152,6 @@
       const btn = document.createElement('button');
       btn.className = 'set-pill' + (i===activeIdx?' is-active':'') + (done?' is-done':'');
       btn.textContent = i+1;
-      btn.setAttribute('data-set-index', String(i));
       btn.onclick = ()=>{
         A.Trainer?.setBatchIndex?.(i,ACTIVE_KEY);
         renderSets(); renderTrainer();
@@ -163,19 +171,19 @@
     }
   }
 
-  // ---------- Зона 2: Подсказки ----------
+  // --- зона 2: подсказки ---
   function renderHints(text){
     const el = document.getElementById('hintsBody');
     if (!el) return;
     el.textContent = text || ' ';
   }
 
-  // ---------- Зона 3: Тренер ----------
-  // звёзды
+  // --- зона 3: тренер ---
   function getStars(wordId){
     const val = (A.state && A.state.stars && A.state.stars[starKey(wordId, ACTIVE_KEY)]) || 0;
     return Number(val) || 0;
   }
+
   function renderStarsFor(word){
     const box = document.querySelector('.trainer-stars');
     if (!box || !word) return;
@@ -282,17 +290,13 @@
     }
   }
 
-  // ---------- мосты для ui.lifecycle/ui.stats.core ----------
-  function renderSetStats(){ renderSets(); }
-  function updateStats(){ /* нижняя статистика обновляется в renderTrainer() */ }
-
-  // ---------- синхронизация языка с тогглом ----------
+  // --- язык тогла ---
   function normalizeLangFromToggle(){
     const toggle = document.getElementById('langToggle');
     if (!toggle) return;
-    // checked => RU, unchecked => UK
     document.documentElement.dataset.lang = toggle.checked ? 'ru' : 'uk';
   }
+
   function bindLangToggle(){
     const toggle = document.getElementById('langToggle');
     if (!toggle) return;
@@ -304,7 +308,7 @@
     });
   }
 
-  // ---------- экспорт и init ----------
+  // --- экспорт ---
   function mount(){
     mountMarkup();
     renderSets();
@@ -313,10 +317,7 @@
     bindLangToggle();
   }
 
-  A.Home = { mount, renderSetStats, updateStats };
-  window.renderSetStats = window.renderSetStats || renderSetStats;
-  window.updateStats    = window.updateStats    || updateStats;
-
+  A.Home = { mount, renderSets };
   if (document.readyState !== 'loading') mount();
   else document.addEventListener('DOMContentLoaded', mount);
 })();
