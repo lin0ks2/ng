@@ -2,7 +2,7 @@
  * home.js — Главная страница MOYAMOVA (визуал старой базы + новая логика)
  *  - Единый источник языка (toggle ↔ App.settings.lang ↔ <html>)
  *  - Домашний контент рендерится ТОЛЬКО по кнопке "Дом"
- *  - Остальные вкладки рендерят пустые заглушки (готовы под замену)
+ *  - Остальные вкладки рендерят пустые заглушки
  * ========================================================== */
 (function(){
   'use strict';
@@ -14,28 +14,21 @@
 
   /* ---------------------------- Утилиты/язык --------------------------- */
   function getUiLang(){
-    // читаем только из settings/lang, а <html data-lang> держим синхронным
     const s = (A.settings && (A.settings.lang || A.settings.uiLang)) || 'ru';
     return (String(s).toLowerCase() === 'uk') ? 'uk' : 'ru';
   }
 
   function setUiLang(code){
     const lang = (code === 'uk') ? 'uk' : 'ru';
-
-    // 1) settings + сохранить
     try {
       A.settings = A.settings || {};
       A.settings.lang = lang;
       if (typeof A.saveSettings === 'function') A.saveSettings(A.settings);
     } catch(_){}
-
-    // 2) html атрибуты
     try {
       document.documentElement.dataset.lang = lang;
       document.documentElement.setAttribute('lang', lang);
     } catch(_){}
-
-    // 3) событие (если кто-то слушает)
     try {
       const ev = new Event('lexitron:ui-lang-changed');
       document.dispatchEvent(ev);
@@ -43,18 +36,23 @@
     } catch(_){}
   }
 
+  // ⬇️ Исправленный биндинг тогла: сначала нормализуем DOM, затем выставляем чекбокс
   function bindLangToggle(){
     const toggle = document.getElementById('langToggle');
     if (!toggle) return;
 
-    // Вёрстка: checked => RU, unchecked => UK
-    const current = getUiLang();          // из settings
-    toggle.checked = (current !== 'uk');  // RU => true
+    // 1) Приводим DOM к состоянию ядра (ru по умолчанию из app.core.js)
+    //    Вёрстка: checked => RU, unchecked => UK
     setUiLang(toggle.checked ? 'ru' : 'uk');
 
+    // 2) Теперь синхронизируем сам чекбокс с актуальным языком,
+    //    чтобы визуально совпадало при первом рендере
+    toggle.checked = (getUiLang() === 'ru');
+
+    // 3) Реакция на будущие изменения
     toggle.addEventListener('change', ()=>{
       setUiLang(toggle.checked ? 'ru' : 'uk');
-      Router.routeTo(Router.current || 'home'); // перерисовать текущий экран
+      Router.routeTo(Router.current || 'home');
     });
   }
 
@@ -351,7 +349,6 @@
         return;
       }
 
-      // Заглушки для остальных вкладок (можно заменить позже реальными модулями)
       const uk = getUiLang()==='uk';
       const titles = {
         dicts: uk ? 'Словники' : 'Словари',
@@ -374,7 +371,6 @@
   };
   A.Router = A.Router || Router;
 
-  // Подпишемся на клики футера (поверх базового обработчика из index.html)
   function bindFooterNav(){
     document.querySelectorAll('.app-footer .nav-btn').forEach(btn=>{
       btn.addEventListener('click', ()=>{
@@ -387,7 +383,7 @@
 
   /* ------------------------------- Экспорт ------------------------------ */
   function mountApp(){
-    bindLangToggle();         // язык ↔ тогл
+    bindLangToggle();         // язык ↔ тогл (фикс первого рендера)
     bindFooterNav();          // маршрутизация
     Router.routeTo('home');   // стартуем с "Дом"
   }
