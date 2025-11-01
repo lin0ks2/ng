@@ -1,113 +1,135 @@
 /* ==========================================================
- * home.css — Главная страница (в фирменном стиле MOYAMOVA)
+ * home.css — Главная страница (базовая стабильная версия)
  * ========================================================== */
 
+/* Контейнер контента между шапкой и футером */
 #app.content{
   display:flex;
   flex-direction:column;
   overflow:auto;
   -webkit-overflow-scrolling:touch;
   height:calc(var(--vh,1vh)*100 - var(--header-h-actual) - var(--footer-h-actual));
-  padding:8px 0;
+  /* запас снизу, чтобы карточки не упирались в фиксированный футер */
+  padding-top:8px;
+  padding-bottom:calc(var(--footer-h-actual, 60px) + 12px);
 }
 
+/* Внутренний лэйаут домашней страницы */
 .home{
   display:flex;
   flex-direction:column;
   min-height:100%;
-  gap:12px;
+  gap:10px;              /* компактнее, чтобы всё входило */
   padding:0 10px;
 }
 
-/* ==========================================================
- * Базовая карточка
- * ========================================================== */
+/* Базовый стиль карточек */
 .home > .card,
 .home section.card{
   background:#fff;
   border:1px solid #e9eef3;
   border-radius:16px;
   box-shadow:0 2px 8px rgba(0,0,0,.03);
-  padding:14px 12px;
+  padding:12px 12px;     /* компактнее, чем 14px */
 }
 
 /* ==========================================================
  * ЗОНА 1: Сеты
  * ========================================================== */
+
 .home-sets.card{ text-align:center; }
 
 .home-sets .sets-header{
   display:flex; align-items:center; justify-content:center;
   gap:6px; margin-bottom:6px;
 }
-.home-sets .flag{ font-size:16px; line-height:1; }
-.home-sets .sets-title{ font-size:14px; font-weight:700; margin:0; opacity:.85; }
 
+.home-sets .flag{ font-size:16px; line-height:1; }
+
+.home-sets .sets-title{
+  font-size:14px; font-weight:700; margin:0; opacity:.85;
+}
+
+/* 10 квадратиков в ряд, сами держат квадратное соотношение */
 .home-sets .sets-grid{
   --sets-gap:8px;
-  display:grid; grid-template-columns:repeat(10,1fr);
+  display:grid; grid-template-columns:repeat(10, 1fr);
   gap:var(--sets-gap);
   justify-content:center;
   margin:6px 0 10px;
 }
 
 .set-pill{
-  aspect-ratio:1/1; width:100%;
+  aspect-ratio:1/1;
+  width:100%;
   border-radius:6px;
   border:1px solid #d8e2eb;
   background:#f7fafd;
   display:flex; align-items:center; justify-content:center;
-  font-weight:600; font-size:clamp(10px, 2vw, 12px); line-height:1;
+  font-weight:600;
+  font-size:clamp(10px, 2vw, 12px);
+  line-height:1;
   color:#333;
   transition:box-shadow .2s ease, border-color .2s ease, background .2s ease;
 }
+
 .set-pill.is-done{
   background:var(--brand-tint, #d5f3ff);
   border-color:var(--brand, #35b6ff);
   color:#1a7abf;
 }
+
 .set-pill.is-active{
   background:#fff;
   border-color:var(--brand, #35b6ff);
-  /* если color-mix не поддерживается — просто игнорируется */
+  /* если color-mix не поддерживается — игнорируется */
   box-shadow:0 0 0 2px color-mix(in srgb, var(--brand) 25%, transparent);
 }
 
 .home-sets .sets-stats{
-  font-size:13px; opacity:.7; text-align:center; margin-top:4px;
+  font-size:13px;
+  opacity:.7;
+  text-align:center;
+  margin-top:4px;
 }
 
 /* ==========================================================
  * ЗОНА 2: Подсказки
  * ========================================================== */
-.home-hints.card{}
+
 .home-hints .hints-title{
-  margin:0 0 6px; font-size:14px; font-weight:700; opacity:.8; text-align:left;
+  margin:0 0 6px;
+  font-size:14px;
+  font-weight:700;
+  opacity:.8;
+  text-align:left;
 }
+
 .home-hints .hints-body{
-  min-height:2.6em; display:flex; align-items:center; justify-content:center;
-  text-align:center; opacity:.75; font-size:13px; line-height:1.4;
+  min-height:2.6em;                 /* «две строки» пустого места */
+  display:flex; align-items:center; justify-content:center;
+  text-align:center;
+  opacity:.75;
+  font-size:13px;
+  line-height:1.4;
 }
 
 /* ==========================================================
  * ЗОНА 3: Тренер
- * Макет:
- *   [звезды]      [сердце]
- *        слово (по центру)
- *   подпись (по центру)
- *   ответы 2×2
- *   "Не знаю" (по центру)
- *   нижняя статистика
  * ========================================================== */
+
 .home-trainer.card{
-  display:grid; grid-template-columns:1fr; row-gap:10px;
+  display:grid;
+  grid-template-columns:1fr;
+  row-gap:8px;                       /* чуть плотнее */
 }
 
+/* верхняя строка: звёзды слева, сердечко справа */
 .home-trainer .trainer-top{
   display:flex; align-items:center; justify-content:space-between; gap:12px;
 }
 
-/* звезды */
+/* звёзды */
 .home-trainer .trainer-stars{
   display:flex; gap:4px; font-size:18px; line-height:1; opacity:.9;
 }
@@ -128,12 +150,12 @@
   text-align:center; font-weight:700; font-size:28px; margin:4px 0 2px;
 }
 .home-trainer .trainer-subtitle{
-  text-align:center; font-size:14px; opacity:.7; margin:4px 0 10px;
+  text-align:center; font-size:14px; opacity:.7; margin:2px 0 8px;
 }
 
 /* ответы 2×2 */
 .home-trainer .answers-grid{
-  display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;
+  display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px;
 }
 .answer-btn{
   height:44px; border:0; border-radius:14px;
@@ -145,17 +167,18 @@
 .answer-btn:hover{ filter:brightness(1.05); }
 .answer-btn:active{ transform:translateY(1px); }
 
-/* "Не знаю" */
+/* «Не знаю» — по центру */
 .btn-ghost.idk-btn{
-  display:block; margin:4px auto 0; height:38px; padding:0 16px;
+  display:block; margin:2px auto 0;
+  height:38px; padding:0 16px;
   border:1px solid #dfe3e8; border-radius:12px; background:#fff;
   font-weight:600; color:#444;
 }
 .btn-ghost.idk-btn:hover{ border-color:var(--brand, #35b6ff); color:var(--brand, #35b6ff); }
 
-/* нижняя статистика */
+/* Нижняя статистика */
 .dict-stats{
-  font-size:13px; opacity:.7; text-align:center; margin-top:6px;
+  font-size:13px; opacity:.7; text-align:center; margin-top:4px;
 }
 
 /* ==========================================================
