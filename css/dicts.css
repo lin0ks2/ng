@@ -46,3 +46,14 @@
   text-align:left; padding:6px 8px; border-bottom:1px solid #e9eef3; font-size:13px;
 }
 .dict-table tbody td{ padding:6px 8px; font-size:14px; border-bottom:1px solid #f1f4f8; }
+
+.dicts-preview {
+  cursor: pointer;
+  font-size: 18px;
+  transition: transform .1s ease, opacity .1s ease;
+  opacity: .8;
+}
+.dicts-preview:hover {
+  transform: scale(1.15);
+  opacity: 1;
+}
