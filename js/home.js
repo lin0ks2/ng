@@ -1,20 +1,61 @@
 /* ==========================================================
- * home.js — Главная страница MOYAMOVA (финальная базовая версия)
+ * home.js — Главная страница MOYAMOVA (визуал старой базы + новая логика)
+ *  - Единый источник языка (toggle ↔ App.settings.lang ↔ <html>)
+ *  - Домашний контент рендерится ТОЛЬКО по кнопке "Дом"
+ *  - Остальные вкладки рендерят пустые заглушки (готовы под замену)
  * ========================================================== */
 (function(){
   'use strict';
   const A = (window.App = window.App || {});
 
-  // --- настройки ---
+  /* ----------------------------- Константы ----------------------------- */
   const ACTIVE_KEY = 'de_verbs';
   const SET_SIZE   = (A.Config && A.Config.setSizeDefault) || 40;
 
-  // --- утилиты ---
+  /* ---------------------------- Утилиты/язык --------------------------- */
   function getUiLang(){
-    const htmlLang = document.documentElement?.dataset?.lang;
-    if (htmlLang === 'ru' || htmlLang === 'uk') return htmlLang;
-    const s = (A.settings && (A.settings.uiLang || A.settings.lang)) || 'ru';
-    return (s === 'uk') ? 'uk' : 'ru';
+    // читаем только из settings/lang, а <html data-lang> держим синхронным
+    const s = (A.settings && (A.settings.lang || A.settings.uiLang)) || 'ru';
+    return (String(s).toLowerCase() === 'uk') ? 'uk' : 'ru';
+  }
+
+  function setUiLang(code){
+    const lang = (code === 'uk') ? 'uk' : 'ru';
+
+    // 1) settings + сохранить
+    try {
+      A.settings = A.settings || {};
+      A.settings.lang = lang;
+      if (typeof A.saveSettings === 'function') A.saveSettings(A.settings);
+    } catch(_){}
+
+    // 2) html атрибуты
+    try {
+      document.documentElement.dataset.lang = lang;
+      document.documentElement.setAttribute('lang', lang);
+    } catch(_){}
+
+    // 3) событие (если кто-то слушает)
+    try {
+      const ev = new Event('lexitron:ui-lang-changed');
+      document.dispatchEvent(ev);
+      window.dispatchEvent(ev);
+    } catch(_){}
+  }
+
+  function bindLangToggle(){
+    const toggle = document.getElementById('langToggle');
+    if (!toggle) return;
+
+    // Вёрстка: checked => RU, unchecked => UK
+    const current = getUiLang();          // из settings
+    toggle.checked = (current !== 'uk');  // RU => true
+    setUiLang(toggle.checked ? 'ru' : 'uk');
+
+    toggle.addEventListener('change', ()=>{
+      setUiLang(toggle.checked ? 'ru' : 'uk');
+      Router.routeTo(Router.current || 'home'); // перерисовать текущий экран
+    });
   }
 
   function tWord(w){
@@ -48,7 +89,7 @@
     ? A.starKey
     : (id, key)=> `${key}:${id}`;
 
-  function getDeckTitleByLang(key){
+  function deckTitleByLang(key){
     const lang = getUiLang();
     try {
       if (A.Decks?.resolveNameByKeyLang) return A.Decks.resolveNameByKeyLang(key, lang);
@@ -71,21 +112,21 @@
     return (lang === 'uk') ? 'Дієслова' : 'Глаголы';
   }
 
-  // --- вёрстка главного окна ---
+  function tUI(){
+    const uk = getUiLang() === 'uk';
+    return uk
+      ? { hints:'Підказки', choose:'Оберіть переклад', idk:'Не знаю', fav:'У вибране' }
+      : { hints:'Подсказки', choose:'Выберите перевод', idk:'Не знаю', fav:'В избранное' };
+  }
+
+  /* --------------------------- DOM-шаблон Home -------------------------- */
   function mountMarkup(){
     const app = document.getElementById('app');
     if (!app) return;
 
     const flag  = (A.Decks && A.Decks.flagForKey && A.Decks.flagForKey(ACTIVE_KEY)) || '🇩🇪';
-    const title = getDeckTitleByLang(ACTIVE_KEY);
-
-    const t = (k)=>{
-      const uk = getUiLang() === 'uk';
-      const dict = uk
-        ? { hints:'Підказки', choose:'Оберіть переклад', idk:'Не знаю', fav:'У вибране' }
-        : { hints:'Подсказки', choose:'Выберите перевод', idk:'Не знаю', fav:'В избранное' };
-      return dict[k];
-    };
+    const title = deckTitleByLang(ACTIVE_KEY);
+    const T = tUI();
 
     app.innerHTML = `
       <div class="home">
@@ -102,7 +143,7 @@
 
         <!-- ЗОНА 2: Подсказки -->
         <section class="card home-hints">
-          <h4 class="hints-title">${t('hints')}</h4>
+          <h4 class="hints-title">${T.hints}</h4>
           <div class="hints-body" id="hintsBody"></div>
         </section>
 
@@ -110,22 +151,22 @@
         <section class="card home-trainer">
           <div class="trainer-top">
             <div class="trainer-stars" aria-hidden="true"></div>
-            <button class="fav-toggle" title="${t('fav')}" aria-label="${t('fav')}">🤍</button>
+            <button class="fav-toggle" title="${T.fav}" aria-label="${T.fav}">🤍</button>
           </div>
 
           <h3 class="trainer-word"></h3>
-          <p class="trainer-subtitle">${t('choose')}</p>
+          <p class="trainer-subtitle">${T.choose}</p>
 
           <div class="answers-grid"></div>
 
-          <button class="btn-ghost idk-btn">${t('idk')}</button>
+          <button class="btn-ghost idk-btn">${T.idk}</button>
 
           <p class="dict-stats" id="dictStats"></p>
         </section>
       </div>`;
   }
 
-  // --- зона 1: сеты ---
+  /* ----------------------------- Зона 1: Сеты --------------------------- */
   function getActiveBatchIndex(){
     try { return A.Trainer?.getBatchIndex ? A.Trainer.getBatchIndex(ACTIVE_KEY) : 0; }
     catch(_) { return 0; }
@@ -165,20 +206,21 @@
     const words = deck.slice(from,to);
     const learned = words.filter(w => ((A.state?.stars?.[starKey(w.id,ACTIVE_KEY)])||0) >= starsMax).length;
     if (statsEl) {
-      statsEl.textContent = (getUiLang()==='uk')
+      const uk = getUiLang()==='uk';
+      statsEl.textContent = uk
         ? `Слів у наборі: ${words.length} / Вивчено: ${learned}`
         : `Слов в наборе: ${words.length} / Выучено: ${learned}`;
     }
   }
 
-  // --- зона 2: подсказки ---
+  /* --------------------------- Зона 2: Подсказки ------------------------ */
   function renderHints(text){
     const el = document.getElementById('hintsBody');
     if (!el) return;
     el.textContent = text || ' ';
   }
 
-  // --- зона 3: тренер ---
+  /* ---------------------------- Зона 3: Тренер -------------------------- */
   function getStars(wordId){
     const val = (A.state && A.state.stars && A.state.stars[starKey(wordId, ACTIVE_KEY)]) || 0;
     return Number(val) || 0;
@@ -243,9 +285,10 @@
           A.Trainer?.handleAnswer?.(ACTIVE_KEY, word.id, ok);
           if (!ok) A.Mistakes?.push?.(ACTIVE_KEY, word.id);
         } catch(_){}
+        const uk = getUiLang()==='uk';
         renderHints(ok
-          ? (getUiLang()==='uk' ? '✅ Чудово!' : '✅ Отлично!')
-          : (getUiLang()==='uk' ? `❌ Правильний переклад — “${tWord(word)}”.` : `❌ Правильный перевод — “${tWord(word)}”.`));
+          ? (uk ? '✅ Чудово!' : '✅ Отлично!')
+          : (uk ? `❌ Правильний переклад — “${tWord(word)}”.` : `❌ Правильный перевод — “${tWord(word)}”.`));
         renderSets(); renderTrainer();
         try { A.Stats?.recomputeAndRender?.(); } catch(_){}
       };
@@ -253,13 +296,13 @@
     });
 
     if (idkBtn) {
-      idkBtn.textContent = (getUiLang()==='uk' ? 'Не знаю' : 'Не знаю');
       idkBtn.onclick = ()=>{
         try {
           A.Trainer?.handleAnswer?.(ACTIVE_KEY, word.id, false);
           A.Mistakes?.push?.(ACTIVE_KEY, word.id);
         } catch(_){}
-        renderHints(getUiLang()==='uk'
+        const uk = getUiLang()==='uk';
+        renderHints(uk
           ? `ℹ️ Правильний переклад — “${tWord(word)}”.`
           : `ℹ️ Правильный перевод — “${tWord(word)}”.`);
         renderSets(); renderTrainer();
@@ -270,7 +313,8 @@
     try {
       const has = A.Favorites?.has?.(ACTIVE_KEY, word.id);
       if (favBtn) {
-        const favTitle = (getUiLang()==='uk' ? 'У вибране' : 'В избранное');
+        const uk = getUiLang()==='uk';
+        const favTitle = uk ? 'У вибране' : 'В избранное';
         favBtn.title = favTitle; favBtn.ariaLabel = favTitle;
         favBtn.classList.toggle('is-fav', !!has);
         favBtn.onclick = ()=>{
@@ -284,40 +328,76 @@
     const starsMax = A.Trainer?.starsMax?.() || 5;
     const learned = full.filter(w => ((A.state?.stars?.[starKey(w.id,ACTIVE_KEY)])||0) >= starsMax).length;
     if (stats) {
-      stats.textContent = (getUiLang()==='uk')
+      const uk = getUiLang()==='uk';
+      stats.textContent = uk
         ? `Всього слів: ${full.length} / Вивчено: ${learned}`
         : `Всего слов: ${full.length} / Выучено: ${learned}`;
     }
   }
 
-  // --- язык тогла ---
-  function normalizeLangFromToggle(){
-    const toggle = document.getElementById('langToggle');
-    if (!toggle) return;
-    document.documentElement.dataset.lang = toggle.checked ? 'ru' : 'uk';
-  }
+  /* ------------------------ Маршрутизация по футеру --------------------- */
+  const Router = {
+    current: 'home',
+    routeTo(action){
+      this.current = action;
+      const app = document.getElementById('app');
+      if (!app) return;
 
-  function bindLangToggle(){
-    const toggle = document.getElementById('langToggle');
-    if (!toggle) return;
-    toggle.checked = (getUiLang()==='ru');
-    normalizeLangFromToggle();
-    toggle.addEventListener('change', ()=>{
-      normalizeLangFromToggle();
-      try { A.Home.mount(); } catch(_){}
+      if (action === 'home'){
+        mountMarkup();
+        renderSets();
+        renderTrainer();
+        renderHints(' ');
+        return;
+      }
+
+      // Заглушки для остальных вкладок (можно заменить позже реальными модулями)
+      const uk = getUiLang()==='uk';
+      const titles = {
+        dicts: uk ? 'Словники' : 'Словари',
+        fav  : uk ? 'Вибране'  : 'Избранное',
+        mistakes: uk ? 'Мої помилки' : 'Мои ошибки',
+        stats: uk ? 'Статистика' : 'Статистика'
+      };
+      const name = titles[action] || (uk ? 'Екран' : 'Экран');
+
+      app.innerHTML = `
+        <div class="home">
+          <section class="card">
+            <h3 style="margin:0 0 6px;">${name}</h3>
+            <p style="opacity:.7; margin:0;">
+              ${uk ? 'Контент скоро з’явиться.' : 'Контент скоро появится.'}
+            </p>
+          </section>
+        </div>`;
+    }
+  };
+  A.Router = A.Router || Router;
+
+  // Подпишемся на клики футера (поверх базового обработчика из index.html)
+  function bindFooterNav(){
+    document.querySelectorAll('.app-footer .nav-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const act = btn.getAttribute('data-action');
+        if (!act) return;
+        Router.routeTo(act);
+      });
     });
   }
 
-  // --- экспорт ---
-  function mount(){
-    mountMarkup();
-    renderSets();
-    renderTrainer();
-    renderHints(' ');
-    bindLangToggle();
+  /* ------------------------------- Экспорт ------------------------------ */
+  function mountApp(){
+    bindLangToggle();         // язык ↔ тогл
+    bindFooterNav();          // маршрутизация
+    Router.routeTo('home');   // стартуем с "Дом"
   }
 
-  A.Home = { mount, renderSets };
-  if (document.readyState !== 'loading') mount();
-  else document.addEventListener('DOMContentLoaded', mount);
+  A.Home = {
+    mount: mountApp,
+    renderSetStats: renderSets,
+    updateStats: function(){ /* нижняя статистика обновляется в renderTrainer() */ }
+  };
+
+  if (document.readyState !== 'loading') mountApp();
+  else document.addEventListener('DOMContentLoaded', mountApp);
 })();
