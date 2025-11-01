@@ -1,5 +1,5 @@
 /* ==========================================================
- * home.js — Главная: Сеты + Подсказки + Тренер (RU/UK + Stars)
+ * home.js — Главная: Сеты + Подсказки + Тренер (lang sync + stars/heart swap)
  * ========================================================== */
 (function(){
   'use strict';
@@ -94,9 +94,9 @@
         <!-- ЗОНА 3: Тренер -->
         <section class="card home-trainer">
           <div class="trainer-header">
-            <button class="fav-toggle" title="${t('fav')}" aria-label="${t('fav')}">🤍</button>
             <h3 class="trainer-word"></h3>
             <div class="trainer-stars" aria-hidden="true"></div>
+            <button class="fav-toggle" title="${t('fav')}" aria-label="${t('fav')}">🤍</button>
           </div>
           <p class="trainer-subtitle">${t('choose')}</p>
           <div class="answers-grid"></div>
@@ -277,14 +277,23 @@
   function renderSetStats(){ renderSets(); }
   function updateStats(){ /* нижняя статистика обновляется в renderTrainer() */ }
 
-  // ---------- реакция на смену языка (тоггл) ----------
+  // ---------- синхронизация языка с тогглом ----------
+  function normalizeLangFromToggle(){
+    const toggle = document.getElementById('langToggle');
+    if (!toggle) return;
+    // checked => RU, unchecked => UK (как в твоём index.html)
+    document.documentElement.dataset.lang = toggle.checked ? 'ru' : 'uk';
+  }
   function bindLangToggle(){
     const toggle = document.getElementById('langToggle');
     if (!toggle) return;
-    // синхронизируем чекбокс с текущим состоянием (в твоём index.html checked=RU)
+    // синхронизируем чекбокс с текущим состоянием
     toggle.checked = (getUiLang()==='ru');
+    // на старте нормализуем dataset.lang под положение тоггла (исправляет рассинхрон)
+    normalizeLangFromToggle();
+    // реакция на изменение
     toggle.addEventListener('change', ()=>{
-      // index.html меняет data-lang; здесь просто перерисовываем
+      normalizeLangFromToggle();
       try { A.Home.mount(); } catch(_){}
     });
   }
