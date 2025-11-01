@@ -349,8 +349,8 @@
   return;
 }
 
-if (action === 'dicts'){
-  A.ViewDicts?.mountInto?.(app);
+if (action === 'dicts') {
+  A.ViewDicts.mount();
   return;
 }
       const uk = getUiLang()==='uk';
